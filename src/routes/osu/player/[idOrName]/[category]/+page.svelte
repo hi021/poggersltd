@@ -1,13 +1,27 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte';
 	import { page } from '$app/stores';
+	//@ts-ignore
 	import * as Pancake from '@sveltejs/pancake';
 	import { COUNTRIES, formatNumber, getAvatarURL } from '$lib/util';
+	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	let chartClosestPoint: any;
+	const maxRankDay = data.ranks.length - 1;
+	let loading = false;
+	let ranks = { ranks: data.ranks, rankStats: data.rankStats };
 	let category = $page.params.category;
+
+	async function fetchRanks(category: string) {
+		loading = true;
+		const resRanks = await fetch(`/api/player/${data._id}/ranks/${category || 'top50'}/90`);
+		const resRanksJson = await resRanks.json();
+
+		ranks = { ranks: resRanksJson.ranks, rankStats: resRanksJson.rankStats };
+		loading = false;
+	}
+	$: fetchRanks(category);
 </script>
 
 <svelte:head>
@@ -24,6 +38,9 @@
 				<div class="column" style="width: 100%;">
 					<div id="top-bar-top">
 						{plr.name}
+						{#if plr.oldName?.length}
+							<div class="icon icon-profile-name" title={plr.oldName.join(', ')} />
+						{/if}
 					</div>
 					<div id="top-bar-bottom" class="row">
 						<img
@@ -38,86 +55,148 @@
 			</div>
 			<div id="main-wrapper" class="row flex-fill">
 				<div id="side-bar" class="column">
-					<a target="_blank" href="https://osu.ppy.sh/users/{plr._id}" title="osu! profile"
-						><span class="icon icon-osu" /></a
+					<a
+						target="_blank"
+						href="https://osu.ppy.sh/users/{plr._id}"
+						title="osu! profile"
+						rel="noreferrer"><span class="icon icon-osu" /></a
 					>
 				</div>
 				<div id="main" class="column flex-fill">
 					<div id="tabs-container" class="row">
-						<div
-							class="tab"
+						<button
+							class="tab btn-none"
 							class:active={category === 'top50'}
 							on:click={() => (category = 'top50')}
 						>
 							top 50
-						</div>
-						<div
-							class="tab"
+						</button>
+						<button
+							class="tab btn-none"
 							class:active={category === 'top25'}
 							on:click={() => (category = 'top25')}
 						>
 							top 25
-						</div>
-						<div
-							class="tab"
+						</button>
+						<button
+							class="tab btn-none"
 							class:active={category === 'top8'}
 							on:click={() => (category = 'top8')}
 						>
 							top 8
-						</div>
-						<div
-							class="tab"
+						</button>
+						<button
+							class="tab btn-none"
 							class:active={category === 'top1'}
 							on:click={() => (category = 'top1')}
 						>
 							top 1
-						</div>
+						</button>
 					</div>
-					<div class="row">
-						{#if plr[category]}
-							<div id="chart-container">
-								<Pancake.Chart x1={0} x2={90} y1={0} y2={90}>
-									<Pancake.Quadtree data={plr.ranks} bind:closest={chartClosestPoint} />
+					{#if loading}
+						<div class="overlay" transition:fade />
+					{:else}
+						<div class="row">
+							{#if plr[category]}
+								<div id="chart-container">
+									<Pancake.Chart
+										clip
+										x1={0}
+										x2={maxRankDay}
+										y1={ranks.rankStats.minValue - 20}
+										y2={ranks.rankStats.maxValue + 20}
+									>
+										<!-- @ts-ignore -->
+										<Pancake.Svg>
+											<Pancake.SvgLine
+												data={ranks.ranks}
+												x={(d: any, i: number) => maxRankDay - i}
+												y={(d: any) => (d ? d.value : -100)}
+												let:d
+											>
+												<path class="chart-path" {d} />
+											</Pancake.SvgLine>
+										</Pancake.Svg>
 
-									<Pancake.Svg>
-										<Pancake.SvgLine data={plr.ranks} x={(d) => d} y={(d) => d} let:d>
-											<path class="chart-path" {d} />
-										</Pancake.SvgLine>
-									</Pancake.Svg>
+										<!-- @ts-ignore -->
+										<Pancake.Quadtree
+											data={ranks.ranks}
+											x={(d, i) => maxRankDay - i}
+											y={(d) => (d ? d.value : -100)}
+											let:closest
+										>
+											{#if closest?.value > 0}
+												<Pancake.Point x={closest.day} y={closest.value}>
+													<span
+														class="chart-tooltip-line"
+														style="transform: translateY(-{200 -
+															(closest.value / ranks.rankStats.maxValue) * 200}px);"
+													/>
+													<span class="chart-tooltip-point" />
+												</Pancake.Point>
 
-									{#if chartClosestPoint}
-										<Pancake.Point x={chartClosestPoint.x} y={chartClosestPoint.y}>
-											<!-- <span
-										class="osu-profile-chart-tooltip-line"
-										style="transform: translateY(-{86 - (profileChartClosestPoint.y / maxProfileChartData) * 86}px);"
-										/> -->
-											<span class="osu-profile-chart-tooltip-point" />
-										</Pancake.Point>
+												<Pancake.Point x={0} y={ranks.rankStats.maxValue + 20}>
+													<div class="chart-tooltip column">
+														<span>
+															<strong>{category}s</strong>
+															{formatNumber(closest.value)}
+														</span>
+														<span style="color: var(--color-active);">
+															{maxRankDay - closest.day === 0
+																? 'now'
+																: maxRankDay - closest.day === 1
+																? '1 day ago'
+																: maxRankDay - closest.day + ' days ago'}
+														</span>
+													</div>
+												</Pancake.Point>
+											{/if}
+										</Pancake.Quadtree>
+									</Pancake.Chart>
+								</div>
+								<div class="stats-container">
+									<span class="stat-name"> count </span>
+									<span class="stat-value">
+										{formatNumber(plr[category].value)}
+									</span>
+									<span class="stat-name"> rank </span>
+									<span class="stat-value">
+										#{formatNumber(plr[category].rank, ',')}
+									</span>
+									<span class="stat-name"> country rank </span>
+									<span class="stat-value">
+										#{formatNumber(plr[category].countryRank, ',')}
+									</span>
+								</div>
+								<div class="stats-container">
+									{#if plr[category].mostGained}
+										<span class="stat-name"> most gained </span>
+										<span class="stat-value" title={plr[category].mostGained.date}>
+											{formatNumber(plr[category].mostGained.value)}
+										</span>
 									{/if}
-								</Pancake.Chart>
-							</div>
-							<div class="stat-container">
-								<span class="stat-name"> count </span>
-								<span class="stat-value">
-									{formatNumber(plr[category].value)}
-								</span>
-								<span class="stat-name"> rank </span>
-								<span class="stat-value">
-									{formatNumber(plr[category].rank)}
-								</span>
-								<span class="stat-name"> country rank </span>
-								<span class="stat-value">
-									{formatNumber(plr[category].countryRank)}
-								</span>
-							</div>
-						{:else}
-							<p>No {category} stats for this player...</p>
-						{/if}
-					</div>
+									{#if plr[category].peak}
+										<span class="stat-name"> peak </span>
+										<span class="stat-value" title={plr[category].peak.date}>
+											{formatNumber(plr[category].peak.value)}
+										</span>
+									{/if}
+									{#if plr[category].lowest}
+										<span class="stat-name"> lowest </span>
+										<span class="stat-value" title={plr[category].lowest.date}>
+											{formatNumber(plr[category].lowest.value)}
+										</span>
+									{/if}
+								</div>
+							{:else}
+								<p style="solo-text">No {category} stats for this player...</p>
+							{/if}
+						</div>
+					{/if}
 				</div>
 			</div>
 		{:else}
-			<p>Player not found</p>
+			<p class="solo-text">Player not found</p>
 		{/if}
 	</main>
 {/await}
@@ -170,19 +249,33 @@
 		--pad: 12px;
 		padding: var(--pad);
 		background-color: var(--color-dark);
+		position: relative;
+	}
+	.overlay {
+		--color-base: 0, 0, 0;
+		backdrop-filter: blur(5px);
+		margin-left: calc(-1 * var(--pad));
 	}
 
 	#tabs-container {
 		margin: calc(-1 * var(--pad));
 		margin-bottom: var(--pad);
 		padding-left: var(--pad);
-		background-color: rgba(0, 0, 0, 0.4);
+		background-color: var(--color-darker);
 	}
 	.tab {
+		color: inherit;
+		border: none;
+		border-radius: 0;
 		padding: 8px;
 		cursor: pointer;
+		transition: none;
 	}
-	.tab:hover {
+	.tab:hover,
+	.tab:focus,
+	.tab:focus-visible {
+		outline: none;
+		box-shadow: none;
 		background-color: rgba(0, 0, 0, 0.4);
 	}
 	.tab.active {
@@ -190,8 +283,9 @@
 	}
 
 	#chart-container {
-		height: 260px;
-		background-color: aliceblue;
+		height: 200px;
+		width: 600px;
+		margin-right: 16px;
 	}
 	.chart-path {
 		stroke: var(--color-active);
@@ -200,6 +294,18 @@
 		stroke-linecap: round;
 		stroke-width: 2px;
 		fill: none;
+	}
+
+	.chart-tooltip {
+		position: absolute;
+		padding: 10px;
+		border-radius: 10px;
+		color: var(--color-lightest);
+		background-color: rgba(0, 0, 0, 0.4);
+		font-size: 0.75rem;
+		width: max-content;
+		z-index: 2;
+		pointer-events: none;
 	}
 	.chart-tooltip-point {
 		position: absolute;
@@ -210,15 +316,30 @@
 		border-radius: 50%;
 		transform: translate(-50%, -50%);
 		pointer-events: none;
+		z-index: 1;
+	}
+	.chart-tooltip-line {
+		position: absolute;
+		width: 1px;
+		height: 200px;
+		background-color: var(--color-active);
+		transform: translateX(-50%);
+		pointer-events: none;
 	}
 
-	.stat-container {
+	.stats-container {
 		display: flex;
 		flex-direction: column;
+		margin-right: 16px;
 	}
 	.stat-name {
 		font-size: 0.875rem;
 		border-bottom: 1px solid var(--color-lighter);
+		border-bottom-left-radius: 1px;
+		border-bottom-right-radius: 1px;
+	}
+	.stat-value {
+		font-size: 1.25rem;
 	}
 
 	.icon-osu {
@@ -228,5 +349,16 @@
 	}
 	.icon-osu:hover {
 		opacity: 0.45;
+	}
+
+	.icon-profile-name {
+		background-image: url('/icons/profile_name.svg');
+		height: 24px;
+		filter: invert(1);
+		margin-left: 10px;
+		transition: transform 0.25s;
+	}
+	.icon-profile-name:hover {
+		transform: translateY(-4px);
 	}
 </style>

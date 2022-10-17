@@ -7,7 +7,7 @@
 	<title>poggers</title>
 </svelte:head>
 
-<header><a href="/">poggers</a></header>
+<header><a href="/" class="logo-text">poggers</a></header>
 
 <main class="row flex-fill">
 	<MenuButton
@@ -40,9 +40,8 @@
 		background-repeat: no-repeat;
 		box-shadow: 0 3px 2px var(--color-darkest);
 	}
-	header > a {
-		color: inherit;
-		text-decoration: none;
+	.logo-text {
+		transition: color 0.25s, background-clip 0.25s, text-shadow 0.25s;
 	}
 
 	main {

@@ -24,7 +24,9 @@
 
 <main class="flex-fill column osu-main">
 	<div class="flex-center" style="margin: 16px 0;">
-		<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
+		{#if maxPage > 1}
+			<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
+		{/if}
 	</div>
 	{#await pageData}
 		<Loader margin="2rem" sticky={true} />
@@ -55,7 +57,12 @@
 							</td>
 							{#if showAvatars}
 								<td class="hide-width-640" style="width: 36px;">
-									<a href="https://osu.ppy.sh/users/{plr._id}" target="_blank" title="osu! profile">
+									<a
+										href="https://osu.ppy.sh/users/{plr._id}"
+										target="_blank"
+										rel="noreferrer"
+										title="osu! profile"
+									>
 										<img class="osu-avatar-small" alt="" src={getAvatarURL(plr._id)} />
 									</a>
 								</td>
@@ -74,6 +81,9 @@
 							<td
 								class="name-column"
 								on:click={() => goto(`/osu/player/${plr.name}/${$page.params.category}`)}
+								on:keypress={(e) => {
+									if (e.key === 'Enter') goto(`/osu/player/${plr.name}/${$page.params.category}`);
+								}}
 							>
 								<div class="row">
 									<span>
@@ -100,7 +110,9 @@
 				</tbody>
 			</table>
 			<div class="column flex-center" style="margin: 16px 0;">
-				<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
+				{#if maxPage > 1}
+					<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
+				{/if}
 				<div style="font-weight: 300; margin-top: 4px;">
 					Page <strong>{curPage}</strong>/{maxPage}
 				</div>
@@ -110,6 +122,9 @@
 </main>
 
 <style>
+	.name-column {
+		cursor: pointer;
+	}
 	.name-column > div {
 		align-items: center;
 	}

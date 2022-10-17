@@ -51,6 +51,24 @@ const api = 'https://osustats.respektive.pw/rankings/';
 const categories = ['top50s', 'top25s', 'top15s', 'top8s', 'top1s'];
 const categoriesMin = [MIN_TOP50, MIN_TOP25, MIN_TOP15, MIN_TOP8, MIN_TOP1]; //lol whatever;
 
+//TODO: move to a shared module file
+async function getRankingCollections(start = '', end = 'Z') {
+	const client = await MongoClient.connect(process.env.DB_URI);
+	const collections = await client
+		.db(process.env.DB_NAME_RANKING)
+		.listCollections(undefined, { nameOnly: true })
+		.toArray();
+
+	if ((start && start > '2020-05-10') || end !== 'Z') {
+		for (const n in collections) {
+			if (collections[n].name < start || collections[n].name > end) delete collections[n];
+		}
+	}
+
+	client.close();
+	return collections;
+}
+
 async function getClosestPrevArchiveEntry(initialDate, daysBack = 1, maxDaysLate = 32) {
 	const today = initialDate ? new Date(initialDate) : new Date();
 	const todayCopy = new Date(today);
@@ -140,11 +158,12 @@ async function setCategoryGains(categoryObject, category, gainsDate, gainsDaysLa
 	for (const i of categoryData) categoryDataMap.set(i._id, i);
 
 	for (const i in categoryObject) {
-		const id = categoryObject[i]._id;
+		const curPlayer = categoryObject[i];
+		const id = curPlayer._id;
 		if (categoryDataMap.has(id)) {
-			categoryObject[i].gained = categoryObject[i].value - categoryDataMap.get(id).value;
-			categoryObject[i].gainedRank = categoryDataMap.get(id).rank - categoryObject[i].rank;
-			if (gainsDaysLate) categoryObject[i].gainedDays = gainsDaysLate + 1;
+			curPlayer.gained = curPlayer.value - categoryDataMap.get(id).value;
+			curPlayer.gainedRank = categoryDataMap.get(id).rank - curPlayer.rank;
+			if (gainsDaysLate) curPlayer.gainedDays = gainsDaysLate + 1;
 		}
 	}
 
@@ -175,22 +194,26 @@ for (const i in categories) {
 	const cat = categories[i].slice(0, categories[i].length - 1);
 
 	console.time(cat);
-	const res = await fetchCategory(cat + 's', categoriesMin[i]);
+	const categoryFetched = await fetchCategory(cat + 's', categoriesMin[i]);
 	console.timeEnd(cat);
-	console.log(res?.length + ' entries');
+	console.log(categoryFetched?.length + ' entries');
 
 	try {
-		const resGain =
+		const categoryWithGains =
 			lastArchive && cat !== 'top15'
-				? await setCategoryGains(res, cat, lastArchive.date, lastArchive.daysLate)
-				: res;
+				? await setCategoryGains(categoryFetched, cat, lastArchive.date, lastArchive.daysLate)
+				: categoryFetched;
 
-		fs.writeFileSync(path.join(__dirname, 'archive', date, cat + '.json'), JSON.stringify(resGain));
+		fs.writeFileSync(
+			path.join(__dirname, 'archive', date, cat + '.json'),
+			JSON.stringify(categoryWithGains)
+		);
 		if (cat === 'top15') continue; //don't save top15s to database - no ranking
 
-		for (const i of resGain) {
-			const data = players.get(i._id);
-			const playerRanking = {
+		//add to players database
+		for (const i of categoryWithGains) {
+			const playerData = players.get(i._id);
+			const playerRankingData = {
 				date,
 				value: i.value,
 				rank: i.rank,
@@ -198,14 +221,21 @@ for (const i in categories) {
 				gained: i.gained,
 				gainedRank: i.gainedRank
 			};
-			if (i.gainedDays) playerRanking.gainedDays = i.gainedDays;
 
-			if (data) players.set(i._id, { ...data, [cat]: playerRanking });
+			//only set mostGained if no gaps in ranking to provide accurate data
+			if (i.gainedDays) playerRankingData.gainedDays = i.gainedDays;
+
+			if (playerData) players.set(i._id, { ...playerData, [cat]: playerRankingData });
 			else
-				players.set(i._id, { _id: i._id, name: i.name, country: i.country, [cat]: playerRanking });
+				players.set(i._id, {
+					_id: i._id,
+					name: i.name,
+					country: i.country,
+					[cat]: playerRankingData
+				});
 		}
 
-		const insertRes = await coll.insertOne({ _id: cat, ranking: resGain });
+		const insertRes = await coll.insertOne({ _id: cat, ranking: categoryWithGains });
 		console.log(insertRes);
 	} catch (e) {
 		console.error('Failed to write:', e);
@@ -216,6 +246,8 @@ try {
 	console.log('Updating players database');
 	const promises = [];
 
+	let collections; //for changing ranking usernames
+
 	let oldPlayers = 0;
 	let newPlayers = 0;
 	for (const player of Array.from(players.values())) {
@@ -224,12 +256,10 @@ try {
 				const _id = player._id;
 				delete player._id; //don't insert a duplicate
 
-				//check for name change
-				const playerOld = await collPlayers.findOne(
-					{ _id },
-					{ projection: { name: 1, oldName: 1 } }
-				);
+				const playerOld = await collPlayers.findOne({ _id });
 				let nameKey = playerOld?.nameKey;
+
+				//check for name change
 				if (playerOld && playerOld.name !== player.name) {
 					console.log(`Name change: ${playerOld.name} -> ${player.name}`);
 					nameKey = createNGram(player.name);
@@ -237,9 +267,58 @@ try {
 					if (playerOld.oldName)
 						player.oldName = [...new Set([...playerOld.oldName, playerOld.name])];
 					else player.oldName = [playerOld.name];
+
+					//replace names in older archive entries
+					let entriesUpdated = 0;
+					if (!collections) collections = await getRankingCollections();
+					for (const i of collections) {
+						//genuinely no clue how to do this properly, but this is fine since it only runs once a day
+						const coll = client.db(process.env.DB_NAME_RANKING).collection(i.name);
+						//get all categories with the player from given date
+						const findRes = await coll.find({ ranking: { $elemMatch: { _id } } }).toArray();
+
+						if (findRes?.length) {
+							for (const i in findRes) {
+								//iterate over all players in all found categories
+								for (const j in findRes[i].ranking) {
+									const playerArchive = findRes[i].ranking[j];
+									if (playerArchive._id === _id) {
+										++entriesUpdated;
+										playerArchive.name = player.name;
+										break;
+									}
+								}
+
+								await coll.updateOne(
+									{ _id: findRes[i]._id },
+									{ $set: { ranking: findRes[i].ranking } }
+								);
+							}
+						}
+					}
+					console.log('Updated for ' + entriesUpdated + ' entries');
 				}
 				if (!nameKey) nameKey = createNGram(player.name);
 				player.nameKey = nameKey;
+
+				for (const i of categories) {
+					const cat = i.slice(0, i.length - 1); //top15s -> top15 etc.
+					if (!player[cat]) continue;
+
+					//check mostGained
+					if (lastArchive?.daysLate === 0 && player[cat].gained != null) {
+						if (!player[cat].mostGained || player[cat].mostGained.value < player[cat].gained)
+							player[cat].mostGained = { date, value: player[cat].gained };
+					}
+
+					//check for peak and lowest
+					const o = { date, value: player[cat].value };
+					if (!player[cat].peak) player[cat].lowest = player[cat].peak = o;
+					else {
+						if (player[cat].peak.value < player[cat].value) player[cat].peak = o;
+						else if (player[cat].lowest.value > player[cat].value) player[cat].lowest = o;
+					}
+				}
 
 				const updateRes = await collPlayers.updateOne({ _id }, { $set: player }, { upsert: true });
 

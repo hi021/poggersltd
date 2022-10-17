@@ -31,10 +31,13 @@
 		goto('/osu/player/' + idOrName + '/top50');
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		if (browser) {
-			searchInputElement.focus();
 			addEventListener('click', handleClick);
+			await new Promise((resolve) => {
+				setTimeout(() => resolve(1), 100);
+			});
+			searchInputElement.focus();
 		}
 	});
 	onDestroy(() => {
@@ -43,7 +46,7 @@
 </script>
 
 <svelte:head>
-	<title>osu! - poggers</title>
+	<title>osu! search - poggers</title>
 </svelte:head>
 
 <main class="flex-fill" style="padding: 0 3.5%">
