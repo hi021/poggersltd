@@ -250,23 +250,25 @@ try {
 
 	let oldPlayers = 0;
 	let newPlayers = 0;
-	for (const player of Array.from(players.values())) {
+	for (const playerCurrent of Array.from(players.values())) {
 		promises.push(
 			new Promise(async (resolve) => {
-				const _id = player._id;
-				delete player._id; //don't insert a duplicate
+				const _id = playerCurrent._id;
+				delete playerCurrent._id; //don't insert a duplicate
 
-				const playerOld = await collPlayers.findOne({ _id });
-				let nameKey = playerOld?.nameKey;
+				const playerFromDatabase = await collPlayers.findOne({ _id });
+				let nameKey = playerFromDatabase?.nameKey;
 
 				//check for name change
-				if (playerOld && playerOld.name !== player.name) {
-					console.log(`Name change: ${playerOld.name} -> ${player.name}`);
-					nameKey = createNGram(player.name);
+				if (playerFromDatabase && playerFromDatabase.name !== playerCurrent.name) {
+					console.log(`Name change: ${playerFromDatabase.name} -> ${playerCurrent.name}`);
+					nameKey = createNGram(playerCurrent.name);
 
-					if (playerOld.oldName)
-						player.oldName = [...new Set([...playerOld.oldName, playerOld.name])];
-					else player.oldName = [playerOld.name];
+					if (playerFromDatabase.oldName)
+						playerCurrent.oldName = [
+							...new Set([...playerFromDatabase.oldName, playerFromDatabase.name])
+						];
+					else playerCurrent.oldName = [playerFromDatabase.name];
 
 					//replace names in older archive entries
 					let entriesUpdated = 0;
@@ -284,7 +286,7 @@ try {
 									const playerArchive = findRes[i].ranking[j];
 									if (playerArchive._id === _id) {
 										++entriesUpdated;
-										playerArchive.name = player.name;
+										playerArchive.name = playerCurrent.name;
 										break;
 									}
 								}
@@ -296,31 +298,41 @@ try {
 							}
 						}
 					}
-					console.log('Updated for ' + entriesUpdated + ' entries');
+					console.log(`Updated ${entriesUpdated} entries for ${playerCurrent.name}`);
 				}
-				if (!nameKey) nameKey = createNGram(player.name);
-				player.nameKey = nameKey;
+				if (!nameKey) nameKey = createNGram(playerCurrent.name);
+				playerCurrent.nameKey = nameKey;
 
 				for (const i of categories) {
 					const cat = i.slice(0, i.length - 1); //top15s -> top15 etc.
-					if (!player[cat]) continue;
+					if (!playerCurrent[cat]) continue;
 
 					//check mostGained
-					if (lastArchive?.daysLate === 0 && player[cat].gained != null) {
-						if (!player[cat].mostGained || player[cat].mostGained.value < player[cat].gained)
-							player[cat].mostGained = { date, value: player[cat].gained };
+					if (lastArchive?.daysLate === 0 && playerCurrent[cat].gained != null) {
+						if (
+							!playerFromDatabase[cat].mostGained ||
+							playerFromDatabase[cat].mostGained.value < playerCurrent[cat].gained
+						)
+							playerCurrent[cat].mostGained = { date, value: playerCurrent[cat].gained };
 					}
 
 					//check for peak and lowest
-					const o = { date, value: player[cat].value };
-					if (!player[cat].peak) player[cat].lowest = player[cat].peak = o;
+					const o = { date, value: playerCurrent[cat].value };
+					if (!playerFromDatabase[cat].peak)
+						playerCurrent[cat].lowest = playerCurrent[cat].peak = o;
 					else {
-						if (player[cat].peak.value < player[cat].value) player[cat].peak = o;
-						else if (player[cat].lowest.value > player[cat].value) player[cat].lowest = o;
+						if (playerFromDatabase[cat].peak.value < playerCurrent[cat].value)
+							playerCurrent[cat].peak = o;
+						else if (playerFromDatabase[cat].lowest.value > playerCurrent[cat].value)
+							playerCurrent[cat].lowest = o;
 					}
 				}
 
-				const updateRes = await collPlayers.updateOne({ _id }, { $set: player }, { upsert: true });
+				const updateRes = await collPlayers.updateOne(
+					{ _id },
+					{ $set: playerCurrent },
+					{ upsert: true }
+				);
 
 				if (updateRes.matchedCount === 0) ++newPlayers;
 				else ++oldPlayers;

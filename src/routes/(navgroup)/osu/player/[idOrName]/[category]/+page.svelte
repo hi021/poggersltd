@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	//@ts-ignore
 	import * as Pancake from '@sveltejs/pancake';
 	import { COUNTRIES, formatNumber, getAvatarURL } from '$lib/util';
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
+
+	// TODO: make changing category tabs change the url (but we don't want a full reload - just a fetchRanks())
 
 	export let data: PageData;
 	const maxRankDay = data.ranks.length - 1;
@@ -14,6 +17,7 @@
 	let category = $page.params.category;
 
 	async function fetchRanks(category: string) {
+		if (!browser) return;
 		loading = true;
 		const resRanks = await fetch(`/api/player/${data._id}/ranks/${category || 'top50'}/90`);
 		const resRanksJson = await resRanks.json();
@@ -96,11 +100,30 @@
 					{#if loading}
 						<div class="overlay" transition:fade />
 					{:else}
-						<div class="row">
+						<div class="row" style="margin: 0 auto;">
 							{#if plr[category]}
+								<div class="stats-container">
+									{#if plr[category].mostGained}
+										<span class="stat-name left"> most gained </span>
+										<span class="stat-value" title={plr[category].mostGained.date}>
+											{formatNumber(plr[category].mostGained.value)}
+										</span>
+									{/if}
+									{#if plr[category].peak}
+										<span class="stat-name left"> peak </span>
+										<span class="stat-value">
+											{formatNumber(plr[category].peak.value)}
+										</span>
+									{/if}
+									{#if plr[category].lowest}
+										<span class="stat-name left"> lowest </span>
+										<span class="stat-value" title={plr[category].lowest.date}>
+											{formatNumber(plr[category].lowest.value)}
+										</span>
+									{/if}
+								</div>
 								<div id="chart-container">
 									<Pancake.Chart
-										clip
 										x1={0}
 										x2={maxRankDay}
 										y1={ranks.rankStats.minValue - 20}
@@ -110,8 +133,8 @@
 										<Pancake.Svg>
 											<Pancake.SvgLine
 												data={ranks.ranks}
-												x={(d: any, i: number) => maxRankDay - i}
-												y={(d: any) => (d ? d.value : -100)}
+												x={(_d, i) => maxRankDay - i}
+												y={(d) => (d ? d.value : -100)}
 												let:d
 											>
 												<path class="chart-path" {d} />
@@ -168,30 +191,15 @@
 										#{formatNumber(plr[category].countryRank, ',')}
 									</span>
 								</div>
-								<div class="stats-container">
-									{#if plr[category].mostGained}
-										<span class="stat-name"> most gained </span>
-										<span class="stat-value" title={plr[category].mostGained.date}>
-											{formatNumber(plr[category].mostGained.value)}
-										</span>
-									{/if}
-									{#if plr[category].peak}
-										<span class="stat-name"> peak </span>
-										<span class="stat-value" title={plr[category].peak.date}>
-											{formatNumber(plr[category].peak.value)}
-										</span>
-									{/if}
-									{#if plr[category].lowest}
-										<span class="stat-name"> lowest </span>
-										<span class="stat-value" title={plr[category].lowest.date}>
-											{formatNumber(plr[category].lowest.value)}
-										</span>
-									{/if}
-								</div>
 							{:else}
 								<p style="solo-text">No {category} stats for this player...</p>
 							{/if}
 						</div>
+					{/if}
+					{#if plr[category]}
+						<small style="margin: auto; margin-bottom: 0;"
+							>Data from <strong>{plr[category].date}</strong></small
+						>
 					{/if}
 				</div>
 			</div>
@@ -286,6 +294,8 @@
 		height: 200px;
 		width: 600px;
 		margin-right: 16px;
+		padding: 4px 8px;
+		overflow-y: hidden;
 	}
 	.chart-path {
 		stroke: var(--color-active);
@@ -320,7 +330,7 @@
 	}
 	.chart-tooltip-line {
 		position: absolute;
-		width: 1px;
+		width: 2px;
 		height: 200px;
 		background-color: var(--color-active);
 		transform: translateX(-50%);
@@ -338,8 +348,16 @@
 		border-bottom-left-radius: 1px;
 		border-bottom-right-radius: 1px;
 	}
+	.stat-name.left {
+		/* text-align: right; */
+	}
 	.stat-value {
 		font-size: 1.25rem;
+		margin-bottom: 3px;
+	}
+	.stat-small {
+		font-size: 0.75rem;
+		font-weight: 300;
 	}
 
 	.icon-osu {

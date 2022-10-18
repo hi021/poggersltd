@@ -19,7 +19,7 @@
 </script>
 
 <svelte:head>
-	<title>{$page.params.date} - poggers</title>
+	<title>{$page.params.date || 'ranking'} - poggers</title>
 </svelte:head>
 
 <main class="flex-fill column osu-main">

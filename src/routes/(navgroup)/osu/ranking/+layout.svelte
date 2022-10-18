@@ -14,7 +14,10 @@
 		if (isNaN(curDate.getTime())) curDate = new Date(MAX_DATE);
 
 		const newDate = addDate(curDate, days);
-		date = formatDate(newDate);
+		const formattedDate = formatDate(newDate);
+		if (formattedDate < MIN_DATE) date = MIN_DATE;
+		else if (formattedDate > MAX_DATE) date = MAX_DATE;
+		else date = formattedDate;
 		setURL();
 	}
 
@@ -153,23 +156,32 @@
 </nav>
 
 <form id="group-container" class="row" on:submit|preventDefault={setURL}>
-	<button class="arrow-button" type="button" on:click={() => addDateNav(-1)}>&lt;</button>
+	<button
+		class="arrow-button btn-none"
+		type="button"
+		disabled={date <= MIN_DATE}
+		on:click={() => addDateNav(-1)}>&lt;</button
+	>
 	<div class="group">
 		<input type="date" max={MAX_DATE} min={MIN_DATE} bind:value={date} />
 		<button class="btn-blue" type="submit">yoink</button>
 	</div>
-	<button class="arrow-button" type="button" on:click={() => addDateNav(1)}>&gt;</button>
+	<button
+		class="arrow-button btn-none"
+		type="button"
+		disabled={date >= MAX_DATE}
+		on:click={() => addDateNav(1)}>&gt;</button
+	>
 </form>
 <slot />
 
 <style>
 	#group-container {
 		background-color: rgba(0, 0, 0, 0.2);
+		border-radius: 6px;
 		display: flex;
 		align-items: stretch;
 		justify-content: space-between;
-		overflow: hidden;
-		border-radius: 6px;
 		margin: 0 2.5%;
 	}
 	.group {
@@ -178,8 +190,22 @@
 	}
 
 	.arrow-button {
+		background-color: rgba(0, 0, 0, 0.1);
+		font-weight: 700;
+		color: inherit;
 		border-radius: 0;
 		padding: 0 12px;
+	}
+	.arrow-button:first-child {
+		border-bottom-left-radius: 6px;
+		border-top-left-radius: 6px;
+	}
+	.arrow-button:last-child {
+		border-bottom-right-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+	.arrow-button:not([disabled]):hover {
+		background-color: rgba(0, 0, 0, 0.5);
 	}
 
 	#secondary-nav {
