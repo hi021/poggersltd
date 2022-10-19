@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ params }) => {
 			});
 		}
 
-		console.log('query', query);
+		// console.log('query players:', query);
 
 		const pipeline: Document[] = [
 			{

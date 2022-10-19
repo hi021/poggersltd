@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ params }) => {
 		const res = await coll.findOne({ name: params.idOrName }, { projection: { nameKey: 0 } });
 		if (res) return new Response(JSON.stringify(res));
 	} catch (e) {
-		console.log(e);
+		console.error(e);
 		throw error(500, 'Internal server error');
 	}
 	throw error(400, "User doesn't exist");

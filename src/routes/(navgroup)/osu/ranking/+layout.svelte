@@ -6,7 +6,7 @@
 	const MAX_DATE = formatDate();
 	let date = $page.params.date;
 	let scoreCategory = $page.params.category;
-	let type = $page.params.type; //players, countries, gains
+	let type = $page.url.pathname.split('/')[3]; //players, countries, gains
 	let country = $page.params.country;
 
 	function addDateNav(days: number) {

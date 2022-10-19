@@ -7,7 +7,7 @@ export const load: PageLoad = async ({
 }): Promise<{ rankingData: App.Ranking[] }> => {
 	try {
 		const res = await fetch(
-			`/api/ranking/${params.type}/${params.date}/${params.category}/${params.country}/${params.ranks}/${params.extra}`,
+			`/api/ranking/gains/${params.date}/${params.category}/${params.country}/${params.ranks}/${params.extra}`,
 			{
 				headers: {
 					accept: 'application/json'

@@ -32,7 +32,7 @@
 		<Loader margin="2rem" sticky={true} />
 	{:then pageData}
 		{#if !pageData?.length}
-			<p style="margin: 2.5rem auto; font-size: 1.75rem;">No data for the given query</p>
+			<p class="solo-text">No data for the given query</p>
 		{:else}
 			<table class="osu-table">
 				<tbody>

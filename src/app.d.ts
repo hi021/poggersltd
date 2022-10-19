@@ -36,4 +36,20 @@ declare namespace App {
 	//rankingdb - for every date have 4 RankingCategory objects with a Ranking type for every player {_id: "top50", ranking: Ranking[]}
 	//index by id, country, rank, countryRank, gained
 	type Ranking = PlayerInfoCommon & PlayerRankingCommon;
+
+	interface CountryRanking {
+		country: string;
+		total: number;
+		players: number;
+		average: number;
+		weighted: number;
+	}
+	//for the first loop in the API endpoint
+	interface CountryRankingAPI {
+		country?: string;
+		total: number;
+		players: number;
+		average?: number;
+		weighted?: number;
+	}
 }

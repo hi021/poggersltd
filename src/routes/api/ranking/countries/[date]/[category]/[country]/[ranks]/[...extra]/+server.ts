@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ params }) => {
 			});
 		}
 
-		console.log('query country:', query);
+		// console.log('query country:', query);
 
 		const pipeline: Document[] = [
 			{
@@ -67,33 +67,31 @@ export const GET: RequestHandler = async ({ params }) => {
 		if (!rankingData?.length) return new Response('[]');
 
 		//set total amount of scores and players
-		const countries: Map<
-			string,
-			{ country?: string; scores: number; players: number; average?: number; weighted?: number }
-		> = new Map();
+		const countries: Map<string, App.CountryRankingAPI> = new Map();
 		for (const i of rankingData) {
 			const curCountry = countries.get(i.country);
 			const players = (curCountry?.players || 0) + 1;
 
-			let weight;
 			//weighted count: 100% for 1st, 91% for 2nd, 82% for 3rd, ..., 9% for 11th, 5% for 12th-20th, 2% for >20th player
+			let weight;
 			if (players <= 20) {
 				if (players <= 11) weight = 1 - (players - 1) * 0.09;
 				else weight = 0.05;
 			} else weight = 0.02;
 			const weighted = i.value * weight;
 
-			if (!curCountry) countries.set(i.country, { scores: i.value, players, weighted });
+			if (!curCountry) countries.set(i.country, { total: i.value, players, weighted });
 			else
 				countries.set(i.country, {
-					scores: curCountry.scores + i.value,
+					total: curCountry.total + i.value,
 					players,
 					weighted: (curCountry.weighted as number) + weighted
 				});
 		}
 
+		//type changes from CountryRankingAPI to CountryRanking
 		for (const [k, v] of countries)
-			countries.set(k, { country: k, ...v, average: v.scores / v.players });
+			countries.set(k, { country: k, ...v, average: v.total / v.players });
 
 		return new Response(JSON.stringify(Array.from(countries.values())));
 	} catch (e) {
