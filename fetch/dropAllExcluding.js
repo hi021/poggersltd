@@ -11,17 +11,12 @@ const db = client.db(process.env.DB_NAME_RANKING);
 
 const collections = await db.listCollections(undefined, { nameOnly: true }).toArray();
 
-const exclude = [
-	'2022-10-09',
-	'2022-10-10',
-	'2022-10-11',
-	'2022-10-12',
-	'2022-10-14',
-	'2022-10-15',
-	'2022-10-16'
-];
+const exclude = ['2022-10-09', '2022-10-10', '2022-10-11', '2022-10-12'];
+const minDate = '2022-10-15'; //first date not to drop
+const maxDate = 'Z';
 
 for (const i of collections) {
+	if (i.name >= minDate && i.name <= maxDate) continue;
 	if (exclude.includes(i.name)) continue;
 	console.log('Dropping collection ' + i.name);
 	await db.collection(i.name).drop();
