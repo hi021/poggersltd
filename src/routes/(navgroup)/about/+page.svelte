@@ -19,7 +19,8 @@
 		I've also moved away from osu!stats to respektive's API.
 		<br />
 		<br />
-		The biggest change is the inclusion of tracking for top 25, top 8, and top 1 scores, and user profiles.
+		The biggest change is the inclusion of tracking for top 25, top 8, and top 1 scores. There are also
+		user profiles and the site is in dark mode!
 	</p>
 
 	<h2>Credits</h2>
@@ -45,7 +46,7 @@
 	</p>
 
 	<h2>osu! score ranking archive</h2>
-	<h4>Why are there no scores?</h4>
+	<h4>Why are there no scores at a given date?</h4>
 	<p class="para">
 		Probably because the API was down for the entire day and it wasn't possible to save the ranking.
 		<br />
@@ -56,6 +57,10 @@
 
 	<h2>Other osu! stat-tracking sites</h2>
 	<ul>
+		<li>
+			<strong><a href="https://osustats.respektive.pw/">respektive's osu!stats</a></strong> - the site
+			where all the data comes from with the full ranking including people below 1000 top 50s
+		</li>
 		<li>
 			<strong><a href="https://osustats.ppy.sh/">osu!Stats</a></strong> - the original site for score
 			rankings
@@ -90,6 +95,10 @@
 		font-weight: 400;
 		background-color: rgba(0, 0, 0, 0.3);
 		padding: 8px;
+	}
+
+	.para {
+		padding-inline-start: 1rem;
 	}
 
 	a {

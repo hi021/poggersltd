@@ -10,13 +10,19 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		}
 		const resPlayerJson = await resPlayer.json();
 
+		if (params.category === 'all') return resPlayerJson;
+
 		const rankDays = 90;
 		const resRanks = await fetch(
 			`/api/player/${resPlayerJson._id}/ranks/${params.category}/${rankDays}`
 		);
 		const resRanksJson = await resRanks.json();
 
-		return { ...resPlayerJson, ranks: resRanksJson.ranks, rankStats: resRanksJson.rankStats };
+		return {
+			...resPlayerJson,
+			ranks: resRanksJson.ranks,
+			rankStats: resRanksJson.rankStats
+		};
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (e: any) {
 		console.error(e);

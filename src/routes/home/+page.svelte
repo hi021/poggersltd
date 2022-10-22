@@ -41,7 +41,7 @@
 		box-shadow: 0 3px 2px var(--color-darkest);
 	}
 	.logo-text {
-		transition: color 0.25s, background-clip 0.25s, text-shadow 0.25s;
+		transition: color 0.25s;
 	}
 
 	main {

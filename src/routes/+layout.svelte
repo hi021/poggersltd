@@ -469,6 +469,7 @@
 	.solo-text {
 		margin: 2.5rem auto;
 		font-size: 1.75rem;
+		text-align: center;
 	}
 	/* MISC */
 

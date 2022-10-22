@@ -11,13 +11,13 @@
 	// TODO: make changing category tabs change the url (but we don't want a full reload - just a fetchRanks())
 
 	export let data: PageData;
-	const maxRankDay = data.ranks.length - 1;
+	const maxRankDay = data.ranks ? data.ranks.length - 1 : 89;
 	let loading = false;
 	let ranks = { ranks: data.ranks, rankStats: data.rankStats };
 	let category = $page.params.category;
 
 	async function fetchRanks(category: string) {
-		if (!browser) return;
+		if (!browser || category === 'all') return;
 		loading = true;
 		const resRanks = await fetch(`/api/player/${data._id}/ranks/${category || 'top50'}/90`);
 		const resRanksJson = await resRanks.json();
@@ -96,12 +96,58 @@
 						>
 							top 1
 						</button>
+						<button
+							class="tab btn-none"
+							class:active={category === 'all'}
+							on:click={() => (category = 'all')}
+						>
+							all
+						</button>
 					</div>
 					{#if loading}
 						<div class="overlay" transition:fade />
 					{:else}
 						<div class="row" style="margin: 0 auto;">
-							{#if plr[category]}
+							{#if category === 'all'}
+								{#each ['top1', 'top8', 'top25', 'top50'] as cat}
+									{#if plr[cat]}
+										<div class="stats-container hoverable" style="margin-right: 32px;">
+											<h3 class="category-header">{cat}s</h3>
+											<span class="stat-name"> count </span>
+											<span class="stat-value">
+												{formatNumber(plr[cat].value)}
+												<small class="stat-small"
+													>#{formatNumber(plr[cat].rank, ',')} ({plr.country}#{formatNumber(
+														plr[cat].countryRank,
+														','
+													)})</small
+												>
+											</span>
+											{#if plr[cat].peak?.value != null}
+												<span class="stat-name"> peak </span>
+												<span class="stat-value">
+													{formatNumber(plr[cat].peak.value)}
+													<small class="stat-small">{plr[cat].peak.date}</small>
+												</span>
+											{/if}
+											{#if plr[cat].lowest?.value != null}
+												<span class="stat-name"> lowest </span>
+												<span class="stat-value">
+													{formatNumber(plr[cat].lowest.value)}
+													<small class="stat-small">{plr[cat].lowest.date}</small>
+												</span>
+											{/if}
+											{#if plr[cat].gained != null}
+												<span class="stat-name"> gained </span>
+												<span class="stat-value">
+													{plr[cat].gained}
+													<small class="stat-small">since last entry</small>
+												</span>
+											{/if}
+										</div>
+									{/if}
+								{/each}
+							{:else if plr[category]}
 								<div class="stats-container">
 									{#if plr[category].mostGained}
 										<span class="stat-name left"> most gained </span>
@@ -152,8 +198,9 @@
 												<Pancake.Point x={closest.day} y={closest.value}>
 													<span
 														class="chart-tooltip-line"
-														style="transform: translateY(-{200 -
-															(closest.value / ranks.rankStats.maxValue) * 200}px);"
+														style="transform: translate(-50%, -{200 -
+															(closest.value / (ranks.rankStats.maxValue - closest.value)) *
+																200}px);"
 													/>
 													<span class="chart-tooltip-point" />
 												</Pancake.Point>
@@ -163,6 +210,10 @@
 														<span>
 															<strong>{category}s</strong>
 															{formatNumber(closest.value)}
+														</span>
+														<span>
+															<strong>global</strong>
+															#{formatNumber(closest.rank, ',')}
 														</span>
 														<span style="color: var(--color-active);">
 															{maxRankDay - closest.day === 0
@@ -192,7 +243,10 @@
 									</span>
 								</div>
 							{:else}
-								<p style="solo-text">No {category} stats for this player...</p>
+								<p class="solo-text">
+									No {category} stats for this player...
+									<br />Check a different tab!
+								</p>
 							{/if}
 						</div>
 					{/if}
@@ -294,7 +348,7 @@
 		height: 200px;
 		width: 600px;
 		margin-right: 16px;
-		padding: 4px 8px;
+		padding: 8px;
 		overflow-y: hidden;
 	}
 	.chart-path {
@@ -333,23 +387,33 @@
 		width: 2px;
 		height: 200px;
 		background-color: var(--color-active);
-		transform: translateX(-50%);
 		pointer-events: none;
 	}
 
+	.category-header {
+		font-weight: 300;
+		text-align: center;
+		margin-top: 6px;
+	}
 	.stats-container {
 		display: flex;
 		flex-direction: column;
-		margin-right: 16px;
+		margin-right: 20px;
+	}
+	.stats-container.hoverable {
+		padding: 10px;
+	}
+	.stats-container.hoverable > .stat-value {
+		margin-bottom: 12px;
+	}
+	.stats-container.hoverable:hover {
+		background-color: rgba(255, 255, 255, 0.1);
 	}
 	.stat-name {
 		font-size: 0.875rem;
 		border-bottom: 1px solid var(--color-lighter);
 		border-bottom-left-radius: 1px;
 		border-bottom-right-radius: 1px;
-	}
-	.stat-name.left {
-		/* text-align: right; */
 	}
 	.stat-value {
 		font-size: 1.25rem;

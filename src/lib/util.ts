@@ -11,6 +11,12 @@ export function isObjEmpty(obj: Record<string, unknown>): boolean {
 	return true;
 }
 
+export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, toRemove = null) {
+	if (trimEnd) while (arr?.length && arr[arr.length - 1] == toRemove) arr.pop();
+	if (trimStart) while (arr?.length && arr[0] == toRemove) arr.shift();
+	return arr;
+}
+
 //0-11, returns 3 letter short name
 export function monthString(m: number) {
 	switch (m) {

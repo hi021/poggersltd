@@ -96,10 +96,15 @@
 									{/if}
 								</div>
 							</td>
-							<td style="width: 20%;">
-								{(plr.gained ?? -1) >= 0 ? '+' : ''}{formatNumber(plr.gained ?? 0)}
+							<td style="width: 25%;">
+								{(plr.gained ?? -1) >= 0 ? '+' : ''}{formatNumber(plr.gained ?? 0, ' ')}
 								<small style="margin-left: 8px;">
-									{formatNumber(plr.value - (plr.gained ?? 0))} → {formatNumber(plr.value)}
+									<span class="hide-width-640">
+										{formatNumber(plr.value - (plr.gained ?? 0), ' ')} → {formatNumber(plr.value)}
+									</span>
+									{#if plr.gainedDays}
+										({Math.round(((plr.gained ?? 0) / plr.gainedDays) * 100) / 100}/day)
+									{/if}
 								</small>
 							</td>
 						</tr>

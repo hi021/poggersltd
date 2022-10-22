@@ -97,12 +97,14 @@
 							</td>
 							<td style="display: flex; align-items: center;">
 								<img
-									class="osu-flag-small hide-width-640"
+									class="osu-flag-small"
 									style="margin-right: 10px;"
 									alt={country.country}
 									src="/flags/{country.country}.svg"
 								/>
-								{COUNTRIES[country.country] || country.country}
+								<span class="hide-width-640">
+									{COUNTRIES[country.country] || country.country}
+								</span>
 							</td>
 							<td>
 								{formatNumber(Math.round(country.weighted))}
@@ -134,6 +136,9 @@
 	}
 	.osu-table td {
 		padding: 4px 0;
+	}
+	.osu-table td:first-child {
+		padding-left: 8px;
 	}
 
 	.sortable {

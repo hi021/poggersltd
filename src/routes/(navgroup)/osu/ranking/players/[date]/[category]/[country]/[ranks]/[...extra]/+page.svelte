@@ -99,8 +99,8 @@
 									{/if}
 								</div>
 							</td>
-							<td style="width: 20%;"
-								>{formatNumber(plr.value ?? 0)}
+							<td style="width: 25%;"
+								>{formatNumber(plr.value ?? 0, ' ')}
 								{plr.gained == undefined
 									? ''
 									: `(${(plr.gained ?? -1) >= 0 ? '+' : ''}${plr.gained})`}</td
