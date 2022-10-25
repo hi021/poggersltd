@@ -5,7 +5,7 @@ declare namespace App {
 	// interface Error {}
 	// interface Platform {}
 
-	type RankingCategory = 'top50' | 'top25' | 'top8' | 'top1'; //also have top15s saved on disk
+	type RankingCategory = 'top50' | 'top25' | 'top8' | 'top1'; //also have top15s only saved in .json
 	//playersdb - simply hold every player (as Player type) with current PlayerRankings for every Ranking category
 	//index by _id, name, country, oldName for searching, rank and countryRank for every category for fetching
 	interface PlayerInfoCommon {
@@ -51,5 +51,15 @@ declare namespace App {
 		players: number;
 		average?: number;
 		weighted?: number;
+	}
+
+	interface MostGainedRanking {
+		_id: number; //rank (1-99)
+		id: number; //osu! id
+		name: string;
+		country: string;
+		value: number; //number of scores total from the day after the gains
+		gained: number; //number of scores gained in 1 day
+		date: string; //YYYY-MM-DD
 	}
 }

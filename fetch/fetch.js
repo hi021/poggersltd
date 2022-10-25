@@ -185,13 +185,22 @@ console.log(`Fetching rankings for ${date} with gains from ${lastArchive?.date}`
 
 const client = await MongoClient.connect(process.env.DB_URI);
 const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
-const collPlayers = client.db(process.env.DB_NAME_OTHER).collection('players');
+const dbOther = client.db(process.env.DB_NAME_OTHER);
+const collPlayers = dbOther.collection('players');
 
 const players = new Map(); //for players database
+const mostGained = {}; //{[category]: Array<MostGainedRanking>}
 
 //request api
 for (const i in categories) {
-	const cat = categories[i].slice(0, categories[i].length - 1);
+	const cat = categories[i].slice(0, categories[i].length - 1); //top50s -> top50 etc.
+
+	//populate mostGained
+	if (cat !== 'top15')
+		mostGained[cat] = await dbOther
+			.collection('most-gained-' + cat)
+			.find()
+			.toArray();
 
 	console.time(cat);
 	const categoryFetched = await fetchCategory(cat + 's', categoriesMin[i]);
@@ -210,29 +219,67 @@ for (const i in categories) {
 		);
 		if (cat === 'top15') continue; //don't save top15s to database - no ranking
 
+		let mostGainedCategory; //{name, _id, gained}
 		//add to players database
-		for (const i of categoryWithGains) {
-			const playerData = players.get(i._id);
-			const playerRankingData = {
+		for (const plrFetched of categoryWithGains) {
+			const plrData = players.get(plrFetched._id);
+			const plrRankingData = {
 				date,
-				value: i.value,
-				rank: i.rank,
-				countryRank: i.countryRank,
-				gained: i.gained,
-				gainedRank: i.gainedRank
+				value: plrFetched.value,
+				rank: plrFetched.rank,
+				countryRank: plrFetched.countryRank,
+				gained: plrFetched.gained,
+				gainedRank: plrFetched.gainedRank
 			};
+			if (plrFetched.gainedDays) plrRankingData.gainedDays = plrFetched.gainedDays;
 
-			//only set mostGained if no gaps in ranking to provide accurate data
-			if (i.gainedDays) playerRankingData.gainedDays = i.gainedDays;
+			if (!mostGainedCategory || plrFetched.gained > mostGainedCategory.gained)
+				mostGainedCategory = {
+					name: plrFetched.name,
+					_id: plrFetched._id,
+					gained: plrFetched.gained
+				};
 
-			if (playerData) players.set(i._id, { ...playerData, [cat]: playerRankingData });
+			//if already has a ranking category
+			if (plrData) players.set(plrFetched._id, { ...plrData, [cat]: plrRankingData });
 			else
-				players.set(i._id, {
-					_id: i._id,
-					name: i.name,
-					country: i.country,
-					[cat]: playerRankingData
+				players.set(plrFetched._id, {
+					_id: plrFetched._id,
+					name: plrFetched.name,
+					country: plrFetched.country,
+					[cat]: plrRankingData
 				});
+		}
+
+		console.log(
+			`Most gained ${cat} was ${mostGainedCategory.gained} by ${mostGainedCategory.name}`
+		);
+		if (!mostGainedCategory.gained) {
+			console.log("Assuming API didn't refresh, stopping");
+			break;
+		}
+
+		if (lastArchive.daysLate) {
+			console.log(
+				'Gains are ' + lastArchive.daysLate + ' day(s) late, skipping mostGained ranking'
+			);
+		} else {
+			const mostGainedLen = mostGained[cat].length;
+			const mostGainedLowest = mostGained[cat][mostGainedLen - 1].gained;
+			if (mostGainedCategory.gained > mostGainedLowest) {
+				for (const plr in categoryWithGains) {
+					if (plr.gained >= 4) mostGained[cat].push({ ...plr, date });
+				}
+
+				mostGained[cat].sort((a, b) => (a.gained < b.gained ? 1 : -1));
+				mostGained[cat] = mostGained[cat].slice(0, process.env.MAX_MOST_GAINED);
+				await dbOther.collection('most-gained-' + cat).deleteMany();
+				await dbOther.collection('most-gained-' + cat).insertMany(mostGained[cat]);
+			} else {
+				console.log(
+					`Lower than lowest ranked player in mostGained ranking ${mostGainedLowest}, skipping`
+				);
+			}
 		}
 
 		const insertRes = await coll.insertOne({ _id: cat, ranking: categoryWithGains });

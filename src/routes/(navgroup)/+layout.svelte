@@ -22,6 +22,11 @@
 			class:active={$page.url.pathname.startsWith('/osu/breakdown')}>Breakdown</a
 		>
 		<a
+			href="/osu/gains/top50"
+			class="nav-tab"
+			class:active={$page.url.pathname.startsWith('/osu/gains')}>Most Gained</a
+		>
+		<a
 			href="/about"
 			class="nav-tab"
 			class:active={$page.url.pathname.startsWith('/about')}

@@ -210,21 +210,21 @@
 		background-color: rgba(0, 0, 0, 0.5);
 	}
 
-	#secondary-nav {
+	:global(#secondary-nav) {
 		background: linear-gradient(var(--color-darker) 0%, var(--color-dark) 15%);
 		justify-content: space-between;
 		padding: 0 20px;
 		margin-bottom: 16px;
 		font-size: 0.825rem;
 	}
-	.secondary-nav-tab {
+	:global(.secondary-nav-tab) {
 		padding: 8px 12px;
 		cursor: pointer;
 	}
-	.secondary-nav-tab.active {
+	:global(.secondary-nav-tab.active) {
 		color: var(--color-active);
 	}
-	.secondary-nav-tab:hover {
+	:global(.secondary-nav-tab:hover) {
 		color: #fff;
 	}
 
