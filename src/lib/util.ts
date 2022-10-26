@@ -83,8 +83,9 @@ export const SCORE_CATEGORIES = ['top50', 'top25', 'top8', 'top1'];
 
 export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = {
 	'5795337': { img: '/badges/pogu.png', title: 'poggers' },
-	'1023489': { img: '/badges/unhappi.png' },
-	'6502403': { img: '/badges/bowing.svg' }
+	'1023489': { img: '/badges/unhappi.png', title: 'gay' },
+	'6502403': { img: '/badges/bowing.svg' },
+	'11495715': { img: '/badges/cat.svg' }
 };
 
 export const COUNTRIES: { [countryCode: string]: string } = {

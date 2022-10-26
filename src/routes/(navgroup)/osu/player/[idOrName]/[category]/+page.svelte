@@ -4,7 +4,7 @@
 	import { browser } from '$app/environment';
 	//@ts-ignore
 	import * as Pancake from '@sveltejs/pancake';
-	import { COUNTRIES, formatNumber, getAvatarURL } from '$lib/util';
+	import { COUNTRIES, formatNumber, getAvatarURL, RANKING_BADGES } from '$lib/util';
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
@@ -42,6 +42,14 @@
 				<div class="column" style="width: 100%;">
 					<div id="top-bar-top">
 						{plr.name}
+						{#if RANKING_BADGES[plr._id]}
+							<img
+								class="osu-badge"
+								alt="<3"
+								src={RANKING_BADGES[plr._id].img}
+								title={RANKING_BADGES[plr._id].title}
+							/>
+						{/if}
 						{#if plr.oldName?.length}
 							<div class="icon icon-profile-name" title={plr.oldName.join(', ')} />
 						{/if}

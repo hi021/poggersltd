@@ -135,6 +135,9 @@
 		background: none;
 		outline: none;
 	}
+	.btn-rect {
+		border-radius: 0;
+	}
 	.btn-blue {
 		--clr: var(--clr-blue);
 		color: var(--color-lightest);
@@ -203,6 +206,52 @@
 		aspect-ratio: 1/1;
 		border-radius: 10px;
 	}
+	/* player badge in ranking */
+	.osu-badge {
+		height: 26px;
+		margin-left: 8px;
+	}
+
+	/* TABLE */
+	.osu-main {
+		background: linear-gradient(transparent 0%, rgba(49, 27, 146, 0.125) 85%);
+	}
+
+	.osu-table {
+		width: 100%;
+		border-spacing: 0 2px;
+		padding: 0 2.5%;
+		margin: 16px 0;
+	}
+	.osu-table tr {
+		background-color: rgba(0, 0, 0, 0.2);
+		transition: background-color 0.25s;
+	}
+	.osu-table tr.top-rank {
+		background-image: url('/osu_triangles.svg');
+		/* background-size: 50%; */
+		background-size: cover;
+	}
+	.osu-table tr:hover {
+		background-color: rgba(100, 180, 245, 0.2);
+	}
+	.osu-table td {
+		line-height: 1;
+	}
+	.osu-table td:first-child {
+		padding-left: 10px;
+	}
+
+	.osu-name-column {
+		cursor: pointer;
+	}
+	.osu-name-column > div {
+		align-items: center;
+	}
+	.osu-name-column:hover > div > span {
+		color: var(--color-active);
+	}
+	/* TABLE */
 
 	/* ARROWS */
 	/* 18x12 px */
@@ -234,6 +283,30 @@
 	}
 	/* ARROWS */
 	/* OSU */
+
+	/* SECONDARY NAV */
+	.secondary-nav {
+		background: linear-gradient(var(--color-darker) 0%, var(--color-dark) 15%);
+		justify-content: space-between;
+		padding: 0 20px;
+		margin-bottom: 16px;
+		font-size: 0.825rem;
+	}
+	.secondary-nav-tab {
+		padding: 8px 12px;
+		cursor: pointer;
+		color: var(--color-light);
+	}
+	.secondary-nav-tab.active {
+		color: var(--color-active);
+	}
+	.secondary-nav-tab:hover,
+	.secondary-nav-tab:focus,
+	.secondary-nav-tab:focus-visible {
+		outline: none;
+		color: #fff;
+	}
+	/* SECONDARY NAV */
 
 	/* AUTOCOMPLETE */
 	.autocmp-wrapper {

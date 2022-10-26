@@ -31,129 +31,87 @@
 		);
 </script>
 
-<nav id="secondary-nav" class="row">
+<nav class="secondary-nav row">
 	<div class="secondary-nav-inner row">
-		<div
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top50'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					scoreCategory = 'top50';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				scoreCategory = 'top50';
 				setURL();
 			}}
 		>
 			Top 50
-		</div>
-		<div
+		</button>
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top25'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					scoreCategory = 'top25';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				scoreCategory = 'top25';
 				setURL();
 			}}
 		>
 			Top 25
-		</div>
-		<div
+		</button>
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top8'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					scoreCategory = 'top8';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				scoreCategory = 'top8';
 				setURL();
 			}}
 		>
 			Top 8
-		</div>
-		<div
+		</button>
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top1'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					scoreCategory = 'top1';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				scoreCategory = 'top1';
 				setURL();
 			}}
 		>
 			Top 1
-		</div>
+		</button>
 	</div>
 	<div class="secondary-nav-inner row">
-		<div
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={type === 'countries'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					type = 'countries';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				type = 'countries';
 				setURL();
 			}}
 		>
 			Countries
-		</div>
-		<div
+		</button>
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={type === 'gains'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					type = 'gains';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				type = 'gains';
 				setURL();
 			}}
 		>
 			Gains
-		</div>
-		<div
+		</button>
+		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={type === 'players'}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					type = 'players';
-					setURL();
-				}
-			}}
 			on:click={() => {
 				type = 'players';
 				setURL();
 			}}
 		>
 			Players
-		</div>
+		</button>
 	</div>
 </nav>
 
@@ -208,57 +166,6 @@
 	}
 	.arrow-button:not([disabled]):hover {
 		background-color: rgba(0, 0, 0, 0.5);
-	}
-
-	:global(#secondary-nav) {
-		background: linear-gradient(var(--color-darker) 0%, var(--color-dark) 15%);
-		justify-content: space-between;
-		padding: 0 20px;
-		margin-bottom: 16px;
-		font-size: 0.825rem;
-	}
-	:global(.secondary-nav-tab) {
-		padding: 8px 12px;
-		cursor: pointer;
-	}
-	:global(.secondary-nav-tab.active) {
-		color: var(--color-active);
-	}
-	:global(.secondary-nav-tab:hover) {
-		color: #fff;
-	}
-
-	:global(.osu-main) {
-		background: linear-gradient(transparent 0%, rgba(49, 27, 146, 0.125) 85%);
-	}
-
-	:global(.osu-table) {
-		width: 100%;
-		border-spacing: 0 2px;
-		padding: 0 2.5%;
-	}
-	:global(.osu-table tr) {
-		background-color: rgba(0, 0, 0, 0.2);
-		transition: background-color 0.25s;
-	}
-	:global(.osu-table tr.top-rank) {
-		background-image: url('/osu_triangles.svg');
-		/* background-size: 50%; */
-		background-size: cover;
-	}
-	:global(.osu-table tr:hover) {
-		background-color: rgba(100, 180, 245, 0.2);
-	}
-	:global(.osu-table td) {
-		line-height: 1;
-	}
-	:global(.osu-table td:first-child) {
-		padding-left: 10px;
-	}
-
-	:global(.osu-badge) {
-		height: 26px;
-		margin-left: 8px;
 	}
 
 	@media screen and (max-width: 640px) {

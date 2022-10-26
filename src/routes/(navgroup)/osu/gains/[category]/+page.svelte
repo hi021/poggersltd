@@ -16,11 +16,11 @@
 	<title>most gained - poggers</title>
 </svelte:head>
 
-<nav id="secondary-nav" class="row">
+<nav class="secondary-nav row">
 	<div class="secondary-nav-inner row">
 		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top50'}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
@@ -37,7 +37,7 @@
 		</button>
 		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top25'}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
@@ -54,7 +54,7 @@
 		</button>
 		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top8'}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
@@ -71,7 +71,7 @@
 		</button>
 		<button
 			tabindex="0"
-			class="secondary-nav-tab"
+			class="secondary-nav-tab btn-none btn-rect"
 			class:active={scoreCategory === 'top1'}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
@@ -127,7 +127,7 @@
 								/>
 							</td>
 							<td
-								class="name-column"
+								class="osu-name-column"
 								on:click={() => goto(`/osu/player/${plr.name}/${$page.params.category}`)}
 								on:keypress={(e) => {
 									if (e.key === 'Enter') goto(`/osu/player/${plr.name}/${$page.params.category}`);
@@ -151,6 +151,9 @@
 								+{formatNumber(plr.gained ?? 0, ' ')}
 								<small style="margin-left: 8px;">
 									{formatNumber(plr.value - (plr.gained ?? 0), ' ')} → {formatNumber(plr.value)}
+								</small>
+								<small style="margin-left: 8px; color: #999;">
+									{plr.date}
 								</small>
 							</td>
 						</tr>

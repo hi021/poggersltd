@@ -23,7 +23,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-	<div class="flex-center" style="margin: 16px 0;">
+	<div class="flex-center" style="margin-top: 16px;">
 		{#if maxPage > 1}
 			<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
 		{/if}
@@ -79,7 +79,7 @@
 								/>
 							</td>
 							<td
-								class="name-column"
+								class="osu-name-column"
 								on:click={() => goto(`/osu/player/${plr.name}/${$page.params.category}`)}
 								on:keypress={(e) => {
 									if (e.key === 'Enter') goto(`/osu/player/${plr.name}/${$page.params.category}`);
@@ -109,11 +109,11 @@
 					{/each}
 				</tbody>
 			</table>
-			<div class="column flex-center" style="margin: 16px 0;">
+			<div class="column flex-center" style="margin-bottom: 21px;">
 				{#if maxPage > 1}
 					<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
 				{/if}
-				<div style="font-weight: 300; margin-top: 4px;">
+				<div style="font-weight: 300;">
 					Page <strong>{curPage}</strong>/{maxPage}
 				</div>
 			</div>
@@ -122,13 +122,4 @@
 </main>
 
 <style>
-	.name-column {
-		cursor: pointer;
-	}
-	.name-column > div {
-		align-items: center;
-	}
-	.name-column:hover > div > span {
-		color: var(--color-active);
-	}
 </style>

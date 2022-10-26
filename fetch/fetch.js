@@ -181,7 +181,9 @@ try {
 }
 
 const lastArchive = await getClosestPrevArchiveEntry();
-console.log(`Fetching rankings for ${date} with gains from ${lastArchive?.date}`);
+console.log(
+	`Fetching rankings for ${date} with gains from ${lastArchive?.date} (${lastArchive?.daysLate} day(s) late)...`
+);
 
 const client = await MongoClient.connect(process.env.DB_URI);
 const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
@@ -273,24 +275,25 @@ for (const i in categories) {
 
 				mostGained[cat].sort((a, b) => (a.gained < b.gained ? 1 : -1));
 				mostGained[cat] = mostGained[cat].slice(0, process.env.MAX_MOST_GAINED);
+				console.log(`Inserting ${mostGained[cat].length} entries into mostGained ranking`);
 				await dbOther.collection('most-gained-' + cat).deleteMany();
 				await dbOther.collection('most-gained-' + cat).insertMany(mostGained[cat]);
 			} else {
 				console.log(
-					`Lower than lowest ranked player in mostGained ranking ${mostGainedLowest}, skipping`
+					`Lower than lowest ranked player in mostGained ranking (${mostGainedLowest}), skipping`
 				);
 			}
 		}
 
 		const insertRes = await coll.insertOne({ _id: cat, ranking: categoryWithGains });
-		console.log(insertRes);
+		console.log('insert:', insertRes, '\n');
 	} catch (e) {
 		console.error('Failed to write:', e);
 	}
 }
 
 try {
-	console.log('Updating players database');
+	console.log('Updating players database...');
 	const promises = [];
 
 	let collections; //for changing ranking usernames
