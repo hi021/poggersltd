@@ -42,11 +42,12 @@ for (const i of collections) {
 	for (const cat of dayData) {
 		const category = cat._id;
 		for (const plr of cat.ranking) {
-			if (plr.gained && !plr.gainedDays && plr.gained >= arbitraryMin[category])
+			if (plr.gained && !plr.gainedDays && plr.gained >= arbitraryMin[category]) {
 				delete plr.countryRank;
-			delete plr.rank;
-			delete plr.gainedRank;
-			scoreArr[category].push({ ...plr, date });
+				delete plr.rank;
+				delete plr.gainedRank;
+				scoreArr[category].push({ ...plr, date });
+			}
 		}
 	}
 }

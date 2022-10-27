@@ -205,7 +205,7 @@ for (const i in categories) {
 			.toArray();
 
 	console.time(cat);
-	const categoryFetched = await fetchCategory(cat + 's', categoriesMin[i]);
+	const categoryFetched = await fetchCategory(categories[i], categoriesMin[i]);
 	console.timeEnd(cat);
 	console.log(categoryFetched?.length + ' entries');
 
@@ -269,12 +269,22 @@ for (const i in categories) {
 			const mostGainedLen = mostGained[cat].length;
 			const mostGainedLowest = mostGained[cat][mostGainedLen - 1].gained;
 			if (mostGainedCategory.gained > mostGainedLowest) {
-				for (const plr in categoryWithGains) {
+				for (const plr of categoryWithGains)
 					if (plr.gained >= 4) mostGained[cat].push({ ...plr, date });
-				}
 
 				mostGained[cat].sort((a, b) => (a.gained < b.gained ? 1 : -1));
 				mostGained[cat] = mostGained[cat].slice(0, process.env.MAX_MOST_GAINED);
+				//set data
+				for (const i in mostGained[cat]) {
+					const plr = mostGained[cat][i];
+
+					plr.id = plr._id;
+					plr._id = Number(i) + 1;
+					delete plr.countryRank;
+					delete plr.rank;
+					delete plr.gainedRank;
+				}
+
 				console.log(`Inserting ${mostGained[cat].length} entries into mostGained ranking`);
 				await dbOther.collection('most-gained-' + cat).deleteMany();
 				await dbOther.collection('most-gained-' + cat).insertMany(mostGained[cat]);
@@ -365,6 +375,9 @@ try {
 						)
 							playerCurrent[cat].mostGained = { date, value: playerCurrent[cat].gained };
 					}
+					//set from database if no change
+					if (playerCurrent[cat].mostGained?.value == null)
+						playerCurrent[cat].mostGained = playerFromDatabase[cat].mostGained;
 
 					//check for peak and lowest
 					const o = { date, value: playerCurrent[cat].value };
@@ -378,6 +391,12 @@ try {
 						playerFromDatabase[cat].lowest.value > playerCurrent[cat].value
 					)
 						playerCurrent[cat].lowest = o;
+
+					//set from database if no change
+					if (playerCurrent[cat].peak?.value == null)
+						playerCurrent[cat].peak = playerFromDatabase[cat].peak;
+					if (playerCurrent[cat].lowest?.value == null)
+						playerCurrent[cat].lowest = playerFromDatabase[cat].lowest;
 				}
 
 				const updateRes = await collPlayers.updateOne(
