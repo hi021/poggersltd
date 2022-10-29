@@ -308,6 +308,39 @@
 	}
 	/* SECONDARY NAV */
 
+	/* SEARCH WRAPPER */
+	.search-input-wrapper {
+		position: relative;
+		width: 100%;
+		height: fit-content;
+		margin-top: 22px;
+		font-size: 1.375rem;
+		background-color: var(--color-dark);
+		border: 1px solid var(--color-darker);
+		align-items: center;
+		/* overflow: hidden; would also hide input's focus shadow and autocomplete */
+	}
+	.search-input-wrapper > .icon {
+		position: absolute;
+		background-image: url('/icons/search.svg');
+		width: 1.75rem;
+		right: 6px;
+		filter: invert(100%);
+	}
+	.search-input {
+		border-radius: 0;
+		padding: 8px 6px;
+		padding-right: calc(2rem + 8px);
+		background-color: transparent;
+		border: none;
+		color: var(--color-lighter);
+		width: 100%;
+	}
+	.search-input:focus {
+		box-shadow: 0 0 2px 0.2rem rgba(255, 255, 255, 0.35);
+	}
+	/* SEARCH WRAPPER */
+
 	/* AUTOCOMPLETE */
 	.autocmp-wrapper {
 		width: 100%;

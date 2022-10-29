@@ -258,7 +258,8 @@ for (const i in categories) {
 		);
 		if (!mostGainedCategory.gained) {
 			console.log("Assuming API didn't refresh, stopping");
-			break;
+			client.close();
+			process.exit();
 		}
 
 		if (lastArchive.daysLate) {

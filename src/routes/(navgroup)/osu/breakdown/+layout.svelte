@@ -28,7 +28,7 @@
 	}
 
 	function gotoPlayer(idOrName: string | number) {
-		goto('/osu/player/' + idOrName + '/top50');
+		goto('/osu/breakdown/' + idOrName + '/1-50');
 	}
 
 	onMount(async () => {
@@ -46,16 +46,16 @@
 </script>
 
 <svelte:head>
-	<title>osu! search - poggers</title>
+	<title>breakdown - poggers</title>
 </svelte:head>
 
-<main class="flex-fill" style="padding: 0 3.5%">
+<main class="flex-fill column" style="padding: 0 3.5%">
 	<div class="search-input-wrapper row">
 		<div class="autocmp-wrapper">
 			<input
 				class="search-input"
 				type="text"
-				placeholder="osu! username"
+				placeholder="osu! username or id"
 				autocomplete="new-password"
 				bind:this={searchInputElement}
 				on:input={() => getAutocomplete(searchInputElement.value)}
@@ -88,6 +88,8 @@
 		</div>
 		<div class="icon icon-search" />
 	</div>
+
+	<slot />
 </main>
 
 <style>

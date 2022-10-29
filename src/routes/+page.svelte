@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { PUBLIC_SOCKET_PORT, PUBLIC_SOCKET_URI } from '$env/static/public';
+	import ioClient from 'socket.io-client';
+
+	const socket = ioClient(PUBLIC_SOCKET_URI);
+	console.log(PUBLIC_SOCKET_URI);
 
 	let curCount = 0;
 	let localCount = 0;
@@ -8,6 +13,9 @@
 
 	onMount(() => {
 		if (localStorage.senko) localCount = localStorage.senko;
+		socket.on('senko', (msg) => {
+			console.log('client', msg);
+		});
 	});
 
 	function handleClick() {
@@ -15,6 +23,7 @@
 		++curCount;
 		++localCount;
 		localStorage.senko = localCount;
+		socket.emit('senko', { add: 1 });
 	}
 </script>
 
@@ -37,6 +46,7 @@
 		height="256"
 		draggable={false}
 		on:click|preventDefault={handleClick}
+		on:keypress={null}
 		on:contextmenu|preventDefault={handleClick}
 		style="height: {25 + curCount * 0.5}%;
 			top: {75 - curCount * 0.25}%;
