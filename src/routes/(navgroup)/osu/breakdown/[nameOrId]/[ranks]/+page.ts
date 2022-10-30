@@ -15,7 +15,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	const arrLength = maxRank ? maxRank - minRank + 1 : 1;
 	const promises = new Array(arrLength);
 	const breakdown = new Array(arrLength);
-	let user;
+	let user: { id: number; name: string; country: string };
 
 	for (let curRank = minRank; curRank <= maxRank; curRank++) {
 		const i = curRank - minRank;
@@ -40,6 +40,8 @@ export const load: PageLoad = async ({ params, fetch }) => {
 
 	try {
 		await Promise.all(promises);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
 		return { user, breakdown };
 	} catch (e: any) {
 		console.error(e);

@@ -378,7 +378,7 @@ try {
 					}
 					//set from database if no change
 					if (playerCurrent[cat].mostGained?.value == null)
-						playerCurrent[cat].mostGained = playerFromDatabase[cat].mostGained;
+						playerCurrent[cat].mostGained = playerFromDatabase?.[cat]?.mostGained;
 
 					//check for peak and lowest
 					const o = { date, value: playerCurrent[cat].value };
@@ -395,9 +395,9 @@ try {
 
 					//set from database if no change
 					if (playerCurrent[cat].peak?.value == null)
-						playerCurrent[cat].peak = playerFromDatabase[cat].peak;
+						playerCurrent[cat].peak = playerFromDatabase?.[cat]?.peak;
 					if (playerCurrent[cat].lowest?.value == null)
-						playerCurrent[cat].lowest = playerFromDatabase[cat].lowest;
+						playerCurrent[cat].lowest = playerFromDatabase?.[cat]?.lowest;
 				}
 
 				const updateRes = await collPlayers.updateOne(

@@ -96,6 +96,15 @@
 		border-radius: 3px;
 	}
 
+	.input-dark {
+		font-size: 1.375rem;
+		background-color: var(--color-dark);
+		border: none;
+		color: var(--color-lighter);
+		padding: 8px 6px;
+		border-radius: 0;
+	}
+
 	/* BUTTONS */
 	button {
 		display: inline-flex;
@@ -307,108 +316,6 @@
 		color: #fff;
 	}
 	/* SECONDARY NAV */
-
-	/* SEARCH WRAPPER */
-	.search-input-wrapper {
-		position: relative;
-		width: 100%;
-		height: fit-content;
-		margin-top: 22px;
-		font-size: 1.375rem;
-		background-color: var(--color-dark);
-		border: 1px solid var(--color-darker);
-		align-items: center;
-		/* overflow: hidden; would also hide input's focus shadow and autocomplete */
-	}
-	.search-input-wrapper > .icon {
-		position: absolute;
-		background-image: url('/icons/search.svg');
-		width: 1.75rem;
-		right: 6px;
-		filter: invert(100%);
-	}
-	.search-input {
-		border-radius: 0;
-		padding: 8px 6px;
-		padding-right: calc(2rem + 8px);
-		background-color: transparent;
-		border: none;
-		color: var(--color-lighter);
-		width: 100%;
-	}
-	.search-input:focus {
-		box-shadow: 0 0 2px 0.2rem rgba(255, 255, 255, 0.35);
-	}
-	/* SEARCH WRAPPER */
-
-	/* AUTOCOMPLETE */
-	.autocmp-wrapper {
-		width: 100%;
-		position: relative;
-		display: inline-flex;
-	}
-	.autocmp-items {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		right: 0;
-		padding: 0 10px;
-		z-index: 2;
-	}
-
-	.autocmp-item,
-	.autocmp-item-image {
-		top: 100%;
-		left: 0;
-		right: 0;
-		cursor: pointer;
-		background-color: var(--color-darkish);
-	}
-	.autocmp-item:focus,
-	.autocmp-item:focus-visible,
-	.autocmp-item-image:focus,
-	.autocmp-item-image:focus-visible {
-		outline: none;
-	}
-	.autocmp-item {
-		display: flex;
-		align-items: center;
-		line-height: 1;
-		padding: 0.5rem;
-	}
-	.autocmp-item:hover,
-	.autocmp-item:focus {
-		background-color: var(--color-active-dark);
-	}
-	.autocmp-item-image {
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-	}
-
-	.autocmp-cntry {
-		padding: 10px;
-		display: flex;
-		align-items: center;
-		text-align: left;
-	}
-	.autocmp-cntry:hover,
-	.autocmp-cntry:focus {
-		background-color: #35a4ff;
-		outline: none;
-	}
-
-	.autocmp-inside {
-		padding: 10px;
-		background-color: rgba(255, 255, 255, 0.8);
-		display: flex;
-	}
-	.autocmp-inside:hover,
-	.autocmp-inside:focus {
-		background-color: rgba(255, 255, 255, 0.4);
-		outline: none;
-	}
-	/* AUTOCOMPLETE */
 
 	/* SCROLLBAR */
 	.scrollbar-dark,

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
 	import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES } from '$lib/util';
 	import type { PageData } from './$types';
@@ -17,8 +15,10 @@
 	<Loader sticky={true} />
 {:then data}
 	<div class="user-header row flex-center">
-		<img class="osu-avatar-small" alt="" src={getAvatarURL(data.user.id)} />
-		<span style="font-size: 1.125rem; margin: 0 8px;">{data.user.name}</span>
+		<a title="osu! profile" href="https://osu.ppy.sh/users/{data.user.id}">
+			<img class="osu-avatar-small" alt="" src={getAvatarURL(data.user.id)} />
+		</a>
+		<span style="font-size: 1.125rem; margin: 0 12px;">{data.user.name}</span>
 		<img
 			class="osu-flag-small"
 			alt={data.user.country}
@@ -39,6 +39,7 @@
 	{:else}
 		<button
 			type="button"
+			style="margin-bottom: 16px;"
 			on:click={() => {
 				showRaw = !showRaw;
 			}}>Show raw data</button
@@ -59,6 +60,9 @@
 {/await}
 
 <style>
+	.raw-table {
+		margin-bottom: 16px;
+	}
 	.raw-table td {
 		background-color: rgba(0, 0, 0, 0.25);
 		font-size: 0.825rem;
@@ -66,7 +70,7 @@
 	}
 	.user-header {
 		background-color: rgba(0, 0, 0, 0.25);
-		padding: 8px;
+		padding: 12px;
 		margin: 16px 0;
 	}
 </style>

@@ -1,48 +1,13 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { getAvatarURL } from '$lib/util';
 	import { goto } from '$app/navigation';
-	import { browser } from '$app/environment';
+	import Switch from '$lib/components/Switch.svelte';
+	import UserSearch from '$lib/components/UserSearch.svelte';
 
-	let searchInputElement: HTMLInputElement;
-	let autocompleteEntries: Array<{ _id: number; name: string }> = [];
+	let singleRank = false;
+	let rank: number;
 
-	function handleClick(e: MouseEvent) {
-		if (!(e.target as Element).className?.includes('autocmp-item')) autocompleteEntries = [];
-	}
-
-	async function getAutocomplete(query: string) {
-		if (!query || query.length < 3) {
-			autocompleteEntries = [];
-			return;
-		}
-
-		try {
-			const res = await fetch('/api/player/' + query + '/search');
-			const resJson = await res.json();
-			if (resJson?.length) autocompleteEntries = resJson;
-			else autocompleteEntries = [];
-		} catch (e) {
-			autocompleteEntries = [];
-		}
-	}
-
-	function gotoPlayer(idOrName: string | number) {
-		goto('/osu/breakdown/' + idOrName + '/1-50');
-	}
-
-	onMount(async () => {
-		if (browser) {
-			addEventListener('click', handleClick);
-			await new Promise((resolve) => {
-				setTimeout(() => resolve(1), 100);
-			});
-			searchInputElement.focus();
-		}
-	});
-	onDestroy(() => {
-		if (browser) removeEventListener('click', handleClick);
-	});
+	const gotoPlayer = (idOrName: string | number) =>
+		goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : '1-50'}`);
 </script>
 
 <svelte:head>
@@ -50,47 +15,31 @@
 </svelte:head>
 
 <main class="flex-fill column" style="padding: 0 3.5%">
-	<div class="search-input-wrapper row">
-		<div class="autocmp-wrapper">
+	<div class="row">
+		<UserSearch {gotoPlayer} />
+		{#if singleRank}
 			<input
-				class="search-input"
-				type="text"
-				placeholder="osu! username or id"
-				autocomplete="new-password"
-				bind:this={searchInputElement}
-				on:input={() => getAutocomplete(searchInputElement.value)}
-				on:keypress={(e) => {
-					if (e.key === 'Enter') {
-						gotoPlayer(searchInputElement.value);
-					}
-				}}
+				class="rank-input input-dark"
+				type="number"
+				placeholder="Rank (1-50)"
+				min="1"
+				max="50"
+				bind:value={rank}
 			/>
-			<div class="autocmp-items">
-				{#each autocompleteEntries as a}
-					<div
-						class="autocmp-item"
-						tabindex="0"
-						on:click={() => gotoPlayer(a.name)}
-						on:keypress={(e) => {
-							if (e.key === 'Enter') gotoPlayer(a.name);
-						}}
-					>
-						<img
-							class="osu-avatar-small"
-							alt=""
-							src={getAvatarURL(a._id)}
-							style="margin-right: 1rem;"
-						/>
-						{a.name}
-					</div>
-				{/each}
-			</div>
-		</div>
-		<div class="icon icon-search" />
+		{/if}
 	</div>
+	<label class="row" style="align-items: center; margin-top: 16px; width: fit-content;">
+		<Switch bind:checked={singleRank} />
+		<span style="margin-left: 8px;">Single rank</span>
+	</label>
 
 	<slot />
 </main>
 
 <style>
+	.rank-input {
+		margin-left: 22px;
+		margin-top: 22px;
+		width: 20%;
+	}
 </style>
