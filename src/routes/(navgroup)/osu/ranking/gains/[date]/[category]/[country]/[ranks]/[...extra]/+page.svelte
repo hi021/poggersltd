@@ -23,7 +23,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-	<div class="flex-center" style="margin: 16px 0;">
+	<div class="flex-center" style="margin-top: 21px;">
 		{#if maxPage > 1}
 			<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
 		{/if}
@@ -32,7 +32,10 @@
 		<Loader margin="2rem" sticky={true} />
 	{:then pageData}
 		{#if !pageData?.length}
-			<p style="margin: 2.5rem auto; font-size: 1.75rem;">No data for the given query</p>
+			<p class="solo-text">
+				No data for the given query<br />
+				<small>There's probably no archive entry for this date...</small>
+			</p>
 		{:else}
 			<table class="osu-table">
 				<tbody>
@@ -111,7 +114,7 @@
 					{/each}
 				</tbody>
 			</table>
-			<div class="column flex-center" style="margin: 16px 0;">
+			<div class="column flex-center" style="margin-bottom: 21px;">
 				{#if maxPage > 1}
 					<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
 				{/if}

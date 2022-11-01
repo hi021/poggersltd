@@ -23,9 +23,10 @@ export const load: PageLoad = async ({ params, fetch }) => {
 			try {
 				const res = await fetch(api + curRank);
 				const resJson = await res.json();
+				console.log(resJson);
 				const value = resJson['rank_' + curRank];
 				if (value == null) {
-					reject(null);
+					reject(new Error('Null rank value'));
 					return;
 				}
 

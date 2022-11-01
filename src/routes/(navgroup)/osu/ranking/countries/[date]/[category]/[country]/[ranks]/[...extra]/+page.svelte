@@ -26,7 +26,10 @@
 		<Loader margin="2rem" sticky={true} />
 	{:then countries}
 		{#if !countries?.length}
-			<p style="margin: 2.5rem auto; font-size: 1.75rem;">No data for the given query</p>
+			<p class="solo-text">
+				No data for the given query<br />
+				<small>There's probably no archive entry for this date...</small>
+			</p>
 		{:else}
 			<table class="osu-table">
 				<thead>

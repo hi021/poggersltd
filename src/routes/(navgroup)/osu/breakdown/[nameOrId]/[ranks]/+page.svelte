@@ -66,11 +66,16 @@
 	.raw-table td {
 		background-color: rgba(0, 0, 0, 0.25);
 		font-size: 0.825rem;
-		padding: 2px;
+		padding: 3px;
 	}
+	.raw-table td:hover {
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
 	.user-header {
 		background-color: rgba(0, 0, 0, 0.25);
 		padding: 12px;
 		margin: 16px 0;
+		line-height: 1;
 	}
 </style>

@@ -105,7 +105,7 @@ async function fetchCategory(category, minScores, maxPage = MAX_PAGE) {
 	let page = 1;
 	let lastMinScores = -1;
 	const fullRes = [];
-	const countries = new Map();
+	const countries = new Map(); //for country ranks
 
 	while (page <= maxPage) {
 		try {

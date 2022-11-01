@@ -9,10 +9,11 @@
 	export let data: PageData;
 	let pageData: App.Ranking[];
 	const perPage = 50;
-	const maxPage = Math.ceil(data.rankingData.length / perPage);
+	let maxPage: number;
 	let curPage = 1;
 
 	$: pageData = data.rankingData.slice(perPage * (curPage - 1), perPage * curPage);
+	$: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
 
 	let showAvatars = true;
 	export let stickyDate;
@@ -23,7 +24,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-	<div class="flex-center" style="margin-top: 16px;">
+	<div class="flex-center" style="margin-top: 21px;">
 		{#if maxPage > 1}
 			<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
 		{/if}
@@ -32,7 +33,10 @@
 		<Loader margin="2rem" sticky={true} />
 	{:then pageData}
 		{#if !pageData?.length}
-			<p class="solo-text">No data for the given query</p>
+			<p class="solo-text">
+				No data for the given query<br />
+				<small>There's probably no archive entry for this date...</small>
+			</p>
 		{:else}
 			<table class="osu-table">
 				<tbody>

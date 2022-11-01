@@ -5,7 +5,8 @@
 
 	let searchInputElement: HTMLInputElement;
 	let autocompleteEntries: Array<{ _id: number; name: string }> = [];
-	export let gotoPlayer: (...args: any[]) => void;
+	export let gotoPlayer: (idOrName: string) => void;
+	export let gotoPlayerKey: (idOrName: string) => void;
 
 	function handleClick(e: MouseEvent) {
 		if (!(e.target as Element).className?.includes('autocmp-item')) autocompleteEntries = [];
@@ -52,7 +53,8 @@
 			on:input={() => getAutocomplete(searchInputElement.value)}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
-					gotoPlayer(searchInputElement.value);
+					gotoPlayerKey(searchInputElement.value);
+					autocompleteEntries = [];
 				}
 			}}
 		/>
@@ -61,9 +63,16 @@
 				<div
 					class="autocmp-item"
 					tabindex="0"
-					on:click={() => gotoPlayer(a.name)}
+					on:click={() => {
+						searchInputElement.value = a.name;
+						gotoPlayer(a.name);
+						autocompleteEntries = [];
+					}}
 					on:keypress={(e) => {
-						if (e.key === 'Enter') gotoPlayer(a.name);
+						if (e.key !== 'Enter') return;
+						searchInputElement.value = a.name;
+						gotoPlayerKey(a.name);
+						autocompleteEntries = [];
 					}}
 				>
 					<img
@@ -88,6 +97,7 @@
 		height: fit-content;
 		margin-top: 22px;
 		align-items: center;
+		padding: 0;
 		/* overflow: hidden; would also hide input's focus shadow and autocomplete */
 	}
 	.search-input-wrapper > .icon {
