@@ -16,6 +16,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	const promises = new Array(arrLength);
 	const breakdown = new Array(arrLength);
 	let user: { id: number; name: string; country: string };
+	let maxValue: number;
 
 	for (let curRank = minRank; curRank <= maxRank; curRank++) {
 		const i = curRank - minRank;
@@ -23,14 +24,17 @@ export const load: PageLoad = async ({ params, fetch }) => {
 			try {
 				const res = await fetch(api + curRank);
 				const resJson = await res.json();
-				console.log(resJson);
+				console.log(api + curRank, resJson);
 				const value = resJson['rank_' + curRank];
 				if (value == null) {
 					reject(new Error('Null rank value'));
 					return;
 				}
 
-				if (!i) user = { id: resJson.user_id, name: resJson.username, country: resJson.country };
+				if (!i) {
+					user = { id: resJson.user_id, name: resJson.username, country: resJson.country };
+					maxValue = value;
+				} else if (value > maxValue) maxValue = value;
 				breakdown[i] = { rank: curRank, value };
 				resolve(value);
 			} catch (e) {
@@ -43,7 +47,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		await Promise.all(promises);
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		//@ts-ignore
-		return { user, breakdown };
+		return { user, breakdown, max: maxValue };
 	} catch (e: any) {
 		console.error(e);
 		throw error(e?.status ?? 500, e?.body?.message ?? 'An unknown error occurred');
