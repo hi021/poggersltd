@@ -13,7 +13,9 @@ export const GET: RequestHandler = async ({ params }) => {
 	const date = params.date === 'latest' ? MAX_DATE : params.date;
 	if (date < MIN_DATE) throw error(400, 'Invalid date: earliest is ' + MIN_DATE);
 	if (date > MAX_DATE) throw error(400, 'Invalid date: latest is ' + MAX_DATE);
+
 	try {
+		console.time('players/' + date);
 		const client = await MongoClient.connect(DB_URI);
 		const coll = client.db(DB_NAME_RANKING).collection(date);
 
@@ -24,14 +26,7 @@ export const GET: RequestHandler = async ({ params }) => {
 		const query = [];
 
 		if (rankMin > 1 || rankMax < Infinity) {
-			query.push(
-				{
-					$lte: ['$$ranking.rank', rankMax]
-				},
-				{
-					$gte: ['$$ranking.rank', rankMin]
-				}
-			);
+			query.push({ $lte: ['$$ranking.rank', rankMax] }, { $gte: ['$$ranking.rank', rankMin] });
 		}
 		if (params.country && params.country.toLowerCase() !== 'all') {
 			query.push({
@@ -39,15 +34,7 @@ export const GET: RequestHandler = async ({ params }) => {
 			});
 		}
 
-		// console.log('query players:', query);
-
-		const pipeline: Document[] = [
-			{
-				$match: {
-					_id: params.category
-				}
-			}
-		];
+		const pipeline: Document[] = [{ $match: { _id: params.category } }];
 		query.length &&
 			pipeline.push({
 				$project: {
@@ -55,9 +42,7 @@ export const GET: RequestHandler = async ({ params }) => {
 						$filter: {
 							input: '$ranking',
 							as: 'ranking',
-							cond: {
-								$and: query
-							}
+							cond: { $and: query }
 						}
 					}
 				}
@@ -66,8 +51,11 @@ export const GET: RequestHandler = async ({ params }) => {
 		const rankingData = (await coll.aggregate(pipeline).toArray())?.[0]?.ranking as App.Ranking[];
 		if (!rankingData?.length) return new Response('[]');
 		return new Response(JSON.stringify(rankingData));
-	} catch (e) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (e: any) {
 		console.error(e);
-		throw e;
+		throw error(500, e?.message || 'Internal server error');
+	} finally {
+		console.timeEnd('players/' + date);
 	}
 };

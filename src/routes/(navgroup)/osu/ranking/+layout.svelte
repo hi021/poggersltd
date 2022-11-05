@@ -4,10 +4,11 @@
 	import { formatDate, MIN_DATE, addDate } from '$lib/util';
 
 	const MAX_DATE = formatDate();
-	let date = $page.params.date === 'latest' ? MAX_DATE : $page.params.date;
-	let scoreCategory = $page.params.category;
+	let date: string;
+	$: date = $page.params.date === 'latest' ? MAX_DATE : $page.params.date;
+	let scoreCategory: string;
 	$: scoreCategory = $page.params.category;
-	let type = $page.url.pathname.split('/')[3]; //players, countries, gains
+	let type: string; //players, countries, gains
 	$: type = $page.url.pathname.split('/')[3];
 	let country = $page.params.country;
 

@@ -9,19 +9,22 @@ export const GET: RequestHandler = async ({ params }) => {
 	if (!scoreCategory || !SCORE_CATEGORIES.includes(scoreCategory))
 		throw error(400, 'Invalid ranking score category');
 
+	console.time('gains/' + scoreCategory);
 	try {
 		const client = await MongoClient.connect(DB_URI);
-		return new Response(
-			JSON.stringify(
-				await client
-					.db(DB_NAME_OTHER)
-					.collection('most-gained-' + scoreCategory)
-					.find()
-					.toArray()
-			)
+		const res = JSON.stringify(
+			await client
+				.db(DB_NAME_OTHER)
+				.collection('most-gained-' + scoreCategory)
+				.find()
+				.toArray()
 		);
+
+		return new Response(res);
 	} catch (e) {
 		console.error(e);
-		throw e;
+		throw error(500, 'Internal server error');
+	} finally {
+		console.timeEnd('gains/' + scoreCategory);
 	}
 };

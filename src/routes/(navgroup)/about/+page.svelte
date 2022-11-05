@@ -42,7 +42,8 @@
 
 	<h2>Contact</h2>
 	<p class="para">
-		Scream at <code>hi#8112</code> in case something breaks;;
+		Scream at <code>hi#8112</code> in case something breaks;;<br />
+		Ask me or <code>respektive#1895</code> if in need of more detailed data that the site doesn't show
 	</p>
 
 	<h2>osu! score ranking archive</h2>
@@ -50,10 +51,22 @@
 	<p class="para">
 		Probably because the API was down for the entire day and it wasn't possible to save the ranking.
 		<br />
-		If you're looking at today's ranking, that becomes available around 7 A.M. UTC.
+		Top 25s, 8s, and 1s have been tracked since October 9th 2022 and there is no data beyond that date.
+		<br />
+		<br />
+		If you're looking at today's ranking, that becomes available around 10 a.m. UTC.
+		<br /><small
+			>respektive's API is still quite unstable, so the time may drastically vary from day to day.</small
+		>
 	</p>
 	<h4>How does it work?</h4>
 	<p class="para">barely\</p>
+
+	<h2>poggers API</h2>
+	<p class="para">
+		The site's API is not private so you can probably use it. Maybe.<br />
+		A basic documentation can be found <a href="/api">here</a>.
+	</p>
 
 	<h2>Other osu! stat-tracking sites</h2>
 	<ul>

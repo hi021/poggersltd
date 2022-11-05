@@ -5,7 +5,9 @@ import type { RequestHandler } from './$types';
 
 //get player (type Player) by id or (exact) name
 export const GET: RequestHandler = async ({ params }) => {
-	const idOrNameNumber = Number(params.idOrName);
+	const idOrNameNumber = parseInt(params.idOrName);
+
+	console.time('player/' + params.idOrName);
 
 	const client = await MongoClient.connect(DB_URI);
 	const coll = client.db(DB_NAME_OTHER).collection('players');
@@ -22,6 +24,8 @@ export const GET: RequestHandler = async ({ params }) => {
 	} catch (e) {
 		console.error(e);
 		throw error(500, 'Internal server error');
+	} finally {
+		console.timeEnd('player/' + params.idOrName);
 	}
 	throw error(400, "User doesn't exist");
 };

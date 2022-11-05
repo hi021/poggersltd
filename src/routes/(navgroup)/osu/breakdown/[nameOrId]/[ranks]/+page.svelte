@@ -1,14 +1,10 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte';
-	import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES } from '$lib/util';
+	import { formatNumber, COUNTRIES, getAvatarURL } from '$lib/util';
 	import type { PageData } from './$types';
-	//@ts-ignore
-	import * as Pancake from '@sveltejs/pancake';
-	import { onMount } from 'svelte';
 
 	export let data: PageData;
-	const minRank = data.breakdown[0].rank;
-	const maxRank = data.breakdown[data.breakdown.length - 1].rank;
+	const chartHeight = 320; //px
 	let showRaw = false;
 </script>
 
@@ -42,27 +38,23 @@
 			</tbody>
 		</table>
 	{:else}
-		<div class="chart-container">
-			<Pancake.Chart x1={minRank} x2={maxRank} y1={0} y2={data.max}>
-				<Pancake.Columns
-					data={data.breakdown}
-					x={(d) => d.rank}
-					y={(d) => d.value}
-					width={0.96}
-					let:d
+		<div class="chart-container" style="height: {chartHeight}px;">
+			{#each data.breakdown as d, i}
+				<div
+					class="chart-column-container"
+					style="width: calc({100 / data.breakdown.length}% - 4px); left: {(i /
+						data.breakdown.length) *
+						100}%;"
 				>
-					<div class="chart-column" />
-				</Pancake.Columns>
-
-				<Pancake.Grid data={data.breakdown} vertical count={data.breakdown.length} let:value>
-					<span class="chart-label x">{value}</span>
-				</Pancake.Grid>
-
-				<Pancake.Grid data={data.breakdown} horizontal count={4} let:value>
-					<span class="chart-label y">{value}</span>
-				</Pancake.Grid>
-			</Pancake.Chart>
+					<div class="chart-column-bar" style="height: {(d.value / data.max) * 100}%;" />
+					<div class="chart-column-tooltip column flex-center">
+						<strong>#{d.rank}</strong>
+						<div>{formatNumber(d.value)}</div>
+					</div>
+				</div>
+			{/each}
 		</div>
+
 		<button
 			type="button"
 			style="margin-bottom: 16px;"
@@ -106,21 +98,43 @@
 	}
 
 	.chart-container {
-		height: 320px;
-		width: 80%;
+		box-sizing: border-box;
+		width: 86%;
 		margin: 32px auto;
-	}
-	.chart-column {
-		height: 100%;
-		background-color: var(--color-active);
-	}
-	.chart-column:hover {
-		opacity: 0.7;
+		position: relative;
 	}
 
-	.chart-label {
+	.chart-column-container {
 		position: absolute;
+		height: 100%;
+		background-color: rgba(255, 255, 255, 0.04);
 	}
-	.chart-label.x {
+	.chart-column-container:hover > .chart-column-tooltip {
+		display: flex;
+	}
+	.chart-column-container:hover > .chart-column-bar {
+		opacity: 0.8;
+	}
+	.chart-column-bar {
+		position: absolute;
+		background-color: var(--color-active);
+		width: 100%;
+		bottom: 0;
+	}
+
+	.chart-column-tooltip {
+		display: none;
+		position: absolute;
+		left: 50%;
+		top: 0;
+		padding: 10px;
+		border-radius: 10px;
+		color: var(--color-lightest);
+		background-color: rgba(0, 0, 0, 0.4);
+		font-size: 0.75rem;
+		width: max-content;
+		z-index: 3;
+		pointer-events: none;
+		transform: translate(-50%, -50%);
 	}
 </style>

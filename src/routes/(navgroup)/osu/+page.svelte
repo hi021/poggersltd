@@ -10,7 +10,7 @@
 </svelte:head>
 
 <main class="flex-fill" style="padding: 0 3.5%">
-	<UserSearch {gotoPlayer} />
+	<UserSearch {gotoPlayer} gotoPlayerKey={gotoPlayer} />
 </main>
 
 <style>

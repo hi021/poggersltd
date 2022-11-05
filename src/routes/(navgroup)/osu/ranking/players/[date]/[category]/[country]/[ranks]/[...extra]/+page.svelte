@@ -9,14 +9,13 @@
 	export let data: PageData;
 	let pageData: App.Ranking[];
 	const perPage = 50;
-	let maxPage: number;
 	let curPage = 1;
+	let maxPage: number;
 
 	$: pageData = data.rankingData.slice(perPage * (curPage - 1), perPage * curPage);
 	$: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
 
 	let showAvatars = true;
-	export let stickyDate;
 </script>
 
 <svelte:head>

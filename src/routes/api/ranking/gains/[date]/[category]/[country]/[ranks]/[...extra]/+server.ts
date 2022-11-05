@@ -13,7 +13,9 @@ export const GET: RequestHandler = async ({ params }) => {
 	const date = params.date === 'latest' ? MAX_DATE : params.date;
 	if (date < MIN_DATE) throw error(400, 'Invalid date: earliest is ' + MIN_DATE);
 	if (date > MAX_DATE) throw error(400, 'Invalid date: latest is ' + MAX_DATE);
+
 	try {
+		console.time('gains/' + date);
 		const client = await MongoClient.connect(DB_URI);
 		const coll = client.db(DB_NAME_RANKING).collection(date);
 
@@ -26,22 +28,13 @@ export const GET: RequestHandler = async ({ params }) => {
 		const query = [];
 
 		if (rankMin > 1 || rankMax < Infinity) {
-			query.push(
-				{
-					$lte: ['$$ranking.rank', rankMax]
-				},
-				{
-					$gte: ['$$ranking.rank', rankMin]
-				}
-			);
+			query.push({ $lte: ['$$ranking.rank', rankMax] }, { $gte: ['$$ranking.rank', rankMin] });
 		}
 		if (params.country && params.country.toLowerCase() !== 'all') {
 			query.push({
 				$eq: ['$$ranking.country', params.country]
 			});
 		}
-
-		// console.log('query gains:', query);
 
 		const pipeline: Document[] = [
 			{
@@ -81,6 +74,7 @@ export const GET: RequestHandler = async ({ params }) => {
 					delete rankingDataEnd[i];
 					++removed;
 				}
+
 			rankingDataEnd.sort(sorting);
 			rankingDataEnd.length -= removed;
 
@@ -122,8 +116,11 @@ export const GET: RequestHandler = async ({ params }) => {
 		playersArray.length -= removed;
 
 		return new Response(JSON.stringify(playersArray));
-	} catch (e) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (e: any) {
 		console.error(e);
-		throw e;
+		throw error(500, e?.message || 'Internal server error');
+	} finally {
+		console.timeEnd('gains/' + date);
 	}
 };
