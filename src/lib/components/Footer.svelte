@@ -1,6 +1,6 @@
 <footer>
 	<p>Poggers Limited 2022</p>
-	<small> v2022-10-30 </small>
+	<small> v2022-11-07 </small>
 </footer>
 
 <style>
@@ -12,5 +12,11 @@
 	}
 	p {
 		margin: 1px 0;
+	}
+
+	@media screen and (max-width: 640px) {
+		footer {
+			padding: 0.25rem 0.125rem;
+		}
 	}
 </style>

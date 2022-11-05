@@ -110,16 +110,16 @@
 								</span>
 							</td>
 							<td>
-								{formatNumber(Math.round(country.weighted))}
+								{formatNumber(Math.round(country.weighted), ' ')}
 							</td>
 							<td>
-								{formatNumber(Math.round(country.total))}
+								{formatNumber(Math.round(country.total), ' ')}
 							</td>
 							<td>
 								{country.players}
 							</td>
 							<td>
-								{formatNumber(Math.round(country.average))}
+								{formatNumber(Math.round(country.average), ' ')}
 							</td>
 						</tr>
 					{/each}
@@ -171,5 +171,14 @@
 	}
 	span.desc::after {
 		transform: rotate(180deg);
+	}
+
+	@media screen and (max-width: 640px) {
+		.osu-table {
+			font-size: 0.875rem;
+		}
+		.osu-table thead {
+			font-size: 0.75rem;
+		}
 	}
 </style>

@@ -250,6 +250,9 @@
 	.osu-table td:first-child {
 		padding-left: 10px;
 	}
+	.osu-table td:last-child {
+		padding-right: 10px;
+	}
 
 	.osu-name-column {
 		cursor: pointer;

@@ -1,3 +1,5 @@
+import { linear } from 'svelte/easing';
+
 export function formatNumber(number: number | string, delimiter = ' '): string {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
 }
@@ -75,6 +77,20 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
 	}
 
 	return dates;
+}
+
+export function transitionHeight(
+	node: Element,
+	{ delay = 0, duration = 400, easing = linear, maxHeight = 1024 }
+) {
+	return {
+		delay,
+		duration,
+		css: (t: number) => {
+			const w = easing(t);
+			return `max-height: ${w * maxHeight}px;`;
+		}
+	};
 }
 
 export const MIN_DATE = '2020-05-10';

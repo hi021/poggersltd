@@ -65,7 +65,7 @@
 	<h2>poggers API</h2>
 	<p class="para">
 		The site's API is not private so you can probably use it. Maybe.<br />
-		A basic documentation can be found <a href="/api">here</a>.
+		Basic documentation can be found <a href="/api">here</a>.
 	</p>
 
 	<h2>Other osu! stat-tracking sites</h2>

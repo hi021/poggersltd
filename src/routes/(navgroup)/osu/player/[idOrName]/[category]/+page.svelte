@@ -115,7 +115,7 @@
 					{#if loading}
 						<div class="overlay" transition:fade />
 					{:else}
-						<div class="row" style="margin: 0 auto;">
+						<div class="data-container row">
 							{#if category === 'all'}
 								{#each ['top1', 'top8', 'top25', 'top50'] as cat}
 									{#if plr[cat]}
@@ -259,9 +259,7 @@
 						</div>
 					{/if}
 					{#if plr[category]}
-						<small style="margin: auto; margin-bottom: 0;"
-							>Data from <strong>{plr[category].date}</strong></small
-						>
+						<small class="date-container">Data from <strong>{plr[category].date}</strong></small>
 					{/if}
 				</div>
 			</div>
@@ -354,6 +352,8 @@
 
 	#chart-container {
 		height: 200px;
+		min-width: 100px;
+		max-width: 600px;
 		width: 600px;
 		margin-right: 16px;
 		padding: 8px;
@@ -398,6 +398,9 @@
 		pointer-events: none;
 	}
 
+	.data-container {
+		margin: 0 auto;
+	}
 	.category-header {
 		font-weight: 300;
 		text-align: center;
@@ -432,6 +435,11 @@
 		font-weight: 300;
 	}
 
+	.date-container {
+		margin: auto;
+		margin-bottom: 0;
+	}
+
 	.icon-osu {
 		background-image: url('/icons/osu_white.svg');
 		filter: invert(1);
@@ -450,5 +458,27 @@
 	}
 	.icon-profile-name:hover {
 		transform: translateY(-4px);
+	}
+
+	@media screen and (max-width: 640px) {
+		#main {
+			--pad: 8px;
+		}
+		main {
+			padding: 16px 5px;
+		}
+		#chart-container {
+			width: 90%;
+		}
+		.data-container {
+			flex-direction: column;
+			margin: 0 4px;
+		}
+		.date-container {
+			margin-top: 20px;
+		}
+		#top-bar-top {
+			border-radius: 0;
+		}
 	}
 </style>

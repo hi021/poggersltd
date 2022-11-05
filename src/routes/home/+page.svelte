@@ -47,5 +47,7 @@
 	main {
 		padding: 0 1.25rem;
 		gap: 1.25rem;
+		flex-wrap: wrap;
+		margin-bottom: 32px;
 	}
 </style>

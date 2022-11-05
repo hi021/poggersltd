@@ -173,5 +173,20 @@
 		:global(.osu-table) {
 			border-spacing: 0;
 		}
+		:global(.osu-table td:first-child) {
+			padding-left: 1px;
+			font-size: 0.875rem;
+		}
+		:global(.osu-table td:last-child) {
+			padding-right: 1px;
+		}
+
+		.secondary-nav-inner {
+			flex-direction: column;
+			padding-top: 12px;
+		}
+		.secondary-nav-tab {
+			padding: 6px;
+		}
 	}
 </style>

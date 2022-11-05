@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte';
-	import { formatNumber, COUNTRIES, getAvatarURL } from '$lib/util';
+	import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight } from '$lib/util';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -63,23 +63,30 @@
 			}}>Show raw data</button
 		>
 		{#if showRaw}
-			<table class="raw-table">
-				<tbody>
-					{#each data.breakdown as breakdown}
-						<tr>
-							<td style="width: 5ch;"><strong>#{breakdown.rank}</strong></td>
-							<td>{breakdown.value}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
+			<div class="table-container" transition:transitionHeight={{ maxHeight: 2000 }}>
+				<table class="raw-table">
+					<tbody>
+						{#each data.breakdown as breakdown}
+							<tr>
+								<td style="width: 5ch;"><strong>#{breakdown.rank}</strong></td>
+								<td>{breakdown.value}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		{/if}
 	{/if}
 {/await}
 
 <style>
+	.table-container {
+		overflow-y: hidden;
+	}
+
 	.raw-table {
 		margin-bottom: 16px;
+		width: 100%;
 	}
 	.raw-table td {
 		background-color: rgba(0, 0, 0, 0.25);

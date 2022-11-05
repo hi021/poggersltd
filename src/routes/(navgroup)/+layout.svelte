@@ -26,12 +26,7 @@
 			class="nav-tab"
 			class:active={$page.url.pathname.startsWith('/osu/gains')}>Most Gained</a
 		>
-		<a
-			href="/about"
-			class="nav-tab"
-			class:active={$page.url.pathname.startsWith('/about')}
-			style="margin-left: auto;"
-		>
+		<a href="/about" class="nav-tab right" class:active={$page.url.pathname.startsWith('/about')}>
 			About
 		</a>
 	</nav>
@@ -57,5 +52,24 @@
 	}
 	.nav-tab.active {
 		color: var(--color-active);
+	}
+	.nav-tab.right {
+		margin-left: auto;
+	}
+
+	@media screen and (max-width: 640px) {
+		header {
+			flex-direction: column;
+		}
+		nav {
+			flex-direction: column;
+		}
+
+		.nav-tab {
+			padding: 6px;
+		}
+		.nav-tab.right {
+			margin-left: 0;
+		}
 	}
 </style>

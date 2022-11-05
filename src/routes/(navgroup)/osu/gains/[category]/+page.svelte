@@ -94,7 +94,7 @@
 		<Loader margin="2rem" sticky={true} />
 	{:then data}
 		{#if !data?.length}
-			<p style="margin: 2.5rem auto; font-size: 1.75rem;">No data for the given query</p>
+			<p class="solo-text">No data for the given query</p>
 		{:else}
 			<table class="osu-table">
 				<tbody>
@@ -149,10 +149,10 @@
 							</td>
 							<td style="width: 25%;">
 								+{formatNumber(plr.gained ?? 0, ' ')}
-								<small style="margin-left: 8px;">
+								<small class="hide-width-640" style="margin-left: 8px;">
 									{formatNumber(plr.value - (plr.gained ?? 0), ' ')} → {formatNumber(plr.value)}
 								</small>
-								<small style="margin-left: 8px; color: #999;">
+								<small class="date-text">
 									{plr.date}
 								</small>
 							</td>
@@ -163,3 +163,17 @@
 		{/if}
 	{/await}
 </main>
+
+<style>
+	.date-text {
+		white-space: nowrap;
+		margin-left: 8px;
+		color: #999;
+	}
+
+	@media screen and (max-width: 640px) {
+		.date-text {
+			font-size: 57.5%;
+		}
+	}
+</style>
