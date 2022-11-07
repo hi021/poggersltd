@@ -4,8 +4,7 @@
 	import { formatDate, MIN_DATE, addDate } from '$lib/util';
 
 	const MAX_DATE = formatDate();
-	let date: string;
-	$: date = $page.params.date === 'latest' ? MAX_DATE : $page.params.date;
+	let date = !$page.params.date || $page.params.date === 'latest' ? MAX_DATE : $page.params.date;
 	let scoreCategory: string;
 	$: scoreCategory = $page.params.category;
 	let type: string; //players, countries, gains
@@ -124,7 +123,7 @@
 		on:click={() => addDateNav(-1)}>&lt;</button
 	>
 	<div class="group">
-		<input type="date" max={MAX_DATE} min={MIN_DATE} bind:value={date} />
+		<input type="date" placeholder="date" max={MAX_DATE} min={MIN_DATE} bind:value={date} />
 		<button class="btn-blue" type="submit">yoink</button>
 	</div>
 	<button

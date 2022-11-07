@@ -1,11 +1,15 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte';
 	import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight } from '$lib/util';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	let loading = true;
 	const chartHeight = 320; //px
 	let showRaw = false;
+
+	onMount(() => {});
 </script>
 
 <svelte:head>
@@ -57,6 +61,7 @@
 
 		<button
 			type="button"
+			class="btn-gray"
 			style="margin-bottom: 16px;"
 			on:click={() => {
 				showRaw = !showRaw;

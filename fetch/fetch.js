@@ -40,6 +40,7 @@ function createNGram(str) {
 }
 //util
 
+export const MIN_TOP100 = 1500;
 export const MIN_TOP50 = 1000;
 export const MIN_TOP25 = 500;
 export const MIN_TOP15 = 300;
@@ -48,8 +49,9 @@ export const MIN_TOP1 = 15;
 const MAX_PAGE = 100;
 
 const api = 'https://osustats.respektive.pw/rankings/';
-const categories = ['top50s', 'top25s', 'top15s', 'top8s', 'top1s'];
-const categoriesMin = [MIN_TOP50, MIN_TOP25, MIN_TOP15, MIN_TOP8, MIN_TOP1]; //lol whatever;
+const categories = ['top100s', 'top50s', 'top25s', 'top15s', 'top8s', 'top1s'];
+const categoriesMin = [MIN_TOP100, MIN_TOP50, MIN_TOP25, MIN_TOP15, MIN_TOP8, MIN_TOP1]; //lol whatever;
+const categoriesSkip = ['top100', 'top15']; //categories not to upload to the db
 
 //TODO: move to a shared module file
 async function getRankingCollections(start = '', end = 'Z') {
@@ -198,7 +200,7 @@ for (const i in categories) {
 	const cat = categories[i].slice(0, categories[i].length - 1); //top50s -> top50 etc.
 
 	//populate mostGained
-	if (cat !== 'top15')
+	if (!categoriesSkip.includes(cat))
 		mostGained[cat] = await dbOther
 			.collection('most-gained-' + cat)
 			.find()
@@ -211,7 +213,7 @@ for (const i in categories) {
 
 	try {
 		const categoryWithGains =
-			lastArchive && cat !== 'top15'
+			lastArchive && !categoriesSkip.includes(cat)
 				? await setCategoryGains(categoryFetched, cat, lastArchive.date, lastArchive.daysLate)
 				: categoryFetched;
 
@@ -219,7 +221,7 @@ for (const i in categories) {
 			path.join(__dirname, 'archive', date, cat + '.json'),
 			JSON.stringify(categoryWithGains)
 		);
-		if (cat === 'top15') continue; //don't save top15s to database - no ranking
+		if (categoriesSkip.includes(cat)) continue; //don't save top15s and top100s to database - no ranking
 
 		let mostGainedCategory; //{name, _id, gained}
 		//add to players database

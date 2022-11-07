@@ -163,7 +163,7 @@
 	}
 	.btn-gray {
 		--clr: var(--clr-gray);
-		color: var(--color-lightest);
+		color: var(--color-darkest);
 	}
 	.btn-gray:not([disabled]):hover {
 		background-color: hsl(var(--clr-gray-h));

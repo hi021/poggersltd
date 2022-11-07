@@ -13,7 +13,10 @@
 			class="nav-tab"
 			class:active={$page.url.pathname.startsWith('/osu/ranking')}>Ranking</a
 		>
-		<a href="/osu" class="nav-tab" class:active={$page.url.pathname.startsWith('/osu/player')}
+		<a
+			href="/osu"
+			class="nav-tab"
+			class:active={$page.url.pathname === '/osu' || $page.url.pathname.startsWith('/osu/player')}
 			>Player</a
 		>
 		<a

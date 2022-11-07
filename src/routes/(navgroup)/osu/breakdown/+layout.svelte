@@ -5,6 +5,7 @@
 
 	let singleRank = false;
 	let rank: number;
+	let username: string;
 
 	const gotoPlayer = (idOrName: string | number) => {
 		if (!singleRank) goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : '1-50'}`);
@@ -19,15 +20,19 @@
 
 <main class="flex-fill column" style="padding: 0 3.5%">
 	<div class="row">
-		<UserSearch {gotoPlayer} {gotoPlayerKey} />
+		<UserSearch {gotoPlayer} {gotoPlayerKey} bind:value={username} />
 		{#if singleRank}
 			<input
 				class="rank-input input-dark"
 				type="number"
-				placeholder="Rank (1-50)"
+				placeholder="Rank (1-100)"
 				min="1"
-				max="50"
+				max="100"
 				bind:value={rank}
+				on:keypress={(e) => {
+					if (e.key !== 'Enter') return;
+					gotoPlayerKey(username);
+				}}
 			/>
 		{/if}
 	</div>

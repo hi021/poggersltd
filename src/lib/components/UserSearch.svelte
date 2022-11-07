@@ -5,6 +5,7 @@
 
 	let searchInputElement: HTMLInputElement;
 	let autocompleteEntries: Array<{ _id: number; name: string }> = [];
+	export let value = '';
 	export let gotoPlayer: (idOrName: string) => void;
 	export let gotoPlayerKey: (idOrName: string) => void;
 
@@ -50,10 +51,11 @@
 			placeholder="osu! username"
 			autocomplete="new-password"
 			bind:this={searchInputElement}
-			on:input={() => getAutocomplete(searchInputElement.value)}
+			bind:value
+			on:input={() => getAutocomplete(value)}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
-					gotoPlayerKey(searchInputElement.value);
+					gotoPlayerKey(value);
 					autocompleteEntries = [];
 				}
 			}}
@@ -64,13 +66,13 @@
 					class="autocmp-item"
 					tabindex="0"
 					on:click={() => {
-						searchInputElement.value = a.name;
+						value = a.name;
 						gotoPlayer(a.name);
 						autocompleteEntries = [];
 					}}
 					on:keypress={(e) => {
 						if (e.key !== 'Enter') return;
-						searchInputElement.value = a.name;
+						value = a.name;
 						gotoPlayerKey(a.name);
 						autocompleteEntries = [];
 					}}

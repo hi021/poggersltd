@@ -1,3 +1,7 @@
+<script lang="ts">
+	export const csr = false;
+</script>
+
 <svelte:head>
 	<title>about - poggers</title>
 </svelte:head>

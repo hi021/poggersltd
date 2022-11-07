@@ -10,9 +10,12 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	if (isNaN(minRank) || minRank < 1) minRank = 1;
 	let maxRank = parseInt(split[1]);
 	if (isNaN(maxRank)) maxRank = minRank;
-	if (maxRank > 50) maxRank = 50;
+	if (minRank > 100) minRank = 100;
+	if (maxRank > 100) maxRank = 100;
 
 	const arrLength = maxRank ? maxRank - minRank + 1 : 1;
+	if (arrLength <= 0) throw error(400, 'Invalid rank range');
+
 	const promises = new Array(arrLength);
 	const breakdown = new Array(arrLength);
 	let user: { id: number; name: string; country: string };

@@ -14,8 +14,8 @@ declare namespace App {
 		country: string; //uppercase 2-letter country code
 	}
 	type PlayerInfoFull = PlayerInfoCommon & {
-		nameKey: string /*n-gram index for searching by partial usernames (e.g. wim wimp wimpn)*/;
-		oldName?: string[] /*all previous osu! usernames*/;
+		nameKey: string; //n-gram index for searching by partial usernames (e.g. wim wimp wimpn)
+		oldName?: string[]; //all previous osu! usernames
 	};
 	interface PlayerRankingCommon {
 		value: number; //amount of scores

@@ -165,7 +165,7 @@
 									{/if}
 									{#if plr[category].peak}
 										<span class="stat-name left"> peak </span>
-										<span class="stat-value">
+										<span class="stat-value" title={plr[category].peak.date}>
 											{formatNumber(plr[category].peak.value)}
 										</span>
 									{/if}
