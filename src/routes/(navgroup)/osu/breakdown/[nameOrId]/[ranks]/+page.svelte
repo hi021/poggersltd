@@ -50,13 +50,54 @@
 						data.breakdown.length) *
 						100}%;"
 				>
-					<div class="chart-column-bar" style="height: {(d.value / data.max) * 100}%;" />
+					<div
+						class="chart-column-bar"
+						style="height: {(d.value / data.max) * 100}%;"
+						in:transitionHeight={{ maxHeight: chartHeight, duration: 200, delay: 12 * i }}
+					/>
 					<div class="chart-column-tooltip column flex-center">
 						<strong>#{d.rank}</strong>
 						<div>{formatNumber(d.value)}</div>
 					</div>
 				</div>
 			{/each}
+		</div>
+
+		<div class="stats-container">
+			<table class="stat-table">
+				<thead>
+					<th />
+					<th>Count</th>
+					<th>Percentage of all maps</th>
+					<th>Global rank</th>
+				</thead>
+				<tbody>
+					{#each Object.entries(data.stats) as [k, v]}
+						<tr>
+							<td>
+								<strong>{k}</strong>
+							</td>
+							<td>
+								{formatNumber(v.value)}
+							</td>
+							<td>
+								{Math.round((v.value / data.beatmaps) * 10000) / 100}%
+							</td>
+							<td>
+								{#if v.rank}
+									#{formatNumber(v.rank, ',')}
+								{:else}
+									-
+								{/if}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<small class="row" style="justify-content: center; margin-top: 12px;">
+				<span>out of</span><strong style="margin: 0 1ch;">{formatNumber(data.beatmaps)}</strong
+				><span>maps</span>
+			</small>
 		</div>
 
 		<button
@@ -68,7 +109,7 @@
 			}}>Show raw data</button
 		>
 		{#if showRaw}
-			<div class="table-container" transition:transitionHeight={{ maxHeight: 2000 }}>
+			<div class="table-container" transition:transitionHeight={{ maxHeight: 3200, duration: 800 }}>
 				<table class="raw-table">
 					<tbody>
 						{#each data.breakdown as breakdown}
@@ -148,5 +189,26 @@
 		z-index: 3;
 		pointer-events: none;
 		transform: translate(-50%, -50%);
+	}
+
+	.stats-container {
+		padding: 0 6%;
+		margin-bottom: 32px;
+	}
+
+	.stat-table {
+		width: 100%;
+	}
+	.stat-table th {
+		font-size: 90%;
+	}
+	.stat-table td {
+		padding: 6px;
+	}
+	.stat-table tr {
+		background-color: rgba(0, 0, 0, 0.25);
+	}
+	.stat-table tr:hover {
+		background-color: rgba(0, 0, 0, 0.5);
 	}
 </style>

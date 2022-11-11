@@ -5,7 +5,8 @@ declare namespace App {
 	// interface Error {}
 	// interface Platform {}
 
-	type RankingCategory = 'top50' | 'top25' | 'top8' | 'top1'; //also have top15s only saved in .json
+	type RankingCategory = 'top50' | 'top25' | 'top8' | 'top1';
+	type RankingCategoryAll = RankingCategory | 'top100' | 'top15'; //only saved in .jsons, not in database
 	//playersdb - simply hold every player (as Player type) with current PlayerRankings for every Ranking category
 	//index by _id, name, country, oldName for searching, rank and countryRank for every category for fetching
 	interface PlayerInfoCommon {

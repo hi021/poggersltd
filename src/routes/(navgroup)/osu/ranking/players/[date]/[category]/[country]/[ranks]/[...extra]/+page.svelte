@@ -3,7 +3,14 @@
 	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
-	import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES } from '$lib/util';
+	import {
+		formatNumber,
+		COUNTRIES,
+		getAvatarURL,
+		RANKING_BADGES,
+		addDate,
+		formatDate
+	} from '$lib/util';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -16,6 +23,7 @@
 	$: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
 
 	let showAvatars = true;
+	let showValueDifferences = true;
 </script>
 
 <svelte:head>
@@ -37,9 +45,20 @@
 				<small>There's probably no archive entry for this date...</small>
 			</p>
 		{:else}
+			{#if pageData[0].gainedDays}
+				<p class="gains-notice">
+					Showing gained counts over <strong>{pageData[0].gainedDays}</strong> days
+					<br />
+					<small>
+						due to a gap between
+						{formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}
+						and {$page.params.date}
+					</small>
+				</p>
+			{/if}
 			<table class="osu-table">
 				<tbody>
-					{#each pageData as plr}
+					{#each pageData as plr, i}
 						<tr
 							class:top-rank={plr.rank <= 3}
 							style="background-position: 50% {plr.rank * 46 + 320}px;"
@@ -102,13 +121,21 @@
 									{/if}
 								</div>
 							</td>
-							<td style="width: 25%;"
-								>{formatNumber(plr.value ?? 0, ' ')}
+							<td style="width: 25%;">
+								{formatNumber(plr.value ?? 0, ' ')}
 								{plr.gained == undefined
 									? ''
 									: `(${(plr.gained ?? -1) >= 0 ? '+' : ''}${plr.gained})`}</td
 							>
 						</tr>
+						{#if showValueDifferences && pageData[i + 1]}
+							<tr class="osu-difference-column">
+								<td /><td /><td /><td /><td /><td />
+								<td style="width: 25%; padding: 2px;"
+									>+{formatNumber(plr.value - pageData[i + 1].value)}</td
+								>
+							</tr>
+						{/if}
 					{/each}
 				</tbody>
 			</table>
@@ -125,4 +152,12 @@
 </main>
 
 <style>
+	.gains-notice {
+		margin: 1.75rem auto;
+		font-size: 1.25rem;
+		text-align: center;
+	}
+	.osu-difference-column {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
 </style>
