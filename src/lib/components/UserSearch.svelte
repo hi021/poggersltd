@@ -7,7 +7,7 @@
 	let autocompleteEntries: Array<{ _id: number; name: string }> = [];
 	export let value = '';
 	export let gotoPlayer: (idOrName: string) => void;
-	export let gotoPlayerKey: (idOrName: string) => void;
+	export let gotoPlayerForce: (idOrName: string) => void;
 
 	function handleClick(e: MouseEvent) {
 		if (!(e.target as Element).className?.includes('autocmp-item')) autocompleteEntries = [];
@@ -30,13 +30,13 @@
 	}
 
 	onMount(async () => {
-		if (browser) {
-			addEventListener('click', handleClick);
-			await new Promise((resolve) => {
-				setTimeout(() => resolve(1), 100);
-			});
-			searchInputElement.focus();
-		}
+		if (!browser) return;
+
+		addEventListener('click', handleClick);
+		await new Promise((resolve) => {
+			setTimeout(() => resolve(1), 100);
+		});
+		searchInputElement.focus();
 	});
 	onDestroy(() => {
 		if (browser) removeEventListener('click', handleClick);
@@ -50,45 +50,44 @@
 			type="text"
 			placeholder="osu! username"
 			autocomplete="new-password"
+			spellcheck="false"
 			bind:this={searchInputElement}
 			bind:value
 			on:input={() => getAutocomplete(value)}
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
-					gotoPlayerKey(value);
+					gotoPlayerForce(value);
 					autocompleteEntries = [];
 				}
 			}}
 		/>
-		<div class="autocmp-items">
+		<ul class="autocmp-items">
 			{#each autocompleteEntries as a}
-				<div
-					class="autocmp-item"
-					tabindex="0"
-					on:click={() => {
-						value = a.name;
-						gotoPlayer(a.name);
-						autocompleteEntries = [];
-					}}
-					on:keypress={(e) => {
-						if (e.key !== 'Enter') return;
-						value = a.name;
-						gotoPlayerKey(a.name);
-						autocompleteEntries = [];
-					}}
-				>
-					<img
-						class="osu-avatar-small"
-						alt=""
-						src={getAvatarURL(a._id)}
-						style="margin-right: 1rem;"
-					/>
-					{a.name}
-				</div>
+				<li>
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a
+						href=""
+						class="autocmp-item"
+						tabindex="0"
+						on:click|preventDefault={() => {
+							value = a.name;
+							gotoPlayer(a.name);
+							autocompleteEntries = [];
+						}}
+					>
+						<img
+							class="osu-avatar-small"
+							alt=""
+							src={getAvatarURL(a._id)}
+							style="margin-right: 1rem;"
+						/>
+						{a.name}
+					</a>
+				</li>
 			{/each}
-		</div>
+		</ul>
 	</div>
-	<div class="icon icon-search" />
+	<button type="submit" class="btn-none icon icon-search" />
 </div>
 
 <style>
@@ -96,18 +95,20 @@
 	.search-input-wrapper {
 		position: relative;
 		width: 100%;
-		height: fit-content;
 		margin-top: 22px;
 		align-items: center;
 		padding: 0;
 		/* overflow: hidden; would also hide input's focus shadow and autocomplete */
 	}
-	.search-input-wrapper > .icon {
+	.icon-search {
 		position: absolute;
-		background-image: url('/icons/search.svg');
 		width: 1.75rem;
 		right: 6px;
 		filter: invert(100%);
+	}
+	.icon-search:hover,
+	.icon-search:focus {
+		filter: invert(0);
 	}
 	.search-input {
 		padding-right: calc(2rem + 8px);
@@ -130,8 +131,10 @@
 		top: 100%;
 		left: 0;
 		right: 0;
+		margin: 0;
 		padding: 0 10px;
 		z-index: 2;
+		list-style: none;
 	}
 
 	.autocmp-item,
@@ -140,7 +143,9 @@
 		left: 0;
 		right: 0;
 		cursor: pointer;
+		color: inherit;
 		background-color: var(--color-darkish);
+		text-decoration: none;
 	}
 	.autocmp-item:focus,
 	.autocmp-item:focus-visible,

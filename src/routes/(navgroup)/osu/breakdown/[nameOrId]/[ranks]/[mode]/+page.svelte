@@ -2,7 +2,7 @@
 	import Loader from '$lib/components/Loader.svelte';
 	import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight } from '$lib/util';
 	import { onMount } from 'svelte';
-	import type { PageData } from './$types';
+	import type { PageData } from '../$types';
 
 	export let data: PageData;
 	let loading = true;

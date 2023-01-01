@@ -2,26 +2,10 @@
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
+import { getRankingCollections } from './shared.js';
 import * as dotenv from 'dotenv';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
-
-async function getRankingCollections(start = '', end = 'Z') {
-	const client = await MongoClient.connect(process.env.DB_URI);
-	const collections = await client
-		.db(process.env.DB_NAME_RANKING)
-		.listCollections(undefined, { nameOnly: true })
-		.toArray();
-
-	if ((start && start > '2020-05-10') || end !== 'Z') {
-		for (const n in collections) {
-			if (collections[n].name < start || collections[n].name > end) delete collections[n];
-		}
-	}
-
-	client.close();
-	return collections;
-}
 
 const fieldReplaced = 'id';
 const fieldReplacing = '_id';

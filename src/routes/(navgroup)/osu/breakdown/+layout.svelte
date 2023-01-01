@@ -5,13 +5,14 @@
 
 	let singleRank = false;
 	let rank: number;
+	let mode: string = '0';
 	let username: string;
 
 	const gotoPlayer = (idOrName: string | number) => {
-		if (!singleRank) goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : '1-50'}`);
+		if (!singleRank) gotoPlayerForce(idOrName);
 	};
-	const gotoPlayerKey = (idOrName: string | number) =>
-		goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : '1-50'}`);
+	const gotoPlayerForce = (idOrName: string | number) =>
+		goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : '1-50'}/${mode}`);
 </script>
 
 <svelte:head>
@@ -19,23 +20,27 @@
 </svelte:head>
 
 <main class="flex-fill column" style="padding: 0 3.5%">
-	<div class="row">
-		<UserSearch {gotoPlayer} {gotoPlayerKey} bind:value={username} />
+	<form class="row" spellcheck="false" on:submit|preventDefault={() => gotoPlayerForce(username)}>
+		<UserSearch {gotoPlayer} {gotoPlayerForce} bind:value={username} />
+		<select bind:value={mode} title="Game mode" class="input-dark">
+			<option value="0">osu!</option>
+			<option value="1">taiko</option>
+			<option value="2">catch</option>
+			<option value="3">mania</option>
+		</select>
 		{#if singleRank}
 			<input
-				class="rank-input input-dark"
+				class="input-dark"
 				type="number"
 				placeholder="Rank (1-100)"
+				title="Score rank"
 				min="1"
 				max="100"
 				bind:value={rank}
-				on:keypress={(e) => {
-					if (e.key !== 'Enter') return;
-					gotoPlayerKey(username);
-				}}
 			/>
 		{/if}
-	</div>
+	</form>
+	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="row" style="align-items: center; margin-top: 16px; width: fit-content;">
 		<Switch bind:checked={singleRank} />
 		<span style="margin-left: 8px;">Single rank</span>
@@ -45,12 +50,12 @@
 </main>
 
 <style>
-	.rank-input {
+	.input-dark {
 		margin-left: 22px;
 		margin-top: 22px;
 		width: 20%;
 	}
-	.rank-input:focus {
+	.input-dark:focus {
 		box-shadow: 0 0 2px 0.2rem rgba(255, 255, 255, 0.35);
 	}
 </style>

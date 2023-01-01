@@ -4,41 +4,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
+import {
+	formatDate,
+	getRankingCollections,
+	getClosestPrevArchiveEntry,
+	createNGram
+} from './shared.js';
 import * as dotenv from 'dotenv';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
-
-//util
-function formatDate(date) {
-	if (!date) date = new Date();
-	return `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-${date
-		.getUTCDate()
-		.toString()
-		.padStart(2, '0')}`;
-}
-
-//for nameKey field (username search index)
-function createNGram(str) {
-	if (!str || str.length <= 3) return str;
-
-	const minGram = 3;
-	const maxGram = str.length;
-
-	return str
-		.split(' ')
-		.reduce((ngrams, token) => {
-			if (token.length > minGram) {
-				for (let i = minGram; i <= maxGram && i <= token.length; ++i) {
-					ngrams = [...ngrams, token.substr(0, i)];
-				}
-			} else {
-				ngrams = [...ngrams, token];
-			}
-			return ngrams;
-		}, [])
-		.join(' ');
-}
-//util
 
 export const MIN_TOP100 = 1500;
 export const MIN_TOP50 = 1000;
@@ -52,55 +26,6 @@ const api = 'https://osustats.respektive.pw/rankings/';
 const categories = ['top100s', 'top50s', 'top25s', 'top15s', 'top8s', 'top1s'];
 const categoriesMin = [MIN_TOP100, MIN_TOP50, MIN_TOP25, MIN_TOP15, MIN_TOP8, MIN_TOP1]; //lol whatever;
 const categoriesSkip = ['top100', 'top15']; //categories not to upload to the db
-
-//TODO: move to a shared module file
-async function getRankingCollections(start = '', end = 'Z') {
-	const client = await MongoClient.connect(process.env.DB_URI);
-	const collections = await client
-		.db(process.env.DB_NAME_RANKING)
-		.listCollections(undefined, { nameOnly: true })
-		.toArray();
-
-	if ((start && start > '2020-05-10') || end !== 'Z') {
-		for (const n in collections) {
-			if (collections[n].name < start || collections[n].name > end) delete collections[n];
-		}
-	}
-
-	client.close();
-	return collections;
-}
-
-async function getClosestPrevArchiveEntry(initialDate, daysBack = 1, maxDaysLate = 32) {
-	const today = initialDate ? new Date(initialDate) : new Date();
-	const todayCopy = new Date(today);
-	todayCopy.setDate(todayCopy.getDate() - daysBack);
-	let curDate = todayCopy;
-	let curDateString = formatDate(curDate);
-	let daysLate = 0;
-
-	const client = await MongoClient.connect(process.env.DB_URI);
-	const db = client.db(process.env.DB_NAME_RANKING);
-
-	for (; daysLate <= maxDaysLate; daysLate++) {
-		try {
-			const curCollection = db.collection(curDateString);
-			const result = await curCollection.findOne();
-
-			if (result) break;
-			const curDateCopy = new Date(curDate);
-			curDateCopy.setDate(curDateCopy.getDate() - 1);
-			curDate = curDateCopy;
-			curDateString = formatDate(curDate);
-		} catch (err) {
-			console.log('Exception in getClosestPrevArchiveEntry:\n', err);
-			return null;
-		}
-	}
-
-	client.close();
-	return daysLate > maxDaysLate ? null : { date: curDateString, daysLate };
-}
 
 async function fetchCategory(category, minScores, maxPage = MAX_PAGE) {
 	const url = api + category + '?page=';

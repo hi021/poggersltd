@@ -1,9 +1,9 @@
 /* eslint-disable no-async-promise-executor */
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
+import type { PageLoad } from '../$types';
 
 export const load: PageLoad = async ({ params, fetch }) => {
-	const api = `https://osustats.respektive.pw/counts/${params.nameOrId}?rank=`;
+	const api = `https://osustats.respektive.pw/counts/${params.nameOrId}`;
 	const split = params.ranks.split('-'); //can be `rank` or `minRank-maxRank`
 
 	let minRank = parseInt(split[0]);
@@ -27,7 +27,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		const i = curRank - minRank;
 		promises[i] = new Promise(async (resolve, reject) => {
 			try {
-				const res = await fetch(api + curRank);
+				const res = await fetch(`${api}?rank=${curRank}&mode=${params.mode}`);
 				const resJson = await res.json();
 				if (resJson.error) {
 					reject(new Error(resJson.error));

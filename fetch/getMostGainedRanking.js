@@ -2,27 +2,11 @@
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
+import { getRankingCollections } from './shared.js';
 import * as dotenv from 'dotenv';
 import fs from 'fs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
-
-async function getRankingCollections(start = '', end = 'Z') {
-	const client = await MongoClient.connect(process.env.DB_URI);
-	const collections = await client
-		.db(process.env.DB_NAME_RANKING)
-		.listCollections(undefined, { nameOnly: true })
-		.toArray();
-
-	if ((start && start > '2020-05-10') || end !== 'Z') {
-		for (const n in collections) {
-			if (collections[n].name < start || collections[n].name > end) delete collections[n];
-		}
-	}
-
-	client.close();
-	return collections;
-}
 
 const collections = await getRankingCollections();
 
@@ -32,9 +16,10 @@ const dbOther = client.db(process.env.DB_NAME_OTHER);
 
 //
 const outputDir = 'archive-other/';
-const arbitraryMin = { top50: 120, top25: 20, top8: 5, top1: 4 };
+const arbitraryMin = { top50: 130, top25: 36, top8: 19, top1: 5 };
 //
 const scoreArr = { top50: [], top25: [], top8: [], top1: [] };
+const idToIgnore = { 9413991: ['2022-12-16'] }; //will skip these players, used to fix data for MystExiStentia once
 
 for (const i of collections) {
 	const date = i.name;
@@ -42,7 +27,8 @@ for (const i of collections) {
 	for (const cat of dayData) {
 		const category = cat._id;
 		for (const plr of cat.ranking) {
-			if (plr.gained && !plr.gainedDays && plr.gained >= arbitraryMin[category]) {
+			if (idToIgnore[plr._id]?.includes(date)) continue;
+			if (!plr.gainedDays && plr.gained >= arbitraryMin[category]) {
 				delete plr.countryRank;
 				delete plr.rank;
 				delete plr.gainedRank;

@@ -2,13 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
+import { getDaysBetweenDates } from './shared.js';
 import * as dotenv from 'dotenv';
 import glob from 'glob';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
-
-const getDaysBetweenDates = (d1, d2) => Math.floor((d1.getTime() - d2.getTime()) / 86400000);
 
 const inputDir = path.resolve(__dirname, 'archive-old');
 const outputDir = path.resolve(__dirname, 'archive-new');

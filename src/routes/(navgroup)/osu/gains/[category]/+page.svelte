@@ -137,12 +137,12 @@
 									<span>
 										{plr.name}
 									</span>
-									{#if RANKING_BADGES[plr._id]}
+									{#if RANKING_BADGES[plr.id]}
 										<img
 											class="osu-badge"
 											alt="pog"
-											src={RANKING_BADGES[plr._id].img}
-											title={RANKING_BADGES[plr._id].title}
+											src={RANKING_BADGES[plr.id].img}
+											title={RANKING_BADGES[plr.id].title}
 										/>
 									{/if}
 								</div>
