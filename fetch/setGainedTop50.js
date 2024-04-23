@@ -9,7 +9,7 @@ import glob from 'glob';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
-const inputDir = path.resolve(__dirname, 'archive-pregains');
+const inputDir = path.resolve(__dirname, 'archive');
 const outputDir = path.resolve(__dirname, 'archive-aftergains');
 
 //works on converted files (v3)

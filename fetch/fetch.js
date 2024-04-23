@@ -27,6 +27,7 @@ const categories = ['top100s', 'top50s', 'top25s', 'top15s', 'top8s', 'top1s'];
 const categoriesMin = [MIN_TOP100, MIN_TOP50, MIN_TOP25, MIN_TOP15, MIN_TOP8, MIN_TOP1]; //lol whatever;
 const categoriesSkip = ['top100', 'top15']; //categories not to upload to the db
 
+//returns an array of formatted players from the API + country ranks
 async function fetchCategory(category, minScores, maxPage = MAX_PAGE) {
 	const url = api + category + '?page=';
 	let page = 1;
@@ -38,12 +39,13 @@ async function fetchCategory(category, minScores, maxPage = MAX_PAGE) {
 		try {
 			const res = await fetch(url + page);
 			const resJson = await res.json();
-			if (!resJson?.length) throw new Error('No results');
+			const lb = resJson.leaderboard;
+			if (!lb?.length) throw new Error('No results');
 
-			for (const i in resJson) {
-				if (resJson[i][category] < minScores) return fullRes;
+			for (const i in lb) {
+				if (lb[i][category] < minScores) return fullRes;
 
-				const player = formatAPIPlayer(resJson[i], category);
+				const player = formatAPIPlayer(lb[i], category);
 				const country = player.country;
 				if (countries.has(country)) countries.set(country, countries.get(country) + 1);
 				else countries.set(country, 1);
@@ -51,7 +53,7 @@ async function fetchCategory(category, minScores, maxPage = MAX_PAGE) {
 				fullRes.push({ ...player, countryRank: countries.get(country) });
 			}
 
-			lastMinScores = resJson[resJson.length - 1][category];
+			lastMinScores = lb[lb.length - 1][category];
 			++page;
 		} catch (e) {
 			console.error(
@@ -75,6 +77,7 @@ function formatAPIPlayer(player, category) {
 	};
 }
 
+//adds gained, gainedRank, and gainedDays (optionally) to the given fetched category array
 async function setCategoryGains(categoryObject, category, gainsDate, gainsDaysLate = 0) {
 	const client = await MongoClient.connect(process.env.DB_URI);
 	const coll = client.db(process.env.DB_NAME_RANKING).collection(gainsDate);
@@ -117,7 +120,7 @@ const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
 const dbOther = client.db(process.env.DB_NAME_OTHER);
 const collPlayers = dbOther.collection('players');
 
-const players = new Map(); //for players database
+const players = new Map(); //for players collection - _id: <player info>, <category stats (without mostGained, peak, and lowest)>
 const mostGained = {}; //{[category]: Array<MostGainedRanking>}
 
 //request api
@@ -131,6 +134,7 @@ for (const i in categories) {
 			.find()
 			.toArray();
 
+	console.log('\n');
 	console.time(cat);
 	const categoryFetched = await fetchCategory(categories[i], categoriesMin[i]);
 	console.timeEnd(cat);
@@ -148,7 +152,7 @@ for (const i in categories) {
 		);
 		if (categoriesSkip.includes(cat)) continue; //don't save top15s and top100s to database - no ranking
 
-		let mostGainedCategory; //{name, _id, gained}
+		let mostGainedCategory; //{name, _id, gained}, used to see if neccessary to update gains ranking
 		//add to players database
 		for (const plrFetched of categoryWithGains) {
 			const plrData = players.get(plrFetched._id);
@@ -169,7 +173,7 @@ for (const i in categories) {
 					gained: plrFetched.gained
 				};
 
-			//if already has a ranking category
+			//add category ranking data
 			if (plrData) players.set(plrFetched._id, { ...plrData, [cat]: plrRankingData });
 			else
 				players.set(plrFetched._id, {
@@ -184,11 +188,12 @@ for (const i in categories) {
 			`Most gained ${cat} was ${mostGainedCategory.gained} by ${mostGainedCategory.name}`
 		);
 		if (!mostGainedCategory.gained) {
-			console.log("Assuming API didn't refresh, stopping");
+			console.log("Assuming the API didn't update, stopping.");
 			client.close();
 			process.exit();
 		}
 
+		//update most gained ranking
 		if (lastArchive.daysLate) {
 			console.log(
 				'Gains are ' + lastArchive.daysLate + ' day(s) late, skipping mostGained ranking'
@@ -224,20 +229,21 @@ for (const i in categories) {
 		}
 
 		const insertRes = await coll.insertOne({ _id: cat, ranking: categoryWithGains });
-		console.log('insert:', insertRes, '\n');
+		console.log('insert:', insertRes);
 	} catch (e) {
 		console.error('Failed to write:', e);
 	}
 }
 
 try {
-	console.log('Updating players database...');
+	console.log('\nUpdating players database...');
 	const promises = [];
 
-	let collections; //for changing ranking usernames
+	let collections; //for changing usernames in past rankings
 
 	let oldPlayers = 0;
 	let newPlayers = 0;
+	//playerCurrent is fetched from today, playerFromDatabase is the player from `players` collection
 	for (const playerCurrent of Array.from(players.values())) {
 		promises.push(
 			new Promise(async (resolve) => {
@@ -291,15 +297,16 @@ try {
 				if (!nameKey) nameKey = createNGram(playerCurrent.name);
 				playerCurrent.nameKey = nameKey;
 
+				//check mostGained, peak, and lowest
 				for (const i of categories) {
 					const cat = i.slice(0, i.length - 1); //top15s -> top15 etc.
 					if (!playerCurrent[cat]) continue;
 
-					//check mostGained
-					if (lastArchive?.daysLate === 0 && playerCurrent[cat].gained?.value != null) {
+					//check mostGained			
+					if (lastArchive?.daysLate === 0 && playerCurrent[cat].gained != null) {
 						if (
 							playerFromDatabase?.[cat]?.mostGained?.value == null ||
-							playerFromDatabase[cat].mostGained.value < playerCurrent[cat].gained
+							playerFromDatabase[cat]?.mostGained?.value < playerCurrent[cat].gained
 						)
 							playerCurrent[cat].mostGained = { date, value: playerCurrent[cat].gained };
 					}

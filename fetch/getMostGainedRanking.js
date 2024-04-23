@@ -19,7 +19,7 @@ const outputDir = 'archive-other/';
 const arbitraryMin = { top50: 130, top25: 36, top8: 19, top1: 5 };
 //
 const scoreArr = { top50: [], top25: [], top8: [], top1: [] };
-const idToIgnore = { 9413991: ['2022-12-16'] }; //will skip these players, used to fix data for MystExiStentia once
+const idToIgnore = { 9413991: ['2022-12-16'], 15787074: ['2023-01-10'] }; //will skip these players, used to fix data for MystExiStentia once
 
 for (const i of collections) {
 	const date = i.name;

@@ -9,8 +9,9 @@ import glob from 'glob';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
-const inputDir = path.resolve(__dirname, 'archive-prepeaks');
+const inputDir = path.resolve(__dirname, 'archive');
 const outputDir = path.resolve(__dirname, 'archive-afterpeaks');
+const categoriesSkip = ['top100', 'top15']; //categories not in the db
 
 //works on v3 files with set gains and gainsDays
 //also needs an up to date players database
@@ -31,7 +32,7 @@ try {
 		const date = split[split.length - 2];
 		const categoryRaw = split[split.length - 1];
 		const category = categoryRaw.slice(0, categoryRaw.length - '.json'.length);
-		if (category === 'top15') continue; //top15s not in database
+		if (categoriesSkip.includes(category)) continue; //skip categories not in the database
 		console.log(`Checking ${category} on ${date}`);
 
 		const fileJson = JSON.parse(fs.readFileSync(i));

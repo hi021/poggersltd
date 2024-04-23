@@ -12,29 +12,27 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "^1.0.0-next.587",
-		"@typescript-eslint/eslint-plugin": "^5.27.0",
-		"@typescript-eslint/parser": "^5.27.0",
-		"eslint": "^8.16.0",
-		"eslint-config-prettier": "^8.3.0",
+		"@sveltejs/adapter-auto": "^3.2.0",
+		"@sveltejs/kit": "^2.5.7",
+		"@typescript-eslint/eslint-plugin": "^7.7.1",
+		"@typescript-eslint/parser": "^7.7.1",
+		"eslint": "^9.1.1",
+		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte3": "^4.0.0",
-		"prettier": "^2.6.2",
-		"prettier-plugin-svelte": "^2.7.0",
-		"svelte": "^3.52.0",
-		"svelte-check": "^2.9.2",
-		"svelte-preprocess": "^4.10.7",
-		"tslib": "^2.3.1",
-		"typescript": "^4.7.4",
-		"vite": "^4.0.1"
+		"prettier": "^3.2.5",
+		"prettier-plugin-svelte": "^3.2.3",
+		"svelte": "^4.2.15",
+		"svelte-check": "^3.6.9",
+		"svelte-preprocess": "^5.1.4",
+		"tslib": "^2.6.2",
+		"vite": "^5.2.10"
 	},
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/pancake": "^0.0.18",
-		"dotenv": "^16.0.3",
-		"mongodb": "^4.12.1",
-		"node-fetch": "^3.2.10",
-		"socket.io": "^4.5.4",
-		"socket.io-client": "^4.5.4"
+		"dotenv": "^16.4.5",
+		"mongodb": "^6.5.0",
+		"socket.io": "^4.7.5",
+		"socket.io-client": "^4.7.5"
 	}
 }

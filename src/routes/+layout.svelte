@@ -68,6 +68,7 @@
 		color: #495057;
 		background-color: #fff;
 		-webkit-background-clip: padding-box;
+		-moz-background-clip: padding-box;
 		background-clip: padding-box;
 		border: 1px solid #ced4da;
 		transition: border-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
@@ -120,8 +121,9 @@
 		border-color: hsl(var(--clr));
 		padding: 0.375rem 0.75rem;
 		margin: 0;
-		-webkit-user-select: none;
 		user-select: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
 		transition: background-color 0.2s, border-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 		cursor: pointer;
 	}
@@ -389,8 +391,9 @@
 			#e81d1d,
 			#ff2400
 		);
-		-webkit-background-clip: text;
 		background-clip: text;
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
 		color: transparent;
 		outline: 0;
 		text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.2);
@@ -452,8 +455,9 @@
 	}
 
 	.unselectable {
-		-webkit-user-select: none;
 		user-select: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
 		-webkit-user-drag: none;
 	}
 
@@ -463,8 +467,9 @@
 	}
 
 	.clip-text {
-		-webkit-background-clip: text;
 		background-clip: text;
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
 		color: transparent;
 	}
 
