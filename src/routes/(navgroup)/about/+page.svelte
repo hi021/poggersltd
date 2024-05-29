@@ -48,8 +48,8 @@
 
   <h2>Contact</h2>
   <p class="para">
-    Scream at <code>hi#8112</code> in case something breaks;;<br />
-    Ask me or <code>respektive#1895</code> if in need of more detailed data that
+    Scream at <code>hiihailey</code> on Discord in case something breaks;;<br />
+    Ask me or <code>respektive</code> if in need of more detailed data that
     the site doesn't show
   </p>
 

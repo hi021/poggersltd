@@ -28,7 +28,7 @@ for (const n in collections) {
 	console.log('Getting data for ' + collections[n].name);
 
 	const dayData = await client
-		.db(process.env.DB_NAME_RANKING)
+		.db(process.env.DB_NAME)
 		.collection(collections[n].name)
 		.find()
 		.toArray();

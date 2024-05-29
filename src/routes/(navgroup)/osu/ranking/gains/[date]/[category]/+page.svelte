@@ -3,27 +3,19 @@
 	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
-	import {
-		formatNumber,
-		COUNTRIES,
-		getAvatarURL,
-		RANKING_BADGES,
-		addDate,
-		formatDate
-	} from '$lib/util';
-	import type { PageData } from './$types';
+	import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES, tooltip } from '$lib/util';
+	import type { PageData } from './[country]/[ranks]/[...extra]/$types';
 
 	export let data: PageData;
-	let pageData: App.Ranking[];
+	let pageData: App.RankingEntry[];
 	const perPage = 50;
 	let curPage = 1;
 	let maxPage: number;
 
+	$: maxPage = Math.ceil(data.rankingData.length / perPage);
 	$: pageData = data.rankingData.slice(perPage * (curPage - 1), perPage * curPage);
-	$: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
 
 	let showAvatars = true;
-	let showValueDifferences = true;
 </script>
 
 <svelte:head>
@@ -45,17 +37,6 @@
 				<small>There's probably no archive entry for this date...</small>
 			</p>
 		{:else}
-			{#if pageData[0].gainedDays}
-				<p class="gains-notice">
-					Showing gained counts over <strong>{pageData[0].gainedDays}</strong> days
-					<br />
-					<small>
-						due to a gap between
-						{formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}
-						and {$page.params.date}
-					</small>
-				</p>
-			{/if}
 			<table class="osu-table">
 				<tbody>
 					{#each pageData as plr, i}
@@ -64,44 +45,41 @@
 							style="background-position: 50% {plr.rank * 46 + 320}px;"
 						>
 							<td style="width: 5.25ch;">
-								<strong>#{plr.rank}</strong>
+								<strong>#{i + 1 + (curPage - 1) * perPage}</strong>
 							</td>
 							<td style="width: 22px;">
-								{#if plr.gainedRank == undefined}
-									<div class="circle" title="New" />
-								{:else if (plr.gainedRank ?? -1) > 0}
-									<div class="arrow" title="Up by {plr.gainedRank}" />
-								{:else if (plr.gainedRank ?? 1) < 0}
-									<div class="arrow-down" title="Down by {-(plr.gainedRank ?? 0)}" />
-								{:else if plr.gainedRank === 0}
-									<div class="line" title="No change" />
+								{#if plr.gainedRanks == undefined}
+									<div class="circle" use:tooltip={"New"} />
+								{:else if (plr.gainedRanks ?? -1) > 0}
+									<div class="arrow" use:tooltip={`Up by ${plr.gainedRanks}`} />
+								{:else if (plr.gainedRanks ?? 1) < 0}
+									<div class="arrow-down" use:tooltip={`Down by ${-(plr.gainedRanks ?? 0)}`} />
+								{:else if plr.gainedRanks === 0}
+									<div class="line" use:tooltip={"No change"} />
 								{/if}
 							</td>
 							{#if showAvatars}
-								<td class="hide-width-640" style="width: 36px;">
+								<td class="hide-width-640" style="width: 64px;">
 									<a
 										href="https://osu.ppy.sh/users/{plr._id}"
 										target="_blank"
 										rel="noreferrer"
-										title="osu! profile"
+										use:tooltip={"osu! profile"}
 									>
 										<img class="osu-avatar-small" alt="" src={getAvatarURL(plr._id)} />
 									</a>
 								</td>
 							{/if}
-							<td style="width: 4.25ch; text-align: end; padding-right: 3px;">
-								#{plr.countryRank}
-							</td>
 							<td style="width: 40px;">
 								<img
 									class="osu-flag-small"
 									alt={plr.country}
-									title={COUNTRIES[plr.country]}
+									use:tooltip={COUNTRIES[plr.country]}
 									src="/flags/{plr.country}.svg"
 								/>
 							</td>
 							<td
-								class="osu-name-column"
+								class="name-column"
 								on:click={() => goto(`/osu/player/${plr.name}/${$page.params.category}`)}
 								on:keypress={(e) => {
 									if (e.key === 'Enter') goto(`/osu/player/${plr.name}/${$page.params.category}`);
@@ -116,26 +94,23 @@
 											class="osu-badge"
 											alt="pog"
 											src={RANKING_BADGES[plr._id].img}
-											title={RANKING_BADGES[plr._id].title}
+											use:tooltip={RANKING_BADGES[plr._id].title}
 										/>
 									{/if}
 								</div>
 							</td>
 							<td style="width: 25%;">
-								{formatNumber(plr.value ?? 0, ' ')}
-								{plr.gained == undefined
-									? ''
-									: `(${(plr.gained ?? -1) >= 0 ? '+' : ''}${plr.gained})`}</td
-							>
+								{(plr.gainedScores ?? -1) >= 0 ? '+' : ''}{formatNumber(plr.gainedScores ?? 0, ' ')}
+								<small style="margin-left: 8px;">
+									<span class="hide-width-640">
+										{formatNumber(plr.scores - (plr.gainedScores ?? 0), ' ')} → {formatNumber(plr.scores)}
+									</span>
+									{#if plr.gainedDays}
+										({Math.round(((plr.gainedScores ?? 0) / plr.gainedDays) * 100) / 100}/day)
+									{/if}
+								</small>
+							</td>
 						</tr>
-						{#if showValueDifferences && pageData[i + 1]}
-							<tr class="osu-difference-column">
-								<td /><td /><td /><td /><td /><td />
-								<td style="width: 25%; padding: 2px;"
-									>+{formatNumber(plr.value - pageData[i + 1].value)}</td
-								>
-							</tr>
-						{/if}
 					{/each}
 				</tbody>
 			</table>
@@ -143,7 +118,7 @@
 				{#if maxPage > 1}
 					<Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
 				{/if}
-				<div style="font-weight: 300;">
+				<div style="font-weight: 300; margin-top: 4px;">
 					Page <strong>{curPage}</strong>/{maxPage}
 				</div>
 			</div>
@@ -152,12 +127,13 @@
 </main>
 
 <style>
-	.gains-notice {
-		margin: 1.75rem auto;
-		font-size: 1.25rem;
-		text-align: center;
+	.name-column {
+		cursor: pointer;
 	}
-	.osu-difference-column {
-		background-color: rgba(255, 255, 255, 0.1);
+	.name-column > div {
+		align-items: center;
+	}
+	.name-column:hover > div > span {
+		color: var(--color-active);
 	}
 </style>

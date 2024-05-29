@@ -12,7 +12,7 @@ const fieldReplacing = '_id';
 const collections = await getRankingCollections();
 
 const client = await MongoClient.connect(process.env.DB_URI);
-const db = client.db(process.env.DB_NAME_RANKING);
+const db = client.db(process.env.DB_NAME);
 const promises = [];
 //swapping field names
 for (const i of collections) {

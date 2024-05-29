@@ -5,9 +5,12 @@
 	export let checked: boolean;
 </script>
 
-<label class="switch">
-	<input type="checkbox" on:change={onChange} bind:checked />
-	<span class="slider" />
+<label class="column" style="gap: 2px;">
+	<slot/>
+	<div class="switch">
+		<input type="checkbox" on:change={onChange} bind:checked />
+		<span class="slider" />
+	</div>
 </label>
 
 <style>

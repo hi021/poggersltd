@@ -1,4 +1,6 @@
 import { linear } from 'svelte/easing';
+import tippy, { type Props } from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
 
 export function formatNumber(number: number | string, delimiter = ' '): string {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
@@ -79,6 +81,7 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
 	return dates;
 }
 
+// svelte utils
 export function transitionHeight(
 	node: Element,
 	{ delay = 0, duration = 400, easing = linear, maxHeight = 1024 }
@@ -93,6 +96,26 @@ export function transitionHeight(
 	};
 }
 
+export function tooltip(node: Element, content?: string | Element, options?: Partial<Props>) {
+	if (!content) return;
+	const tooltip = tippy(node, {
+		allowHTML: true,
+		delay: 0,
+		ignoreAttributes: true,
+		duration: 170,
+		zIndex: 10,
+		...options,
+		content
+	});
+
+	return {
+		destroy() {
+			tooltip.destroy();
+		}
+	};
+}
+
+// consts
 export const MIN_DATE = '2020-05-10';
 
 export const SCORE_CATEGORIES = ['top50', 'top25', 'top8', 'top1'];

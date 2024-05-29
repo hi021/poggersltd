@@ -40,21 +40,22 @@ export function createNGram(str) {
 		.join(' ');
 }
 
-export async function getRankingCollections(start = '', end = 'Z') {
+export async function getRankingEntries(start = '', end = 'Z') {
 	const client = await MongoClient.connect(process.env.DB_URI);
-	const collections = await client
-		.db(process.env.DB_NAME_RANKING)
-		.listCollections(undefined, { nameOnly: true })
+	const allRankingEntries = await client
+		.db(process.env.DB_NAME)
+		.collection("rankings")
+		.find()
 		.toArray();
 
 	if ((start && start > '2020-05-10') || end !== 'Z') {
-		for (const n in collections) {
-			if (collections[n].name < start || collections[n].name > end) delete collections[n];
+		for (const n in allRankingEntries) {
+			if (allRankingEntries[n]._id < start || allRankingEntries[n]._id > end) delete allRankingEntries[n];
 		}
 	}
 
 	client.close();
-	return collections;
+	return allRankingEntries;
 }
 
 export async function getClosestPrevArchiveEntry(initialDate, daysBack = 1, maxDaysLate = 32) {
@@ -66,12 +67,11 @@ export async function getClosestPrevArchiveEntry(initialDate, daysBack = 1, maxD
 	let daysLate = 0;
 
 	const client = await MongoClient.connect(process.env.DB_URI);
-	const db = client.db(process.env.DB_NAME_RANKING);
+	const db = client.db(process.env.DB_NAME).collection("rankings");
 
 	for (; daysLate <= maxDaysLate; daysLate++) {
 		try {
-			const curCollection = db.collection(curDateString);
-			const result = await curCollection.findOne();
+			const result = await db.findOne({_id: curDate});
 
 			if (result) break;
 			const curDateCopy = new Date(curDate);

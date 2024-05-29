@@ -80,7 +80,7 @@ function formatAPIPlayer(player, category) {
 //adds gained, gainedRank, and gainedDays (optionally) to the given fetched category array
 async function setCategoryGains(categoryObject, category, gainsDate, gainsDaysLate = 0) {
 	const client = await MongoClient.connect(process.env.DB_URI);
-	const coll = client.db(process.env.DB_NAME_RANKING).collection(gainsDate);
+	const coll = client.db(process.env.DB_NAME).collection(gainsDate);
 	const categoryData = (await coll.findOne({ _id: category })).ranking;
 	client.close();
 
@@ -116,8 +116,8 @@ console.log(
 );
 
 const client = await MongoClient.connect(process.env.DB_URI);
-const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
-const dbOther = client.db(process.env.DB_NAME_OTHER);
+const coll = client.db(process.env.DB_NAME).collection(date);
+const dbOther = client.db(process.env.DB_NAME);
 const collPlayers = dbOther.collection('players');
 
 const players = new Map(); //for players collection - _id: <player info>, <category stats (without mostGained, peak, and lowest)>
@@ -269,7 +269,7 @@ try {
 					if (!collections) collections = await getRankingCollections();
 					for (const i of collections) {
 						//genuinely no clue how to do this properly, but this is fine since it only runs once a day
-						const coll = client.db(process.env.DB_NAME_RANKING).collection(i.name);
+						const coll = client.db(process.env.DB_NAME).collection(i.name);
 						//get all categories with the player from given date
 						const findRes = await coll.find({ ranking: { $elemMatch: { _id } } }).toArray();
 
