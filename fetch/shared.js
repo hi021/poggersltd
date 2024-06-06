@@ -45,14 +45,8 @@ export async function getRankingEntries(start = '', end = 'Z') {
 	const allRankingEntries = await client
 		.db(process.env.DB_NAME)
 		.collection("rankings")
-		.find()
+		.find({_id: {$gte: start, $lte: end}})
 		.toArray();
-
-	if ((start && start > '2020-05-10') || end !== 'Z') {
-		for (const n in allRankingEntries) {
-			if (allRankingEntries[n]._id < start || allRankingEntries[n]._id > end) delete allRankingEntries[n];
-		}
-	}
 
 	client.close();
 	return allRankingEntries;
