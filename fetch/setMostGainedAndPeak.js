@@ -1,4 +1,9 @@
-/* eslint-disable no-async-promise-executor */
+
+// works on v3 files with set gains and gainsDays
+// needs an up to date players database
+// used for setting mostGained, peak, and lowest fields for all ranking categories
+// saves the player json and attempts to update the db
+
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';

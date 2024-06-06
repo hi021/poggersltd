@@ -1,3 +1,9 @@
+
+// works on converted files (v3)
+// gets all jsons in order and sets gainedScores, gainedRanks, and gainedDays fields but ONLY ON TOP50
+// saves all jsons and attempts to add them to the db
+// was used to fix gains not being set properly on days between v2 and v3
+
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,7 +25,7 @@ const outputDir = path.resolve(__dirname, 'archive-aftergains');
 try {
 	const client = await MongoClient.connect(process.env.DB_URI);
 
-	const globDirectories = glob.sync(inputDir + '\\20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\\top50.json');
+	const globDirectories = glob.sync(inputDir + '\\*.json');
 	const inputDirLen = inputDir.length;
 
 	let prevDate = '';
@@ -42,9 +48,10 @@ try {
 			//set gains
 			const prevPlr = prevPlayers?.get(_id);
 			if (prevPlr) {
-				const prevValue = prevPlr.value;
+				const prevScores = prevPlr.scores;
 				const prevRank = prevPlr.rank;
-				plr.gained = prevValue ? plr.value - prevValue : undefined;
+
+				plr.gainedScores = prevScores ? plr.scores - prevScores : undefined;
 				plr.gainedRank = prevRank ? prevRank - plr.rank : undefined; //reversed because (+1 is 100 -> 99 etc.)
 				if (dateDiff > 1) plr.gainedDays = dateDiff;
 			}
@@ -57,24 +64,22 @@ try {
 		if (fs.existsSync(outputPath)) console.log('Directory exists, skipping writing');
 		else {
 			fs.mkdirSync(outputPath);
-			fs.writeFileSync(path.join(outputPath, 'top50.json'), JSON.stringify(fileConverted));
+			fs.writeFileSync(path.join(outputPath, date + '.json'), JSON.stringify({top50: fileConverted}));
 		}
 
-		const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
+		const coll = client.db(process.env.DB_NAME).collection("rankings");
 		const insertRes = await coll.updateOne(
-			{ _id: 'top50' },
-			{ $set: { ranking: fileConverted } },
+			{ _id: date },
+			{ $set: { top50: fileConverted } },
 			{ $upsert: true }
 		);
 		console.log(insertRes);
 		await coll.createIndexes([
-			{ key: { 'ranking._id': -1 } },
-			{ key: { 'ranking.country': -1 } },
-			{
-				key: { 'ranking.rank': 1 }
-			},
-			{ key: { 'ranking.gained': -1 } },
-			{ key: { 'ranking.countryRank': -1 } }
+			{ key: { 'top50._id': -1 } },
+			{ key: { 'top50.rank': 1 } },
+			{ key: { 'top50.country': -1 } },
+			{ key: { 'top50.countryRank': -1 } },
+			{ key: { 'top50.gainedScores': -1 } }
 		]);
 
 		prevDate = date;

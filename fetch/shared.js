@@ -42,16 +42,11 @@ export function createNGram(str) {
 
 export async function getRankingCollections(start = '', end = 'Z') {
 	const client = await MongoClient.connect(process.env.DB_URI);
-	const collections = await client
-		.db(process.env.DB_NAME_RANKING)
-		.listCollections(undefined, { nameOnly: true })
+	const allRankingEntries = await client
+		.db(process.env.DB_NAME)
+		.collection("rankings")
+		.find({_id: {$gte: start, $lte: end}})
 		.toArray();
-
-	if ((start && start > '2020-05-10') || end !== 'Z') {
-		for (const n in collections) {
-			if (collections[n].name < start || collections[n].name > end) delete collections[n];
-		}
-	}
 
 	client.close();
 	return collections;
