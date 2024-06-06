@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
-	import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES, tooltip } from '$lib/util';
+	import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES } from '$lib/util';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -112,7 +112,7 @@
 										href="https://osu.ppy.sh/users/{plr.id}"
 										target="_blank"
 										rel="noreferrer"
-										use:tooltip={"osu! profile"}
+										title="osu! profile"
 									>
 										<img class="osu-avatar-small" alt="" src={getAvatarURL(plr.id)} />
 									</a>
@@ -122,7 +122,7 @@
 								<img
 									class="osu-flag-small"
 									alt={plr.country}
-									use:tooltip={COUNTRIES[plr.country]}
+									title={COUNTRIES[plr.country]}
 									src="/flags/{plr.country}.svg"
 								/>
 							</td>
@@ -142,7 +142,7 @@
 											class="osu-badge"
 											alt="pog"
 											src={RANKING_BADGES[plr.id].img}
-											use:tooltip={RANKING_BADGES[plr.id].title}
+											title={RANKING_BADGES[plr.id].title}
 										/>
 									{/if}
 								</div>

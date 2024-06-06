@@ -11,8 +11,8 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 const collections = await getRankingCollections();
 
 const client = await MongoClient.connect(process.env.DB_URI);
-const db = client.db(process.env.DB_NAME);
-const dbOther = client.db(process.env.DB_NAME);
+const db = client.db(process.env.DB_NAME_RANKING);
+const dbOther = client.db(process.env.DB_NAME_OTHER);
 
 //
 const outputDir = 'archive-other/';

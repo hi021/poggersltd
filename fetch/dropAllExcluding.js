@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const client = await MongoClient.connect(process.env.DB_URI);
-const db = client.db(process.env.DB_NAME);
+const db = client.db(process.env.DB_NAME_RANKING);
 
 const collections = await db.listCollections(undefined, { nameOnly: true }).toArray();
 

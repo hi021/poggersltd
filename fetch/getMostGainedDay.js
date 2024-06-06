@@ -29,7 +29,7 @@ for (const n in collections) {
 	console.log('Getting data for ' + date);
 
 	const dayData = await client
-		.db(process.env.DB_NAME)
+		.db(process.env.DB_NAME_RANKING)
 		.collection(date)
 		.find({ _id: { $in: categories } })
 		.toArray();

@@ -7,11 +7,11 @@
   <p>
     This API is not private but it sure is a mess
     <br />
-    Yell at <code>hiihailey</code> in case it explodes
+    Yell at <code>hi#8112</code> in case it explodes
     <br />
     <small>server smol please be gentle;;</small>
   </p>
-  <small><strong>v3.1</strong> (2022-11-06) [OUTDATED!]</small>
+  <small>v3.0 (2022-11-06)</small>
 
   <h2>Types</h2>
   <span class="type-name">PlayerRanking</span>
@@ -19,12 +19,12 @@
     <li>
       <span>date</span>
       <code class="type-type">string</code>
-      <span class="description">
-        YYYY-MM-DD day from which the data was taken
-      </span>
+      <span class="description"
+        >YYYY-MM-DD day from which the data was taken</span
+      >
     </li>
     <li>
-      <span>scores</span>
+      <span>value</span>
       <code class="type-type">number</code>
       <span class="description">amount of scores</span>
     </li>
@@ -38,7 +38,7 @@
       <code class="type-type">number</code>
     </li>
     <li>
-      <span>gainedScores</span>
+      <span>gained</span>
       <code class="type-type">number | undefined</code>
       <span class="description"
         >amount of scores gained in the last `gainedDays` days, undefined if not
@@ -46,7 +46,7 @@
       >
     </li>
     <li>
-      <span>gainedRanks</span>
+      <span>gainedRank</span>
       <code class="type-type">number | undefined</code>
       <span class="description"
         >amount of ranks gained in the last `gainedDays` days, undefined if not
@@ -220,7 +220,6 @@
     >/[date]/[category]/[country]/[ranks]
     <span class="method get" />
   </h4>
-
   <h5>Route parameters (positional)</h5>
   <ul>
     <li>
@@ -254,13 +253,11 @@
   <h5>Returns</h5>
   <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
 
-
   <h4 class="endpoint-url">
     /api/ranking/<span class="emphasis">gains</span
     >/[date]/[category]/[country]/[ranks]/[...days]
     <span class="method get" />
   </h4>
-
   <h5>Route parameters (positional)</h5>
   <ul>
     <li>
@@ -302,13 +299,11 @@
   <h5>Returns</h5>
   <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
 
-
   <h4 class="endpoint-url">
     /api/ranking/<span class="emphasis">countries</span
     >/[date]/[category]/[country]/[ranks]
     <span class="method get" />
   </h4>
-
   <h5>Route parameters (positional)</h5>
   <ul>
     <li>
@@ -345,11 +340,7 @@
 
 <style>
   main {
-    padding: 0.5rem 4%;
-  }
-
-  h5 {
-    margin-bottom: 0.4rem;
+    padding: 0.5rem 2.5%;
   }
 
   .description-main {
@@ -368,7 +359,7 @@
     background-color: rgba(0, 0, 0, 0.3);
   }
   .method {
-    padding: 2px 5px;
+    padding: 5px;
     border-radius: 999px;
   }
   .method.get {

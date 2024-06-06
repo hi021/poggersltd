@@ -1,57 +1,48 @@
-
-// CONVERT ALL JSONS IN V2 FORMAT (old poggers.ltd - the react one) INTO CURRENT V3.1 FORMAT
-// INPUT ./archive-old/ -> OUTPUT ./archive-new/
-
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
 import { getDaysBetweenDates } from './shared.js';
 import * as dotenv from 'dotenv';
-import * as glob from 'glob';
+import glob from 'glob';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
-//change to POSIX paths to use with glob
-const inputDir = path.resolve(__dirname, 'archive-old').replace(/\\/g, "/");
-const outputDir = path.resolve(__dirname, 'archive-new').replace(/\\/g, "/");
+const inputDir = path.resolve(__dirname, 'archive-old');
+const outputDir = path.resolve(__dirname, 'archive-new');
 
 try {
 	const client = await MongoClient.connect(process.env.DB_URI);
 	const playersDatabase = await client
-		.db(process.env.DB_NAME)
+		.db(process.env.DB_NAME_OTHER)
 		.collection('players')
 		.find()
 		.toArray();
-	
-	// load all players from the db into Map<osu! id, player object> to get current names from later
 	const playersMap = new Map();
 	for (const i of playersDatabase) playersMap.set(i._id, i);
 
-	const globRes = glob.globSync(inputDir + '/*.json');
+	const globRes = glob.sync(inputDir + '\\*.json');
 	const inputDirLen = inputDir.length;
-	const inputFileLen = '/2022-01-01'.length;
-	console.log("Found " + globRes.length + " file(s)")
-	
-	let prevDate = ''; // last read date - used to set gains
-	let prevPlayers; // ?? - used to set gains
-	// read all jsons from archive-old
+
+	let prevDate = '';
+	let prevPlayers;
+
 	for (const i of globRes) {
-		const date = i.slice(inputDirLen + 1, inputDirLen + inputFileLen);
+		const date = i.slice(inputDirLen + 1, inputDirLen + '2022-01-01'.length + 1); //inputDirLen + 1 because of the slash
 		console.log('Converting ' + date);
 		const fileJson = JSON.parse(fs.readFileSync(i));
-		const convertedPlayersArr = new Array(fileJson.length);
+		const fileConverted = new Array(fileJson.length);
 
 		const dateDiff = prevDate ? getDaysBetweenDates(new Date(date), new Date(prevDate)) : 0;
 		if (dateDiff > 1) console.log('Date difference for gains is ' + dateDiff);
-		const convertedPlayersMap = new Map();
+		const players = new Map();
 
 		for (const j in fileJson) {
 			const plr = fileJson[j];
 			const _id = plr._id;
 
-			// get current name from playersDatabase, otherwise set from read file
+			//get current name from playersDatabase
 			const curName = playersMap.get(_id)?.name;
 			const plrConverted = {
 				_id,
@@ -59,41 +50,45 @@ try {
 				rank: plr.pos,
 				country: plr.cntr,
 				countryRank: plr.cntrPos,
-				scores: plr.t50
+				value: plr.t50
 			};
 
-			// set gains because older jsons don't have them (can also do with a different script afterwards)
-			const prevPlr = prevPlayers?.get(_id);
+			//set gains because older jsons don't have them
+			const prevPlr = prevPlayers && prevPlayers.get(_id);
 			if (prevPlr) {
-				const prevValue = prevPlr.scores;
+				const prevValue = prevPlr.value;
 				const prevRank = prevPlr.rank;
-				plrConverted.gainedScores = prevValue ? plr.t50 - prevValue : undefined;
-				plrConverted.gainedRanks = prevRank ? prevRank - plr.pos : undefined; //reversed because (+1 is like 100 -> 99 for ranks)
+				plrConverted.gained = prevValue ? plr.t50 - prevValue : undefined;
+				plrConverted.gainedRank = prevRank ? prevRank - plr.pos : undefined; //reversed because (+1 is 100 -> 99 etc.)
 				if (dateDiff > 1) plrConverted.gainedDays = dateDiff;
 			}
 
-			convertedPlayersMap.set(plr._id, plrConverted);
-			convertedPlayersArr[j] = plrConverted;
+			players.set(plr._id, plrConverted);
+			fileConverted[j] = plrConverted;
 		}
 
-		const convertedFile = {top50: convertedPlayersArr};
-		const outPath = path.join(outputDir, date + ".json");
-		if (fs.existsSync(outPath)) console.log('File already exists, skipping writing');
-		else fs.writeFileSync(outPath, JSON.stringify(convertedFile));
+		const dirPath = path.join(outputDir, date);
+		if (fs.existsSync(dirPath)) console.log('Directory exists, skipping writing');
+		else {
+			fs.mkdirSync(dirPath);
+			fs.writeFileSync(path.join(dirPath, 'top50.json'), JSON.stringify(fileConverted));
+		}
 
-		const coll = client.db(process.env.DB_NAME).collection("rankings");
-		const insertRes = await coll.insertOne({ _id: date, ...convertedFile });
+		const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
+		const insertRes = await coll.insertOne({ _id: 'top50', ranking: fileConverted });
 		console.log(insertRes);
 		await coll.createIndexes([
-			{ key: { 'top50._id': -1 } },
-			{ key: { 'top50.rank': 1 } },
-			{ key: { 'top50.country': -1 } },
-			{ key: { 'top50.countryRank': -1 } },
-			{ key: { 'top50.gainedScores': -1 } }
+			{ key: { 'ranking._id': -1 } },
+			{ key: { 'ranking.country': -1 } },
+			{
+				key: { 'ranking.rank': 1 }
+			},
+			{ key: { 'ranking.gained': -1 } },
+			{ key: { 'ranking.countryRank': -1 } }
 		]);
 
 		prevDate = date;
-		prevPlayers = convertedPlayersMap;
+		prevPlayers = players;
 	}
 
 	client.close();

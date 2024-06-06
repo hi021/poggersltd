@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Loader from '$lib/components/Loader.svelte';
-	import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight, tooltip } from '$lib/util';
+	import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight } from '$lib/util';
 	import { onMount } from 'svelte';
 	import type { PageData } from '../$types';
 
@@ -20,7 +20,7 @@
 	<Loader sticky={true} />
 {:then data}
 	<div class="user-header row flex-center">
-		<a use:tooltip={"osu! profile"} href="https://osu.ppy.sh/users/{data.user.id}">
+		<a title="osu! profile" href="https://osu.ppy.sh/users/{data.user.id}">
 			<img class="osu-avatar-small" alt="" src={getAvatarURL(data.user.id)} />
 		</a>
 		<span style="font-size: 1.125rem; margin: 0 12px;">{data.user.name}</span>
@@ -28,7 +28,7 @@
 			class="osu-flag-small"
 			alt={data.user.country}
 			src="/flags/{data.user.country}.svg"
-			use:tooltip={COUNTRIES[data.user.country] || data.user.country}
+			title={COUNTRIES[data.user.country] || data.user.country}
 		/>
 	</div>
 

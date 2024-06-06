@@ -1,10 +1,13 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './[country]/[ranks]/[...extra]/$types';
+import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ params, fetch }) => {
+export const load: PageLoad = async ({
+	params,
+	fetch
+}): Promise<{ rankingData: App.Ranking[] }> => {
 	try {
 		const res = await fetch(
-			`/api/ranking/countries/${params.date}/${params.category}/${params.country}/${params.ranks}/${params.extra}`,
+			`/api/ranking/players/${params.date}/${params.category}/${params.country}/${params.ranks}/${params.extra}`,
 			{
 				headers: {
 					accept: 'application/json'

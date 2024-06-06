@@ -1,9 +1,3 @@
-
-//works on converted files (v3)
-//gets all jsons in order and sets gained, gainedRank, and gainedDays fields
-//saves all jsons and attempts to add them to the db
-//was used to fix gains not being set properly on days between v2 and v3
-
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -15,14 +9,17 @@ import glob from 'glob';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
-const inputDir = path.resolve(__dirname, 'archive').replace(/\\/g, "/");
+const inputDir = path.resolve(__dirname, 'archive');
 const outputDir = path.resolve(__dirname, 'archive-aftergains');
 
+//works on converted files (v3)
+//gets all jsons in order and sets gained, gainedRank, and gainedDays fields
+//saves all jsons and attempts to add them to the db
+//was used to fix gains not being set properly on days between v2 and v3
 try {
 	const client = await MongoClient.connect(process.env.DB_URI);
 
-	//was only top50 !!!!
-	const globDirectories = glob.sync(inputDir + '\\*.json');
+	const globDirectories = glob.sync(inputDir + '\\20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\\top50.json');
 	const inputDirLen = inputDir.length;
 
 	let prevDate = '';
@@ -63,7 +60,7 @@ try {
 			fs.writeFileSync(path.join(outputPath, 'top50.json'), JSON.stringify(fileConverted));
 		}
 
-		const coll = client.db(process.env.DB_NAME).collection(date);
+		const coll = client.db(process.env.DB_NAME_RANKING).collection(date);
 		const insertRes = await coll.updateOne(
 			{ _id: 'top50' },
 			{ $set: { ranking: fileConverted } },

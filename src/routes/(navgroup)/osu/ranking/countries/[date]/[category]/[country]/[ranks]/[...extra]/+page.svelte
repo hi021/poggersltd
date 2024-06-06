@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
 	import { formatNumber, COUNTRIES } from '$lib/util';
-	import type { PageData } from './[country]/[ranks]/[...extra]/$types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 

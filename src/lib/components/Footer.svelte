@@ -1,6 +1,6 @@
 <footer>
-	<p>Poggers Limited 2024</p>
-	<small> v2024-06-01 </small>
+	<p>Poggers Limited 2022</p>
+	<small> v2022-11-07 </small>
 </footer>
 
 <style>

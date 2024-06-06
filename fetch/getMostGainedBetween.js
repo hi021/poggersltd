@@ -28,7 +28,7 @@ for (const i of categories) {
 const client = await MongoClient.connect(process.env.DB_URI);
 
 const startData = await client
-	.db(process.env.DB_NAME)
+	.db(process.env.DB_NAME_RANKING)
 	.collection(startDate)
 	.find({ _id: { $in: categories } })
 	.toArray();
@@ -38,7 +38,7 @@ if (!startData?.[0]?.ranking?.length) {
 }
 
 const endData = await client
-	.db(process.env.DB_NAME)
+	.db(process.env.DB_NAME_RANKING)
 	.collection(endDate)
 	.find({ _id: { $in: categories } })
 	.toArray();

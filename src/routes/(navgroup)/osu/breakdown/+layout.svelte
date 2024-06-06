@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import Switch from '$lib/components/Switch.svelte';
 	import UserSearch from '$lib/components/UserSearch.svelte';
-    import { tooltip } from '$lib/util';
 
 	let singleRank = false;
 	let rank: number;
@@ -23,7 +22,7 @@
 <main class="flex-fill column" style="padding: 0 3.5%">
 	<form class="row" spellcheck="false" on:submit|preventDefault={() => gotoPlayerForce(username)}>
 		<UserSearch {gotoPlayer} {gotoPlayerForce} bind:value={username} />
-		<select bind:value={mode} use:tooltip={"Game mode"} class="input-dark">
+		<select bind:value={mode} title="Game mode" class="input-dark">
 			<option value="0">osu!</option>
 			<option value="1">taiko</option>
 			<option value="2">catch</option>
@@ -34,7 +33,7 @@
 				class="input-dark"
 				type="number"
 				placeholder="Rank (1-100)"
-				use:tooltip={"Score rank"}
+				title="Score rank"
 				min="1"
 				max="100"
 				bind:value={rank}

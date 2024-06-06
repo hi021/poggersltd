@@ -5,7 +5,6 @@ node_modules
 /package
 /fetch/archive*
 /fetch/stats*
-/fetch/OLD*
 .env
 .env.*
 !.env.example

@@ -4,7 +4,7 @@
 	import { browser } from '$app/environment';
 	//@ts-ignore
 	import * as Pancake from '@sveltejs/pancake';
-	import { COUNTRIES, formatNumber, getAvatarURL, RANKING_BADGES, tooltip } from '$lib/util';
+	import { COUNTRIES, formatNumber, getAvatarURL, RANKING_BADGES } from '$lib/util';
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
@@ -47,11 +47,11 @@
 								class="osu-badge"
 								alt="<3"
 								src={RANKING_BADGES[plr._id].img}
-								use:tooltip={RANKING_BADGES[plr._id].title}
+								title={RANKING_BADGES[plr._id].title}
 							/>
 						{/if}
 						{#if plr.oldName?.length}
-							<div class="icon icon-profile-name" use:tooltip={plr.oldName.join(', ')} />
+							<div class="icon icon-profile-name" title={plr.oldName.join(', ')} />
 						{/if}
 					</div>
 					<div id="top-bar-bottom" class="row">
@@ -70,7 +70,7 @@
 					<a
 						target="_blank"
 						href="https://osu.ppy.sh/users/{plr._id}"
-						use:tooltip={"osu! profile"}
+						title="osu! profile"
 						rel="noreferrer"><span class="icon icon-osu" /></a
 					>
 				</div>
@@ -159,19 +159,19 @@
 								<div class="stats-container">
 									{#if plr[category].mostGained}
 										<span class="stat-name left"> most gained </span>
-										<span class="stat-value" use:tooltip={plr[category].mostGained.date}>
+										<span class="stat-value" title={plr[category].mostGained.date}>
 											{formatNumber(plr[category].mostGained.value)}
 										</span>
 									{/if}
 									{#if plr[category].peak}
 										<span class="stat-name left"> peak </span>
-										<span class="stat-value" use:tooltip={plr[category].peak.date}>
+										<span class="stat-value" title={plr[category].peak.date}>
 											{formatNumber(plr[category].peak.value)}
 										</span>
 									{/if}
 									{#if plr[category].lowest}
 										<span class="stat-name left"> lowest </span>
-										<span class="stat-value" use:tooltip={plr[category].lowest.date}>
+										<span class="stat-value" title={plr[category].lowest.date}>
 											{formatNumber(plr[category].lowest.value)}
 										</span>
 									{/if}
