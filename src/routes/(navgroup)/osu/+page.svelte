@@ -19,7 +19,7 @@
     <div class="logo-letter" style="color: #ff82e3;">r</div>
     <div class="logo-letter" style="color: #5cc4ff;">s</div>
   </div>
-  <UserSearch {gotoPlayer} gotoPlayerKey={gotoPlayer} />
+  <UserSearch {gotoPlayer} gotoPlayerForce={gotoPlayer} />
 </main>
 
 <style>

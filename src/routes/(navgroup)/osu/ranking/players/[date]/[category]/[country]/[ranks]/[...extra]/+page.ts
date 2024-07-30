@@ -9,8 +9,6 @@ export const load: PageLoad = async ({
     const url = `/api/ranking/players/${params.date}/${params.category}/${params.country}/${params.ranks}/${params.extra}`;
     const res = await fetch(url);
 
-    console.log(url, res);
-
     if (!res.ok) {
       if (res.status == 400) return { rankingData: [] };
       throw error(500, res.statusText || "Oopsie");

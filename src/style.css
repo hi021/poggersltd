@@ -110,7 +110,7 @@ button {
   color: var(--color-darkest);
   text-decoration: none;
   font-size: 1rem;
-  border: 1px solid var(--color-darkest);
+  border: none;
   border-radius: 0.4rem;
   background-color: hsl(var(--clr));
   border-color: hsl(var(--clr));
@@ -201,7 +201,7 @@ button[disabled] {
 .tippy-box:is([data-theme~="default"], [data-theme~="large"]) {
   background-color: var(--color-darkest);
   color: var(--color-lightest);
-  font-size: 0.5rem;
+  font-size: 0.875rem;
   text-align: center;
 }
 .tippy-box:is([data-theme~="default"], [data-theme~="large"])[data-placement^="top"]

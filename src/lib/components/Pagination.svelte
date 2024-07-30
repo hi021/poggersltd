@@ -2,6 +2,8 @@
   export let page: number;
   export let maxPage: number;
   export let onPageChange: (newPage: number) => void;
+  export let showPageNumber = true;
+  export let style = "";
 </script>
 
 <div class="column flex-center" style:gap="2px" {style}>
@@ -35,12 +37,12 @@
   }
   button {
     color: inherit;
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 6px 12px;
     user-select: none;
     cursor: pointer;
   }
   button:not([disabled]):hover {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.9);
   }
 </style>

@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit";
-import { DB_URI, DB_NAME_OTHER } from "$env/static/private";
+import { DB_URI, DB_NAME } from "$env/static/private";
 import { MongoClient } from "mongodb";
 import type { RequestHandler } from "./$types";
 
@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
   const projection = queryParams.get("full") ? { nameKey: 0 } : { _id: 1, name: 1 };
 
   const client = await MongoClient.connect(DB_URI);
-  const coll = client.db(DB_NAME_OTHER).collection("players");
+  const coll = client.db(DB_NAME).collection("players");
 
   try {
     const res = await coll

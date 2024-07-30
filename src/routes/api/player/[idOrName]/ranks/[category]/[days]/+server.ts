@@ -1,9 +1,11 @@
 /* eslint-disable no-async-promise-executor */
 import { error } from "@sveltejs/kit";
-import { DB_URI, DB_NAME_RANKING } from "$env/static/private";
+import { DB_URI, DB_NAME } from "$env/static/private";
 import { MongoClient } from "mongodb";
 import type { RequestHandler } from "./$types";
 import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
+
+// TODO
 
 //get `category` count from last `days`
 //returns Array<{rank, value, day}> with length of `days`
@@ -18,7 +20,7 @@ export const GET: RequestHandler = async ({ params }) => {
   const playerId = Number(params.idOrName); //must be id!
 
   const client = await MongoClient.connect(DB_URI);
-  const db = client.db(DB_NAME_RANKING);
+  const db = client.db(DB_NAME);
   const scoresArray = new Array(days);
   const promises = new Array(days);
   const project = {

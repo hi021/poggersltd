@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ params }) => {
   try {
     if (!isNaN(idOrNameNumber)) {
       //look by id
-      const res = await coll.findOne({ _id: idOrNameNumber }, { projection: { nameKey: 0 } });
+      const res = await coll.findOne({ _id: idOrNameNumber as any }, { projection: { nameKey: 0 } });
       if (res) return new Response(JSON.stringify(res));
     }
     //look by name
