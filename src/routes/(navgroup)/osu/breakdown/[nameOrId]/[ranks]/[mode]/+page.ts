@@ -1,8 +1,8 @@
-import { error } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit";
 
 export const load = async () => {
   throw error(505, "Not Implemented");
-}
+};
 
 // /* eslint-disable no-async-promise-executor */
 // import { error } from "@sveltejs/kit";
@@ -82,5 +82,3 @@ export const load = async () => {
 //     console.timeEnd("breakdown/" + params.nameOrId);
 //   }
 // };
-
-

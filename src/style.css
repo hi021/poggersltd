@@ -56,7 +56,7 @@ select,
 textarea {
   margin-bottom: 0;
   padding: 4px;
-  border-radius: 0.25rem;
+  border-radius: 8px;
   font-weight: 400;
   color: #495057;
   background-color: #fff;
@@ -68,10 +68,7 @@ textarea {
     border-color 0.1s ease-in-out,
     box-shadow 0.1s ease-in-out;
 }
-/* can't use :is() in global sheets;; */
-input:focus,
-select:focus,
-textarea:focus {
+:is(input, select, textarea):focus {
   border-color: #80bdff;
   outline: 0;
   box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
@@ -90,6 +87,15 @@ textarea {
 fieldset {
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 3px;
+}
+
+.vr {
+  width: 2px;
+  margin: 16px 12px;
+  border-radius: 9999px;
+  background-color: var(--color-lighter);
+  opacity: 0.325;
+  transform: translateX(-1px);
 }
 
 .input-dark {

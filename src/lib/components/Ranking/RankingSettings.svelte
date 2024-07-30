@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import Switch from "./Switch.svelte";
+  import Switch from "../Switch.svelte";
 
   export let settings: App.RankingSettings;
   export let style = "";

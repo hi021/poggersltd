@@ -1,6 +1,8 @@
 import { PUBLIC_SOCKET_PORT } from "$env/static/public";
 import { Server } from "socket.io";
 
+// TODO waiting for official socket.io support... would have to use express atm
+
 const io = new Server(Number(PUBLIC_SOCKET_PORT));
 let senko = 0;
 

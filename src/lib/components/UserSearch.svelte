@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { onMount, onDestroy, tick } from "svelte";
+  import { onMount, tick } from "svelte";
   import { getAvatarURL } from "$lib/util";
-  import { browser } from "$app/environment";
 
   let searchInputElement: HTMLInputElement;
   let autocompleteEntries: Array<{ _id: number; name: string }> = [];
@@ -30,12 +29,14 @@
     }
   }
 
-  onMount(async () => {
+  onMount(() => {
     addEventListener("click", handleClick);
-    await tick();
-    searchInputElement.focus();
+    tick().then(() => searchInputElement.focus());
+
+    return () => {
+      removeEventListener("click", handleClick);
+    };
   });
-  onDestroy(() => browser && removeEventListener("click", handleClick));
 </script>
 
 <div class="search-input-wrapper input-dark row">

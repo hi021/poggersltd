@@ -1,11 +1,14 @@
 declare namespace App {
-  // interface Locals {}
-  // interface PageData {}
-  // interface Error {}
-  // interface Platform {}
+  // Database structure:
+  // DATABASE poggersltd
+  //    COLLECTION rankings | index by: _id, country, rank, countryRank, gainedScores
+  //      DOCUMENT every ranking date: {_id: date, top50, top25, top8, top1}
+  //    COLLECTION players
+  //      DOCUMENT every player {_id: osu! id}
+  //    COLLECTION ...
 
   type RankingCategory = "top50" | "top25" | "top8" | "top1";
-  type RankingCategoryAll = RankingCategory | "top100" | "top15"; //only saved in .jsons, not in database
+  type AllRankingCategory = RankingCategory | "top100" | "top15"; //only saved in .jsons, not in database
   //playersdb - simply hold every player (as Player type) with current PlayerRankings for every Ranking category
   //index by _id, name, country, oldName for searching, rank and countryRank for every category for fetching
   interface PlayerInfoCommon {
@@ -15,15 +18,15 @@ declare namespace App {
   }
   type PlayerInfoFull = PlayerInfoCommon & {
     nameKey: string; //n-gram index for searching by partial usernames (e.g. wim wimp wimpn)
-    oldName?: string[]; //all previous osu! usernames
+    oldName?: string[]; //set of all previous osu! usernames (saved as array)
   };
   interface PlayerRankingCommon {
-    value: number; //amount of scores
     rank: number; //global rank in given scores ranking
+    scores: number; //amount of scores
     countryRank: number;
-    gained?: number; //amount of scores gained in the last `gainedDays` days, undefined if not in previous ranking archive
-    gainedRank?: number; //amount of ranks gained in the last `gainedDays` days, undefined if not in previous ranking archive
-    gainedDays?: number; //defaults to 1, only set in case of a gap in archive entries
+    gainedScores?: number; //amount of scores gained in the last `gainedDays` days, undefined if not in previous ranking archive
+    gainedRanks?: number; //amount of ranks gained in the last `gainedDays` days, undefined if not in previous ranking archive
+    gainedDays?: number; //days since previous ranking entry defaults to 1, only set otherwise in case of a gap in archive entries
   }
   type PlayerRankingFull = PlayerRankingCommon & {
     date: string; //YYYY-MM-DD day from which the data was taken
@@ -31,11 +34,11 @@ declare namespace App {
     peak?: { date: string; value: number };
     lowest?: { date: string; value: number };
   };
-  type Player = PlayerInfoFull & { [ranking in RankingCategory]?: PlayerRankingFull };
+  type Player = PlayerInfoFull & {
+    [ranking in RankingCategory]?: PlayerRankingFull;
+  };
 
-  //rankingdb - for every date have 4 RankingCategory objects with a Ranking type for every player {_id: "top50", ranking: Ranking[]}
-  //index by id, country, rank, countryRank, gained
-  type Ranking = PlayerInfoCommon & PlayerRankingCommon;
+  type RankingEntry = PlayerInfoCommon & PlayerRankingCommon;
 
   interface CountryRanking {
     country: string;

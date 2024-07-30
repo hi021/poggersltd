@@ -1,10 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { PUBLIC_SOCKET_PORT, PUBLIC_SOCKET_URI } from "$env/static/public";
+  import { PUBLIC_SOCKET_URI } from "$env/static/public";
   import ioClient from "socket.io-client";
 
   const socket = ioClient(PUBLIC_SOCKET_URI);
-  console.log(PUBLIC_SOCKET_URI);
 
   let curCount = 0;
   let localCount = 0;
@@ -86,6 +85,7 @@
     z-index: 1;
   }
   #counter {
+    cursor: default;
     top: 5%;
   }
   #click-text {

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import RankingGainedRanks from "$lib/components/RankingGainedRanks.svelte";
-  import RankingSettings from "$lib/components/RankingSettings.svelte";
-  import RankingAvatar from "$lib/components/RankingAvatar.svelte";
-  import RankingEmpty from "$lib/components/RankingEmpty.svelte";
-  import RankingName from "$lib/components/RankingName.svelte";
+  import RankingGainedRanks from "$lib/components/Ranking/RankingGainedRanks.svelte";
+  import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
+  import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
+  import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
+  import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import Pagination from "$lib/components/Pagination.svelte";
   import Loader from "$lib/components/Loader.svelte";
   import type { PageData } from "./$types";

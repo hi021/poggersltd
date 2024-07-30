@@ -6,13 +6,13 @@ export const load: PageLoad = async ({
   fetch
 }): Promise<{ rankingData: App.RankingEntry[] }> => {
   try {
-    const url = `/api/ranking/gains/${params.date}/${params.category}/${params.country}/${params.ranks}/${params.extra}`;
+    const url = `/api/ranking/gains/${params.date}/${params.category ?? "top50"}/${params.country ?? "all"}/${params.ranks}/${params.extra}`;
     const res = await fetch(url, { headers: { accept: "application/json" } });
-    // if (!res.ok) {
-    // 	console.error(res)
-    // 	if (res.status == 400) return { rankingData: [] };
-    // 	throw error(res.status, res.statusText || 'Oopsie');
-    // }
+    if (!res.ok) {
+      console.error(res);
+      if (res.status == 400) return { rankingData: [] };
+      throw error(res.status, res.statusText || "Oopsie");
+    }
 
     const resJson = await res.json();
     return { rankingData: resJson };
