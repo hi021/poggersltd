@@ -19,9 +19,7 @@
     <li>
       <span>date</span>
       <code class="type-type">string</code>
-      <span class="description"
-        >YYYY-MM-DD day from which the data was taken</span
-      >
+      <span class="description"> YYYY-MM-DD day from which the data was taken </span>
     </li>
     <li>
       <span>value</span>
@@ -41,49 +39,40 @@
       <span>gained</span>
       <code class="type-type">number | undefined</code>
       <span class="description"
-        >amount of scores gained in the last `gainedDays` days, undefined if not
-        in previous ranking archive</span
-      >
+        >amount of scores gained in the last `gainedDays` days, undefined if not in previous ranking
+        archive</span>
     </li>
     <li>
       <span>gainedRank</span>
       <code class="type-type">number | undefined</code>
       <span class="description"
-        >amount of ranks gained in the last `gainedDays` days, undefined if not
-        in previous ranking archive</span
-      >
+        >amount of ranks gained in the last `gainedDays` days, undefined if not in previous ranking
+        archive</span>
     </li>
     <li>
       <span>gainedDays</span>
       <code class="type-type">number | undefined</code>
-      <span class="description"
-        >defaults to 1, only set in case of a gap in archive entries</span
-      >
+      <span class="description">defaults to 1, only set in case of a gap in archive entries</span>
     </li>
     <li>
       <span>mostGained</span>
       <code
         >{"{date: "}<code class="type-type">string</code>, value:
-        <code class="type-type">number</code>{"}"}</code
-      >
-      <span class="description"
-        >value is most gained scores in one day, date is YYYY-MM-DD</span
-      >
+        <code class="type-type">number</code>{"}"}</code>
+      <span class="description">value is most gained scores in one day, date is YYYY-MM-DD</span>
     </li>
     <li>
       <span>peak</span>
       <code
         >{"{date: "}<code class="type-type">string</code>, value:
-        <code class="type-type">number</code>{"}"}</code
-      >
+        <code class="type-type">number</code>{"}"}</code>
       <span class="description">highest score count</span>
     </li>
     <li>
       <span>lowest</span>
       <code
         >{"{date: "}<code class="type-type">string</code>, value:
-        <code class="type-type">number</code>{"}"}</code
-      >
+        <code class="type-type">number</code>{"}"}</code>
       <span class="description">lowest score count</span>
     </li>
   </ul>
@@ -108,9 +97,7 @@
     <li>
       <span>oldName</span>
       <code class="type-type">string[]</code>
-      <span class="description"
-        >previous osu! usernames (from when the player was tracked)</span
-      >
+      <span class="description">previous osu! usernames (from when the player was tracked)</span>
     </li>
   </ul>
 
@@ -125,15 +112,12 @@
   <ul>
     <li>
       <code class="type-type"
-        >{"PlayerInfo & { [ranking in RankingCategory]?: PlayerRanking }"}</code
-      >
+        >{"PlayerInfo & { [ranking in RankingCategory]?: PlayerRanking }"}</code>
     </li>
   </ul>
 
   <span class="type-name">CountryRanking</span>
-  <p class="description-main">
-    Used for country rankings at /api/ranking/countries
-  </p>
+  <p class="description-main">Used for country rankings at /api/ranking/countries</p>
   <ul>
     <li>
       <span>country</span>
@@ -143,30 +127,22 @@
     <li>
       <span>total</span>
       <code class="type-type">number</code>
-      <span class="description"
-        >total amount of given scores for the country</span
-      >
+      <span class="description">total amount of given scores for the country</span>
     </li>
     <li>
       <span>players</span>
       <code class="type-type">number</code>
-      <span class="description"
-        >total amount of players tracked in the country</span
-      >
+      <span class="description">total amount of players tracked in the country</span>
     </li>
     <li>
       <span>average</span>
       <code class="type-type">number</code>
-      <span class="description"
-        >average amount of given scores for the country</span
-      >
+      <span class="description">average amount of given scores for the country</span>
     </li>
     <li>
       <span>weighted</span>
       <code class="type-type">number</code>
-      <span class="description"
-        >weighted amount of given scores for the country</span
-      >
+      <span class="description">weighted amount of given scores for the country</span>
     </li>
   </ul>
 
@@ -196,9 +172,7 @@
     <li>
       <span>value</span>
       <code class="type-type">number</code>
-      <span class="description"
-        >number of scores total from the day after the gains</span
-      >
+      <span class="description">number of scores total from the day after the gains</span>
     </li>
     <li>
       <span>gained</span>
@@ -216,8 +190,7 @@
 
   <h2>Endpoints</h2>
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">players</span
-    >/[date]/[category]/[country]/[ranks]
+    /api/ranking/<span class="emphasis">players</span>/[date]/[category]/[country]/[ranks]
     <span class="method get" />
   </h4>
   <h5>Route parameters (positional)</h5>
@@ -225,9 +198,7 @@
     <li>
       <span>date</span>
       <code class="type-type">string</code>
-      <span class="description"
-        >YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span
-      >
+      <span class="description">YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span>
     </li>
     <li>
       <span>category</span>
@@ -238,24 +209,20 @@
       <span>country</span>
       <code class="type-type">string</code>
       <span class="description"
-        >2-letter country code to show players only from given country or "all"</span
-      >
+        >2-letter country code to show players only from given country or "all"</span>
     </li>
     <li>
       <span>ranks</span>
       <code class="type-type">string</code>
       <span class="description"
-        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all
-        players</span
-      >
+        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all players</span>
     </li>
   </ul>
   <h5>Returns</h5>
   <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
 
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">gains</span
-    >/[date]/[category]/[country]/[ranks]/[...days]
+    /api/ranking/<span class="emphasis">gains</span>/[date]/[category]/[country]/[ranks]/[...days]
     <span class="method get" />
   </h4>
   <h5>Route parameters (positional)</h5>
@@ -263,9 +230,7 @@
     <li>
       <span>date</span>
       <code class="type-type">string</code>
-      <span class="description"
-        >YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span
-      >
+      <span class="description">YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span>
     </li>
     <li>
       <span>category</span>
@@ -276,32 +241,27 @@
       <span>country</span>
       <code class="type-type">string</code>
       <span class="description"
-        >2-letter country code to show players only from given country or "all"</span
-      >
+        >2-letter country code to show players only from given country or "all"</span>
     </li>
     <li>
       <span>ranks</span>
       <code class="type-type">string</code>
       <span class="description"
-        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all
-        players</span
-      >
+        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all players</span>
     </li>
     <li>
       <span>days</span>
       <code class="type-type">number</code>
       <span class="description"
-        >number of days to go back (defaults to 1), will return an empty array
-        if there is no archive entry given days ago</span
-      >
+        >number of days to go back (defaults to 1), will return an empty array if there is no
+        archive entry given days ago</span>
     </li>
   </ul>
   <h5>Returns</h5>
   <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
 
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">countries</span
-    >/[date]/[category]/[country]/[ranks]
+    /api/ranking/<span class="emphasis">countries</span>/[date]/[category]/[country]/[ranks]
     <span class="method get" />
   </h4>
   <h5>Route parameters (positional)</h5>
@@ -309,9 +269,7 @@
     <li>
       <span>date</span>
       <code class="type-type">string</code>
-      <span class="description"
-        >YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span
-      >
+      <span class="description">YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span>
     </li>
     <li>
       <span>category</span>
@@ -322,16 +280,13 @@
       <span>country</span>
       <code class="type-type">string</code>
       <span class="description"
-        >2-letter country code to show players only from given country or "all"</span
-      >
+        >2-letter country code to show players only from given country or "all"</span>
     </li>
     <li>
       <span>ranks</span>
       <code class="type-type">string</code>
       <span class="description"
-        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all
-        players</span
-      >
+        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all players</span>
     </li>
   </ul>
   <h5>Returns</h5>

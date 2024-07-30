@@ -1,126 +1,97 @@
-import { error } from '@sveltejs/kit';
-import { DB_URI, DB_NAME_RANKING } from '$env/static/private';
-import { MongoClient, type Document } from 'mongodb';
-import type { RequestHandler } from './$types';
-import { addDate, formatDate, MIN_DATE, SCORE_CATEGORIES } from '$lib/util';
+import { dbRankings } from "$lib/db";
+import { addDate, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
+import type { RequestHandler } from "./$types";
+import { error } from "@sveltejs/kit";
+
+const sorting = (a: App.RankingEntry, b: App.RankingEntry) =>
+  (a.gainedScores as number) < (b.gainedScores as number) ? 1 : -1;
 
 export const GET: RequestHandler = async ({ params }) => {
-	const scoreCategory = params.category;
-	if (!scoreCategory || !SCORE_CATEGORIES.includes(scoreCategory))
-		throw error(400, 'Invalid ranking score category');
+  const scoreCategory = params.category;
+  if (!scoreCategory || !SCORE_CATEGORIES.includes(scoreCategory))
+    throw error(400, "Invalid ranking score category");
 
-	const MAX_DATE = formatDate();
-	const date = params.date === 'latest' ? MAX_DATE : params.date;
-	if (date < MIN_DATE) throw error(400, 'Invalid date: earliest is ' + MIN_DATE);
-	if (date > MAX_DATE) throw error(400, 'Invalid date: latest is ' + MAX_DATE);
+  const MAX_DATE = formatDate();
+  const date = params.date === "latest" ? MAX_DATE : params.date;
+  if (date < MIN_DATE) throw error(400, "Invalid date: earliest is " + MIN_DATE);
+  if (date > MAX_DATE) throw error(400, "Invalid date: latest is " + MAX_DATE);
 
-	try {
-		console.time('gains/' + date);
-		const client = await MongoClient.connect(DB_URI);
-		const coll = client.db(DB_NAME_RANKING).collection(date);
+  try {
+    console.time("gains/" + date);
 
-		const ranks = params.ranks.split('-');
-		const rankMin = Number(ranks[0]) ?? 0;
-		const rankMax = Number(ranks[1]) || Infinity;
+    const ranks = params.ranks.split("-");
+    const rankMin = Number(ranks[0]) ?? 0;
+    const rankMax = Number(ranks[1]) || Infinity;
+    const gainsDays = Number(params.extra) || 1;
 
-		const gainsDays = Number(params.extra) || 1;
+    const query: App.RankingQuery = { _id: params.date };
 
-		const query = [];
+    if (rankMin > 1 || rankMax < Infinity) query.rank = { $lte: rankMax, $gte: rankMin };
+    // all country codes should always be two uppercase letters
+    if (params.country?.length == 2) query.country = { $eq: params.country };
 
-		if (rankMin > 1 || rankMax < Infinity) {
-			query.push({ $lte: ['$$ranking.rank', rankMax] }, { $gte: ['$$ranking.rank', rankMin] });
-		}
-		if (params.country && params.country.toLowerCase() !== 'all') {
-			query.push({
-				$eq: ['$$ranking.country', params.country]
-			});
-		}
+    const rankingDataEnd = (
+      await dbRankings.findOne(query, { projection: { [params.category]: 1 } })
+    )?.[params.category] as unknown as App.RankingEntry[];
+    if (!rankingDataEnd?.length) return new Response("[]");
 
-		const pipeline: Document[] = [
-			{
-				$match: {
-					_id: params.category
-				}
-			}
-		];
-		query.length &&
-			pipeline.push({
-				$project: {
-					ranking: {
-						$filter: {
-							input: '$ranking',
-							as: 'ranking',
-							cond: {
-								$and: query
-							}
-						}
-					}
-				}
-			});
+    // use gained field without having to send a request to another date
+    if (gainsDays === 1) {
+      // remove players without gained scores field
+      let removed = 0;
+      for (const i in rankingDataEnd)
+        if (rankingDataEnd[i].gainedScores == null) {
+          delete rankingDataEnd[i];
+          ++removed;
+        }
 
-		const sorting = (a: App.Ranking, b: App.Ranking) =>
-			(a.gained as number) < (b.gained as number) ? 1 : -1;
+      rankingDataEnd.sort(sorting);
+      rankingDataEnd.length -= removed;
 
-		const rankingDataEnd = (await coll.aggregate(pipeline).toArray())?.[0]
-			?.ranking as App.Ranking[];
-		if (!rankingDataEnd?.length) return new Response('[]');
+      return new Response(JSON.stringify(rankingDataEnd));
+    }
 
-		//use gained field without having to send another request
-		if (gainsDays === 1) {
-			//remove players without gains
-			let removed = 0;
-			for (const i in rankingDataEnd)
-				if (rankingDataEnd[i].gained == null) {
-					delete rankingDataEnd[i];
-					++removed;
-				}
+    const dateStart = addDate(new Date(date), -gainsDays);
+    const rankingDataStart = (
+      await dbRankings.findOne(
+        { ...query, _id: formatDate(dateStart) as any },
+        { projection: { [params.category]: 1 } }
+      )
+    )?.[params.category] as unknown as App.RankingEntry[];
+    if (!rankingDataStart?.length) return new Response("[]");
 
-			rankingDataEnd.sort(sorting);
-			rankingDataEnd.length -= removed;
+    const players = new Map();
+    for (const i of rankingDataStart) players.set(i._id, { scores: i.scores, rank: i.rank });
 
-			return new Response(JSON.stringify(rankingDataEnd));
-		}
+    for (const i of rankingDataEnd) {
+      const player = players.get(i._id);
+      if (!player) continue;
 
-		const dateStart = addDate(new Date(date), -gainsDays);
-		const collStart = client.db(DB_NAME_RANKING).collection(formatDate(dateStart));
-		const rankingDataStart = (await collStart.aggregate(pipeline).toArray())?.[0]
-			?.ranking as App.Ranking[];
-		if (!rankingDataStart?.length) return new Response('[]');
+      players.set(i._id, {
+        ...i,
+        gainedScores: i.scores - player.scores,
+        gainedRanks: player.rank - i.rank,
+        gainedDays: gainsDays
+      });
+    }
 
-		const players = new Map();
-		for (const i of rankingDataStart) {
-			players.set(i._id, { value: i.value, rank: i.rank });
-		}
-		for (const i of rankingDataEnd) {
-			const player = players.get(i._id);
-			if (!player) continue;
+    const playersArray = Array.from(players.values());
+    // remove players that are in start but not end ranking
+    let removed = 0;
+    for (const i in playersArray)
+      if (playersArray[i].gainedScores == null) {
+        delete playersArray[i];
+        ++removed;
+      }
 
-			players.set(i._id, {
-				...i,
-				gained: i.value - player.value,
-				gainedDays: gainsDays,
-				gainedRank: player.rank - i.rank
-			});
-		}
+    playersArray.sort(sorting);
+    playersArray.length -= removed;
 
-		const playersArray = Array.from(players.values());
-		//remove players in start but not end ranking
-		let removed = 0;
-		for (const i in playersArray)
-			if (playersArray[i].gained == null) {
-				delete playersArray[i];
-				++removed;
-			}
-
-		playersArray.sort(sorting);
-		playersArray.length -= removed;
-
-		return new Response(JSON.stringify(playersArray));
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} catch (e: any) {
-		console.error(e);
-		throw error(500, e?.message || 'Internal server error');
-	} finally {
-		console.timeEnd('gains/' + date);
-	}
+    return new Response(JSON.stringify(playersArray));
+  } catch (e: any) {
+    console.error(e);
+    throw error(500, e?.message || "Internal server error");
+  } finally {
+    console.timeEnd("gains/" + date);
+  }
 };
