@@ -17,10 +17,6 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 const inputDir = path.resolve(__dirname, "archive").replace(/\\/g, "/");
 const outputDir = path.resolve(__dirname, "archive-aftergains");
 
-//works on converted files (v3)
-//gets all jsons in order and sets gained, gainedRank, and gainedDays fields
-//saves all jsons and attempts to add them to the db
-//was used to fix gains not being set properly on days between v2 and v3
 try {
   const client = await MongoClient.connect(process.env.DB_URI);
 

@@ -15,12 +15,8 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 const inputDir = path.resolve(__dirname, "archive").replace(/\\/g, "/");
 const outputDir = path.resolve(__dirname, "archive-afterpeaks");
-const categoriesSkip = ["top100", "top15"]; //categories not in the db
+const categoriesSkip = ["top100", "top15"]; // categories not in the db
 
-//works on v3 files with set gains and gainsDays
-//also needs an up to date players database
-//used to set mostGained, peak, and lowest fields for all categories
-//saves the player json and attempts to update the db
 try {
   const client = await MongoClient.connect(process.env.DB_URI);
   const plrColl = client.db(process.env.DB_NAME).collection("players");

@@ -1,3 +1,8 @@
+// returns an object {category: Array<{id, name, country, value, gained, date}>}
+// used for osu! wrapped stats
+
+// TODO
+
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
@@ -14,9 +19,6 @@ const categories = ["top50"]; //score categories to count
 const maxPlayers = 500;
 const minGained = 60;
 const outputDir = "stats/most-gained-1day.json";
-
-//returns an object {category: Array<{id, name, country, value, gained, date}>}
-//used for osu! wrapped stats
 
 const arr = {};
 for (const i of categories) arr[i] = [];

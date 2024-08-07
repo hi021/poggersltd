@@ -6,7 +6,7 @@ import * as dotenv from "dotenv";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-export const categoriesDb = ["top50", "top25", "top8", "top1"]; //only the ones stored in db
+export const categoriesDb = ["top50", "top25", "top8", "top1"]; // only the ones stored in db
 
 export function formatDate(date) {
   if (!date) date = new Date();
@@ -18,7 +18,7 @@ export function formatDate(date) {
 
 export const getDaysBetweenDates = (d1, d2) => Math.floor((d1.getTime() - d2.getTime()) / 86400000);
 
-//for nameKey field (username search index)
+// for nameKey field (username search index)
 export function createNGram(str) {
   if (!str || str.length <= 3) return str;
 

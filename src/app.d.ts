@@ -2,15 +2,14 @@ declare namespace App {
   // Database structure:
   // DATABASE poggersltd
   //    COLLECTION rankings | index by: _id, country, rank, countryRank, gainedScores
-  //      DOCUMENT every ranking date: {_id: date, top50, top25, top8, top1}
-  //    COLLECTION players
-  //      DOCUMENT every player {_id: osu! id}
-  //    COLLECTION ...
+  //      DOCUMENT every ranking date:  {_id: date, top50: RankingEntry[], ..., top1: RankingEntry[]}
+  //    COLLECTION players  | index by: _id, name, country, oldName for searching, rank and countryRank per category for fetching
+  //      DOCUMENT every player         {...PlayerInfo, top50: PlayerRanking, ..., top1: PlayerRanking}
+  //    COLLECTION other    |
 
   type RankingCategory = "top50" | "top25" | "top8" | "top1";
   type AllRankingCategory = RankingCategory | "top100" | "top15"; //only saved in .jsons, not in database
-  //playersdb - simply hold every player (as Player type) with current PlayerRankings for every Ranking category
-  //index by _id, name, country, oldName for searching, rank and countryRank for every category for fetching
+
   interface PlayerInfoCommon {
     _id: number; //osu! id
     name: string; //current osu! username
@@ -21,12 +20,12 @@ declare namespace App {
     oldName?: string[]; //set of all previous osu! usernames (saved as array)
   };
   interface PlayerRankingCommon {
-    rank: number; //global rank in given scores ranking
-    scores: number; //amount of scores
+    rank: number; //global rank in given ranking category
+    scores: number; //amount of scores in given ranking category
     countryRank: number;
     gainedScores?: number; //amount of scores gained in the last `gainedDays` days, undefined if not in previous ranking archive
     gainedRanks?: number; //amount of ranks gained in the last `gainedDays` days, undefined if not in previous ranking archive
-    gainedDays?: number; //days since previous ranking entry defaults to 1, only set otherwise in case of a gap in archive entries
+    gainedDays?: number; //days since previous ranking entry, defaults to 1, only set otherwise in case of a gap in archive entries
   }
   type PlayerRankingFull = PlayerRankingCommon & {
     date: string; //YYYY-MM-DD day from which the data was taken
@@ -47,7 +46,7 @@ declare namespace App {
     average: number;
     weighted: number;
   }
-  //for the first loop in the API endpoint
+  // for the first loop in the API endpoint
   interface CountryRankingAPI {
     country?: string;
     total: number;
@@ -67,13 +66,13 @@ declare namespace App {
   }
 
   interface RankingSettings {
-    avatars: boolean; // true by default
-    scoreDifferences: boolean; // false by default
+    avatars: boolean; //true by default
+    scoreDifferences: boolean; //false by default
   }
 
   interface RankingQuery {
-    _id: any; // YYYY-MM-DD string entry date
-    country?: { $eq: string }; // 2 uppercase letter country code or "all"
-    rank?: { $lte: number; $gte: number }; // rankMin-rankMax
+    _id: any; //YYYY-MM-DD string entry date
+    country?: { $eq: string }; //2 uppercase letter country code or "all"
+    rank?: { $lte: number; $gte: number }; //rankMin - rankMax
   }
 }
