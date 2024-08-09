@@ -46,13 +46,13 @@ declare namespace App {
     average: number;
     weighted: number;
   }
-  // for the first loop in the API endpoint
+  // for the first loop in the API endpoint, average and country name get set afterward
   interface CountryRankingAPI {
     country?: string;
     total: number;
     players: number;
     average?: number;
-    weighted?: number;
+    weighted: number;
   }
 
   interface MostGainedRanking {
@@ -68,6 +68,7 @@ declare namespace App {
   interface RankingSettings {
     avatars: boolean; //true by default
     scoreDifferences: boolean; //false by default
+    perPage: number; //players per page
   }
 
   interface RankingQuery {

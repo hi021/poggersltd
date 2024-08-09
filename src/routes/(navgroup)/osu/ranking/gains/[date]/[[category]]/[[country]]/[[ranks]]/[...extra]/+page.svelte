@@ -9,6 +9,7 @@
   import Loader from "$lib/components/Loader.svelte";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
+  import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
 
   export let data: PageData;
   let pageData: App.RankingEntry[];
@@ -53,13 +54,7 @@
                 <RankingAvatar id={plr._id} />
               {/if}
 
-              <td style="width: 40px;">
-                <img
-                  class="osu-flag-small"
-                  alt={plr.country}
-                  title={COUNTRIES[plr.country]}
-                  src="/flags/{plr.country}.svg" />
-              </td>
+              <RankingCountry country={plr.country} />
 
               <RankingName category={$page.params.category} {plr} />
 

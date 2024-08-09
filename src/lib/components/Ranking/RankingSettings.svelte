@@ -20,6 +20,16 @@
       <Switch bind:checked={settings.scoreDifferences}>
         <span>Score differences</span>
       </Switch>
+      <label>
+        Players per page
+        <select bind:value={settings.perPage}>
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+          <option value={Infinity}>All</option>
+        </select>
+      </label>
     </div>
   {/if}
 </div>
@@ -34,14 +44,27 @@
   }
   .background {
     background-color: var(--color-darkest);
+    min-width: 15svw;
     padding: 12px;
     border-radius: 8px;
     gap: 8px;
   }
 
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  select {
+    width: max-content;
+  }
+
   .btn-icon {
-    font-size: 1.5em;
+    font-size: 1.75em;
     color: var(--color-lighter);
+  }
+  .btn-icon:focus {
+    box-shadow: none;
   }
   icon.settings {
     transition: transform 0.2s;

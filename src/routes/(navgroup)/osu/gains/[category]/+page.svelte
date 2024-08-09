@@ -2,7 +2,10 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import Loader from "$lib/components/Loader.svelte";
-  import { formatNumber, COUNTRIES, getAvatarURL, RANKING_BADGES, tooltip } from "$lib/util";
+  import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
+  import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
+  import RankingName from "$lib/components/Ranking/RankingName.svelte";
+  import { formatNumber, getAvatarURL, RANKING_BADGES, tooltip } from "$lib/util";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -89,19 +92,19 @@
   {#await data.rankingData}
     <Loader margin="2rem" sticky={true} />
   {:then data}
-    {#if !data?.length}
-      <p class="solo-text">No data for the given query</p>
+    {#if !data?.rankingData?.length}
+      <RankingEmpty />
     {:else}
       <table class="osu-table">
         <tbody>
-          {#each data as plr}
+          {#each data.rankingData as plr}
             <tr
               class:top-rank={plr._id <= 3}
               style="background-position: 50% {plr._id * 46 + 320}px;">
               <td style="width: 5.25ch;">
                 <strong>#{plr._id}</strong>
               </td>
-              {#if true}
+              {#if data.rankingSettings.avatars}
                 <td class="hide-width-640" style="width: 64px;">
                   <a
                     href="https://osu.ppy.sh/users/{plr.id}"
@@ -112,34 +115,11 @@
                   </a>
                 </td>
               {/if}
-              <td style="width: 40px;">
-                <img
-                  class="osu-flag-small"
-                  alt={plr.country}
-                  use:tooltip={{ content: COUNTRIES[plr.country] }}
-                  src="/flags/{plr.country}.svg" />
-              </td>
-              <td
-                class="osu-name-column"
-                on:click={() => goto(`/osu/player/${plr.name}/${$page.params.category}`)}
-                on:keypress={(e) => {
-                  if (e.key === "Enter") goto(`/osu/player/${plr.name}/${$page.params.category}`);
-                }}>
-                <div class="row">
-                  <span>
-                    {plr.name}
-                  </span>
-                  {#if RANKING_BADGES[plr.id]}
-                    <img
-                      class="osu-badge"
-                      alt="pog"
-                      src={RANKING_BADGES[plr.id].img}
-                      use:tooltip={{
-                        content: RANKING_BADGES[plr.id].title ?? ""
-                      }} />
-                  {/if}
-                </div>
-              </td>
+
+              <RankingCountry country={plr.country} />
+
+              <RankingName category={$page.params.category} {plr} />
+
               <td style="width: 25%;">
                 +{formatNumber(plr.gained ?? 0, " ")}
                 <small class="hide-width-640" style="margin-left: 8px;">

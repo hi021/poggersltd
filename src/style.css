@@ -147,6 +147,7 @@ button[disabled] {
 .btn-none,
 .btn-icon {
   padding: 0;
+  border-radius: 9999px;
   border: none;
   background: none;
   outline: none;
@@ -297,31 +298,44 @@ button[disabled] {
 }
 .osu-table tr {
   background-color: var(--color-darker);
-  transition:
-    background-color 0.2s,
-    margin 0.2s;
+  transition: background-color 0.2s;
 }
-.osu-table tr:first-child > td:first-child {
+.osu-table tr:first-child > td:first-child,
+.osu-table thead > th:first-child {
   border-top-left-radius: 8px;
+  overflow: hidden;
 }
-.osu-table tr:first-child > td:last-child {
+.osu-table tr:first-child > td:last-child,
+.osu-table thead > th:last-child {
   border-top-right-radius: 8px;
+  overflow: hidden;
 }
 .osu-table tr:last-child > td:first-child {
   border-bottom-left-radius: 8px;
+  overflow: hidden;
 }
 .osu-table tr:last-child > td:last-child {
   border-bottom-right-radius: 8px;
+  overflow: hidden;
 }
-/* .osu-table tr.top-rank {
-
-} */
+.osu-table tr.top-rank {
+  position: relative;
+}
+.osu-table tr.top-rank::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 4px;
+  background-color: var(--color-lighter);
+}
 .osu-table tr.osu-difference-column {
   background-color: rgba(255, 255, 255, 0.25);
 }
 .osu-table tr:not(.osu-difference-column):hover {
   margin: 0 15%;
-  background-color: color-mix(in srgb, var(--color-active) 20%, var(--color-darker));
+  background-color: color-mix(in srgb, var(--color-active) 25%, var(--color-darker));
 }
 .osu-table td {
   line-height: 1;
@@ -508,18 +522,21 @@ button[disabled] {
   flex: 1 1 auto;
 }
 
+.group {
+  --radius: 6px;
+}
 .group > * {
   border-radius: 0;
 }
 .group > *:first-child {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 .group > *:last-child {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }

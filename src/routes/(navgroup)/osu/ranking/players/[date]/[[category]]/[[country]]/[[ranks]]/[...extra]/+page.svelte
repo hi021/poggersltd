@@ -8,14 +8,16 @@
   import Loader from "$lib/components/Loader.svelte";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
-  import { formatNumber, COUNTRIES, addDate, formatDate, tooltip } from "$lib/util";
+  import { formatNumber, addDate, formatDate } from "$lib/util";
+  import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
 
   export let data: PageData;
   let pageData: App.RankingEntry[];
   let maxPage: number;
-  const perPage = 50;
+  let perPage: number;
   let curPage = 1;
 
+  $: perPage = data.rankingSettings.perPage;
   $: pageData = data.rankingData.slice(perPage * (curPage - 1), perPage * curPage);
   $: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
 </script>
@@ -26,8 +28,12 @@
 
 <main class="flex-fill column osu-main">
   <div class="flex-center" style="margin-top: 21px;">
-    {#if maxPage > 1}
-      <Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
+    {#if perPage > 25 && maxPage > 1}
+      <Pagination
+        page={curPage}
+        {maxPage}
+        onPageChange={(newPage) => (curPage = newPage)}
+        entries={data.rankingData.length} />
     {/if}
   </div>
 
@@ -66,17 +72,7 @@
                 <RankingAvatar id={plr._id} />
               {/if}
 
-              <td style="width: 4.25ch; text-align: end; padding-right: 3px;">
-                #{plr.countryRank}
-              </td>
-
-              <td style="width: 40px;">
-                <img
-                  class="osu-flag-small"
-                  alt={plr.country}
-                  use:tooltip={{ content: COUNTRIES[plr.country] }}
-                  src="/flags/{plr.country}.svg" />
-              </td>
+              <RankingCountry country={plr.country} countryRank={plr.countryRank} />
 
               <RankingName category={$page.params.category} {plr} />
 
@@ -106,6 +102,7 @@
           page={curPage}
           showPageNumber={true}
           style="margin-bottom: 21px;"
+          entries={data.rankingData.length}
           onPageChange={(newPage) => (curPage = newPage)} />
       {/if}
     {/if}

@@ -5,8 +5,7 @@ import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params }) => {
   const scoreCategory = params.category ?? "top50";
-  if (!SCORE_CATEGORIES.includes(scoreCategory))
-    throw error(400, "Invalid ranking score category");
+  if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
   const MAX_DATE = formatDate();
   const date = params.date === "latest" || params.date === "last" ? MAX_DATE : params.date;
@@ -33,12 +32,12 @@ export const GET: RequestHandler = async ({ params }) => {
 
     // set total amount of scores and players
     const countries: Map<string, App.CountryRankingAPI> = new Map();
-    for (const i of rankingData[scoreCategory]) {
+    for (const i of rankingData[scoreCategory] as App.RankingEntry[]) {
       const curCountry = countries.get(i.country);
       const players = (curCountry?.players || 0) + 1;
 
       // weighted count: 100% for 1st, 91% for 2nd, 82% for 3rd, ..., 9% for 11th, 5% for 12th-20th, 2% for >20th player
-      let weight;
+      let weight: number;
       if (players <= 20) {
         if (players <= 11) weight = 1 - (players - 1) * 0.09;
         else weight = 0.05;
@@ -50,13 +49,13 @@ export const GET: RequestHandler = async ({ params }) => {
         countries.set(i.country, {
           total: curCountry.total + i.scores,
           players,
-          weighted: (curCountry.weighted as number) + weighted
+          weighted: curCountry.weighted + weighted
         });
     }
 
     // type changes from CountryRankingAPI to CountryRanking
     for (const [k, v] of countries)
-      countries.set(k, { country: k, ...v, average: v.total / v.players });
+      countries.set(k, { ...v, country: k, average: v.total / v.players });
 
     return json(Array.from(countries.values()));
   } catch (e: any) {

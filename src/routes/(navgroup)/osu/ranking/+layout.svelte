@@ -27,7 +27,7 @@
     goto(
       `/osu/ranking/${type || "players"}/${date || "latest"}/${scoreCategory || "top50"}/${
         country || "all"
-      }/${$page.params.ranks || "0-0"}/${$page.params.extra || ""}`
+      }/${$page.params.ranks || ""}/${$page.params.extra || ""}`
     );
 </script>
 
@@ -148,6 +148,7 @@
   }
 
   .arrow-button {
+    --radius: 10px;
     background-color: rgba(0, 0, 0, 0.1);
     font-weight: 700;
     color: inherit;
@@ -155,12 +156,12 @@
     padding: 0 12px;
   }
   .arrow-button:first-child {
-    border-bottom-left-radius: 6px;
-    border-top-left-radius: 6px;
+    border-bottom-left-radius: var(--radius);
+    border-top-left-radius: var(--radius);
   }
   .arrow-button:last-child {
-    border-bottom-right-radius: 6px;
-    border-top-right-radius: 6px;
+    border-bottom-right-radius: var(--radius);
+    border-top-right-radius: var(--radius);
   }
   .arrow-button:not([disabled]):hover {
     background-color: rgba(0, 0, 0, 0.5);
@@ -169,6 +170,7 @@
   @media screen and (max-width: 640px) {
     :global(.osu-table) {
       border-spacing: 0;
+      margin: 10px 2%;
     }
     :global(.osu-table td:first-child) {
       padding-left: 1px;
@@ -176,6 +178,9 @@
     }
     :global(.osu-table td:last-child) {
       padding-right: 1px;
+    }
+    :global(.osu-table tr.top-rank) {
+      display: none;
     }
 
     .secondary-nav-inner {

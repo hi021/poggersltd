@@ -1,6 +1,7 @@
 <script lang="ts">
   export let page: number;
   export let maxPage: number;
+  export let entries: number | undefined = undefined;
   export let onPageChange: (newPage: number) => void;
   export let showPageNumber = true;
   export let style = "";
@@ -22,9 +23,17 @@
       <icon class="double-arrow" />
     </button>
   </div>
-  {#if showPageNumber}
+  {#if showPageNumber || entries}
     <div style="font-weight: 300;">
-      Page <strong>{page}</strong>/{maxPage}
+      {#if showPageNumber}
+        Page <span style="font-weight: 400;">{page}</span>/{maxPage}
+        {#if entries}
+          |
+        {/if}
+      {/if}
+      {#if entries}
+        {entries} {entries == 1 ? "entry" : "entries"}
+      {/if}
     </div>
   {/if}
 </div>
@@ -37,12 +46,12 @@
   }
   button {
     color: inherit;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.55);
     padding: 6px 12px;
     user-select: none;
     cursor: pointer;
   }
   button:not([disabled]):hover {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.96);
   }
 </style>
