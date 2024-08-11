@@ -11,6 +11,6 @@
     rel="noreferrer"
     use:tooltip={{ content: "osu! profile" }}
     style="display: block;">
-    <img class="osu-avatar-small" alt="" src={getAvatarURL(id)} />
+    <img class="osu-avatar-small" height="36" width="36" alt="" src={getAvatarURL(id)} />
   </a>
 </td>

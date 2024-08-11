@@ -29,7 +29,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.name ? data.name : "player"} - poggers</title>
+  <title>{data.name ?? "player"} - poggers</title>
 </svelte:head>
 
 {#await data}
@@ -60,6 +60,8 @@
           <div id="top-bar-bottom" class="row">
             <img
               class="osu-flag-small"
+              width="36"
+              height="36"
               alt={plr.country}
               src={"/flags/" + plr.country + ".svg"}
               style="margin-right: 10px;" />

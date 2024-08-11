@@ -71,7 +71,7 @@ export const getAvatarURL = (id: number | string) => "https://a.ppy.sh/" + id + 
 export function getDaysBeforeDate(days: number, startDate?: Date) {
   if (!startDate) startDate = new Date();
   let daysDone = 0;
-  const dates = new Array(days);
+  const dates = new Array<string>(days);
 
   for (; daysDone < days; daysDone++) {
     const curDate = addDate(startDate, -daysDone);

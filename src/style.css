@@ -257,8 +257,8 @@ button[disabled] {
   border-radius: 4px;
 }
 .osu-avatar-small {
+  width: 36px;
   height: 36px;
-  aspect-ratio: 1/1;
   border-radius: 8px;
 }
 /* player badge in ranking */
@@ -300,6 +300,10 @@ button[disabled] {
   background-color: var(--color-darker);
   transition: background-color 0.2s;
 }
+.osu-table thead > th {
+  color: var(--color-darker);
+  background-color: var(--color-light);
+}
 .osu-table tr:first-child > td:first-child,
 .osu-table thead > th:first-child {
   border-top-left-radius: 8px;
@@ -322,13 +326,24 @@ button[disabled] {
   position: relative;
 }
 .osu-table tr.top-rank::after {
+  --color: var(--color-darker);
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
-  width: 4px;
-  background-color: var(--color-lighter);
+  width: 8px;
+  background-color: color-mix(in srgb, var(--color) 50%, transparent);
+}
+.osu-table #rank-1.top-rank::after {
+  --color: goldenrod;
+  border-top-right-radius: 8px;
+}
+.osu-table #rank-2.top-rank::after {
+  --color: silver;
+}
+.osu-table #rank-3.top-rank::after {
+  --color: saddlebrown;
 }
 .osu-table tr.osu-difference-column {
   background-color: rgba(255, 255, 255, 0.25);

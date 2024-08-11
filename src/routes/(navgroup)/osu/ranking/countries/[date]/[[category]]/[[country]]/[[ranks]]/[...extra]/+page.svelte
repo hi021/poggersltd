@@ -86,7 +86,7 @@
           {#each countries as country, i}
             <tr>
               <td style="width: 5.25ch;">
-                <strong>#{i + 1}</strong>
+                <strong>#{sortDescending ? i + 1 : countries.length - i}</strong>
               </td>
 
               <td style="display: flex; align-items: center;">
@@ -143,7 +143,7 @@
     cursor: pointer;
   }
   .sortable:hover {
-    background-color: rgba(0, 0, 0, 0.32);
+    background-color: var(--color-lightest);
   }
   .sortable span {
     display: flex;

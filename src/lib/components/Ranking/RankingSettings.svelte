@@ -67,6 +67,6 @@
     box-shadow: none;
   }
   icon.settings {
-    transition: transform 0.2s;
+    transition: transform 0.4s;
   }
 </style>

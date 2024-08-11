@@ -1,7 +1,6 @@
-import { error } from "@sveltejs/kit";
-import { DB_URI, DB_NAME } from "$env/static/private";
-import { MongoClient } from "mongodb";
+import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
+import { dbPlayers } from "$lib/db";
 
 //get player (type Player) by id or (exact) name
 export const GET: RequestHandler = async ({ params }) => {
@@ -9,21 +8,18 @@ export const GET: RequestHandler = async ({ params }) => {
 
   console.time("player/" + params.idOrName);
 
-  const client = await MongoClient.connect(DB_URI);
-  const coll = client.db(DB_NAME).collection("players");
-
   try {
     if (!isNaN(idOrNameNumber)) {
       //look by id
-      const res = await coll.findOne(
+      const res = await dbPlayers.findOne(
         { _id: idOrNameNumber as any },
         { projection: { nameKey: 0 } }
       );
-      if (res) return new Response(JSON.stringify(res));
+      if (res) return json(res);
     }
     //look by name
-    const res = await coll.findOne({ name: params.idOrName }, { projection: { nameKey: 0 } });
-    if (res) return new Response(JSON.stringify(res));
+    const res = await dbPlayers.findOne({ name: params.idOrName }, { projection: { nameKey: 0 } });
+    if (res) return json(res);
   } catch (e) {
     console.error(e);
     throw error(500, "Internal server error");

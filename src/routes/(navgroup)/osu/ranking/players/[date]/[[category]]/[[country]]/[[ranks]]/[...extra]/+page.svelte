@@ -27,17 +27,15 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-  <div class="flex-center" style="margin-top: 21px;">
-    {#if perPage > 25 && maxPage > 1}
+  {#if perPage > 25 && maxPage > 1}
+    <div class="flex-center" style="margin-top: 21px;">
       <Pagination
         page={curPage}
         {maxPage}
         onPageChange={(newPage) => (curPage = newPage)}
         entries={data.rankingData.length} />
-    {/if}
-  </div>
-
-  <RankingSettings bind:settings={data.rankingSettings}></RankingSettings>
+    </div>
+  {/if}
 
   {#await pageData}
     <Loader margin="2rem" sticky={true} />
@@ -45,6 +43,8 @@
     {#if !pageData?.length}
       <RankingEmpty />
     {:else}
+      <RankingSettings bind:settings={data.rankingSettings} />
+
       {#if pageData[0].gainedDays}
         <p class="gains-notice">
           Showing gained counts over <strong>{pageData[0].gainedDays}</strong>
@@ -61,7 +61,7 @@
       <table class="osu-table">
         <tbody>
           {#each pageData as plr, i (plr._id)}
-            <tr class:top-rank={plr.rank <= 3}>
+            <tr class:top-rank={plr.rank <= 5} id="rank-{plr.rank}">
               <td style="width: 5.25ch;">
                 <strong>#{plr.rank}</strong>
               </td>

@@ -32,7 +32,7 @@ export const GET: RequestHandler = async ({ params }) => {
     const rankingDataEnd = (
       await dbRankings.findOne(query, { projection: { [scoreCategory]: 1 } })
     )?.[scoreCategory] as unknown as App.RankingEntry[];
-    if (!rankingDataEnd?.length) return new Response("[]");
+    if (!rankingDataEnd?.length) return json([]);
 
     // use gained field without having to send a request to another date
     if (gainsDays === 1) {
@@ -47,7 +47,7 @@ export const GET: RequestHandler = async ({ params }) => {
       rankingDataEnd.sort(sorting);
       rankingDataEnd.length -= removed;
 
-      return json(JSON.stringify(rankingDataEnd));
+      return json(rankingDataEnd);
     }
 
     const dateStart = addDate(new Date(date), -gainsDays);
@@ -86,7 +86,7 @@ export const GET: RequestHandler = async ({ params }) => {
     playersArray.sort(sorting);
     playersArray.length -= removed;
 
-    return json(JSON.stringify(playersArray));
+    return json(playersArray);
   } catch (e: any) {
     console.error(e);
     throw error(500, e?.message || "Internal server error");

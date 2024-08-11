@@ -26,13 +26,15 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-  <div class="flex-center" style="margin-top: 21px;">
-    {#if maxPage > 1}
-      <Pagination page={curPage} {maxPage} onPageChange={(newPage) => (curPage = newPage)} />
-    {/if}
-  </div>
-
-  <RankingSettings bind:settings={data.rankingSettings}></RankingSettings>
+  {#if perPage > 25 && maxPage > 1}
+    <div class="flex-center" style="margin-top: 21px;">
+      <Pagination
+        page={curPage}
+        {maxPage}
+        onPageChange={(newPage) => (curPage = newPage)}
+        entries={data.rankingData.length} />
+    </div>
+  {/if}
 
   {#await pageData}
     <Loader margin="2rem" sticky={true} />
@@ -40,10 +42,11 @@
     {#if !pageData?.length}
       <RankingEmpty />
     {:else}
+      <RankingSettings bind:settings={data.rankingSettings} />
       <table class="osu-table">
         <tbody>
           {#each pageData as plr, i}
-            <tr class:top-rank={plr.rank <= 3}>
+            <tr>
               <td style="width: 5.25ch;">
                 <strong>#{i + 1 + (curPage - 1) * perPage}</strong>
               </td>

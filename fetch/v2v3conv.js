@@ -81,7 +81,11 @@ try {
     else fs.writeFileSync(outPath, JSON.stringify(convertedFile));
 
     const coll = client.db(process.env.DB_NAME).collection("rankings");
-    const insertRes = await coll.insertOne({ _id: date, ...convertedFile });
+    const insertRes = await coll.updateOne(
+      { _id: date },
+      { $set: convertedFile },
+      { upsert: true }
+    );
     console.log(insertRes);
     console.log("Creating indexes...");
     await coll.createIndexes([

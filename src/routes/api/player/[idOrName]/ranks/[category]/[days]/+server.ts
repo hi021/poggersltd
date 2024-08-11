@@ -1,49 +1,36 @@
-/* eslint-disable no-async-promise-executor */
-import { error } from "@sveltejs/kit";
-import { DB_URI, DB_NAME } from "$env/static/private";
-import { MongoClient } from "mongodb";
+import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
+import { dbRankings } from "$lib/db";
 
 // TODO
 
-//get `category` count from last `days`
-//returns Array<{rank, value, day}> with length of `days`
+// get scores from `category` from the last `days` days
+// returns {ranks: Array<{rank: number, scores: number, day: number} | null>, rankStats: {...}}
 export const GET: RequestHandler = async ({ params }) => {
-  const scoreCategory = params.category;
-  if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
+  const category = params.category;
+  if (!SCORE_CATEGORIES.includes(category)) throw error(400, "Invalid ranking score category");
 
+  const playerId = parseInt(params.idOrName);
   let days = Number(params.days);
   if (isNaN(days) || days < 1) days = 90;
+
   const daysArray = getDaysBeforeDate(days);
-
-  const playerId = Number(params.idOrName); //must be id!
-
-  const client = await MongoClient.connect(DB_URI);
-  const db = client.db(DB_NAME);
   const scoresArray = new Array(days);
   const promises = new Array(days);
   const project = {
     $project: {
-      ranking: {
+      [category]: {
         $filter: {
-          input: "$ranking",
-          as: "ranking",
-          cond: {
-            $eq: ["$$ranking._id", playerId]
-          }
+          input: "$" + category,
+          as: "cat",
+          cond: { $eq: isNaN(playerId) ? ["$$cat.name", params.idOrName] : ["$$cat._id", playerId] }
         }
       }
     }
   };
-  const aggregate = [
-    {
-      $match: {
-        _id: params.category
-      }
-    },
-    project
-  ];
+
+  console.log(project.$project[category].$filter);
 
   let hasNonNull = false;
   let minRank = 0;
@@ -51,29 +38,39 @@ export const GET: RequestHandler = async ({ params }) => {
   let minValue = 0;
   let maxValue = 0;
   for (let i = 0; i < days; i++) {
+    const aggregate = [
+      {
+        $match: { _id: daysArray[i] }
+      },
+      project
+    ];
+
     promises[i] = new Promise(async (resolve, reject) => {
       try {
-        const res = (await db.collection(daysArray[i]).aggregate(aggregate).toArray())?.[0]
-          ?.ranking?.[0];
-        if (!res) {
+        const res = await dbRankings.aggregate(aggregate).toArray();
+
+        const resPlayer = res?.[0]?.[params.category]?.[0];
+        console.log(res, resPlayer);
+
+        if (!resPlayer) {
           resolve(null);
           return;
         }
 
         scoresArray[i] = {
-          rank: res.rank,
-          value: res.value,
+          rank: resPlayer.rank,
+          value: resPlayer.scores,
           day: days - i - 1
         };
 
         if (!hasNonNull) {
-          minRank = maxRank = res.rank;
-          minValue = maxValue = res.value;
+          minRank = maxRank = resPlayer.rank;
+          minValue = maxValue = resPlayer.scores;
         } else {
-          if (minRank > res.rank) minRank = res.rank;
-          else if (maxRank < res.rank) maxRank = res.rank;
-          if (minValue > res.value) minValue = res.value;
-          else if (maxValue < res.value) maxValue = res.value;
+          if (minRank > resPlayer.rank) minRank = resPlayer.rank;
+          else if (maxRank < resPlayer.rank) maxRank = resPlayer.rank;
+          if (minValue > resPlayer.scores) minValue = resPlayer.scores;
+          else if (maxValue < resPlayer.scores) maxValue = resPlayer.scores;
         }
         hasNonNull = true;
 
@@ -87,12 +84,10 @@ export const GET: RequestHandler = async ({ params }) => {
 
   try {
     await Promise.all(promises);
-    return new Response(
-      JSON.stringify({
-        ranks: scoresArray,
-        rankStats: { minRank, maxRank, minValue, maxValue }
-      })
-    );
+    return json({
+      ranks: scoresArray,
+      rankStats: { minRank, maxRank, minValue, maxValue }
+    });
   } catch (e) {
     throw error(500, "Internal server error");
   }
