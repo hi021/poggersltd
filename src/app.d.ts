@@ -72,7 +72,7 @@ declare namespace App {
   }
 
   interface RankingQuery {
-    _id: any; //YYYY-MM-DD string entry date
+    _id; //YYYY-MM-DD string entry date
     country?: { $eq: string }; //2 uppercase letter country code or "all"
     rank?: { $lte: number; $gte: number }; //rankMin - rankMax
   }

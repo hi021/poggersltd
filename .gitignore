@@ -3,9 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /package
-/fetch/archive*
-/fetch/stats*
-/fetch/OLD*
+/data/archive*
+/data/OLD*
+/data/stats/results
 .env
-.env.*
-!.env.example

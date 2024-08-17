@@ -9,25 +9,24 @@ import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import { getDaysBetweenDates } from "./shared.js";
 import * as dotenv from "dotenv";
-import glob from "glob";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-const inputDir = path.resolve(__dirname, "archive").replace(/\\/g, "/");
+const inputDir = path.resolve(__dirname, "archive");
 const outputDir = path.resolve(__dirname, "archive-aftergains");
 
 try {
   const client = await MongoClient.connect(process.env.DB_URI);
 
-  const globDirectories = glob.sync(inputDir + "\\*.json");
-  const inputDirLen = inputDir.length;
+  const globDirectories = fs.globSync(inputDir + "/*.json");
+  const inputDirLen = inputDir.length + 1; // count the slash
 
   let prevDate = "";
   let prevPlayers;
 
   for (const i of globDirectories) {
-    const date = i.slice(inputDirLen + 1, inputDirLen + "2022-01-01".length + 1); //inputDirLen + 1 because of the slash
+    const date = i.slice(inputDirLen, inputDirLen + "2022-01-01".length);
     console.log("Converting " + date);
     const fileJson = JSON.parse(fs.readFileSync(i));
     const fileConverted = new Array(fileJson.length);

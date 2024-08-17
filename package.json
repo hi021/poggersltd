@@ -1,6 +1,6 @@
 {
   "name": "poggersltd",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "vite dev",
@@ -12,30 +12,32 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^5.2.0",
-    "@sveltejs/kit": "^2.5.20",
+    "@sveltejs/adapter-node": "^5.2.2",
+    "@sveltejs/kit": "^2.5.22",
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "eslint": "^8.57.0",
+    "@types/eslint": "^9.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-svelte3": "^4.0.0",
+    "eslint-plugin-svelte": "^2.43.0",
+    "globals": "^15.9.0",
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.6",
     "svelte": "^4.2.18",
     "svelte-check": "^3.8.5",
-    "svelte-preprocess": "^6.0.2",
-    "tslib": "^2.6.3",
-    "vite": "^5.4.0"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.1.0",
+    "vite": "^5.4.1"
   },
   "type": "module",
   "dependencies": {
     "@sveltejs/pancake": "^0.0.18",
     "dotenv": "^16.4.5",
-    "glob": "^11.0.0",
     "mongodb": "^6.8.0",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tippy.js": "^6.3.7"
-  }
+  },
+  "packageManager": "pnpm@9.7.1+sha256.46f1bbc8f8020aa9869568c387198f1a813f21fb44c82f400e7d1dbde6c70b40"
 }

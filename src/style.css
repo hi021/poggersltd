@@ -237,6 +237,7 @@ button[disabled] {
   aspect-ratio: 1/1;
   background-size: contain;
   background-origin: content-box;
+  background-color: currentColor;
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -270,9 +271,9 @@ button[disabled] {
 /* TABLE */
 .osu-main {
   background: linear-gradient(
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.05) 10%,
-    rgba(49, 27, 146, 0.125) 85%
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.05) 200px,
+    rgba(49, 27, 146, 0.125) 900px
   );
   position: relative;
 }

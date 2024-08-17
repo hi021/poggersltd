@@ -1,22 +1,22 @@
 // returns an object of arrays sorted descending by gains: {[category]: Array<{id, name, country, value, gained, avg}>}
-// gained and avg will be null if player doesn't exist at startData
+// gained and avg will be null if player doesn't exist on startDate, player will be ignored completely if doesn't exist on endDate
 // used for osu! wrapped stats
 
 import * as path from "path";
-import { fileURLToPath } from "url";
-import { MongoClient } from "mongodb";
-import { getDaysBetweenDates } from "./shared.js";
 import * as dotenv from "dotenv";
 import { writeFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { MongoClient } from "mongodb";
+import { getDaysBetweenDates } from "../shared.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-const startDate = "2022-01-01";
-const endDate = "2023-01-01";
+const startDate = "2024-01-01";
+const endDate = "2025-01-01";
 const daysBetween = getDaysBetweenDates(new Date(endDate), new Date(startDate));
-const categories = { top50: 1 }; // ranking categories to count (mongo projection)
-const outputDir = "stats/most-gained-year.json";
+const categories = { top50: 1 }; // ranking categories to count (as a mongodb projection object)
+const outputDir = "./results/most-gained-year.json";
 
 // initialize arrays with necessary categories
 const arr = {};
@@ -43,11 +43,11 @@ for (const cat of categories) {
   }
 }
 
-for (const cat of endData) {
-  if (cat == "_id") continue;
-  for (const p in cat) {
-    const plr = cat[p];
-    arr[cat][plr._id] = {
+for (const category of endData) {
+  if (category == "_id") continue;
+  for (const p in category) {
+    const plr = category[p];
+    arr[category][plr._id] = {
       name: plr.name,
       country: plr.country,
       scores: plr.scores,
@@ -56,14 +56,15 @@ for (const cat of endData) {
   }
 }
 
-for (const cat of startData) {
-  if (cat == "_id") continue;
-  for (const p in cat) {
-    const plr = cat[p];
-    if (!arr[cat][plr._id]) continue; // player not in ranking on endDate
+for (const category of startData) {
+  if (category == "_id") continue;
+  for (const p in category) {
+    const plr = category[p];
+    if (!arr[category][plr._id]) continue; // player not in ranking on endDate
 
-    arr[cat][plr._id].gainedScores = arr[cat][plr._id].scores - plr.scores;
-    arr[cat][plr._id].avg = Math.round((arr[cat][plr._id].gainedScores / daysBetween) * 100) / 100;
+    arr[category][plr._id].gainedScores = arr[category][plr._id].scores - plr.scores;
+    arr[category][plr._id].avg =
+      Math.round((arr[category][plr._id].gainedScores / daysBetween) * 100) / 100;
   }
 }
 

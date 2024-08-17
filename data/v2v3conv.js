@@ -1,5 +1,5 @@
 // CONVERT ALL JSONS IN V2 FORMAT (old poggers.ltd in react, top 50s only) INTO CURRENT V3.1 FORMAT
-// INPUT ./archive-old/ -> OUTPUT ./archive-new/
+// INPUT ./archive-old/ -> OUTPUT ./archive-new/ - overwrites all files and database entries
 
 import * as fs from "fs";
 import * as path from "path";
@@ -7,14 +7,13 @@ import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import { getDaysBetweenDates } from "./shared.js";
 import * as dotenv from "dotenv";
-import * as glob from "glob";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 // change to POSIX paths to use with glob
-const inputDir = path.resolve(__dirname, "archive-old").replace(/\\/g, "/");
-const outputDir = path.resolve(__dirname, "archive-new").replace(/\\/g, "/");
+const inputDir = path.resolve(__dirname, "archive-old");
+const outputDir = path.resolve(__dirname, "archive-new");
 
 try {
   const client = await MongoClient.connect(process.env.DB_URI);
@@ -28,7 +27,7 @@ try {
   const playersMap = new Map();
   for (const i of playersDatabase) playersMap.set(i._id, i);
 
-  const globFiles = glob.globSync(inputDir + "/*.json").sort();
+  const globFiles = fs.globSync(inputDir + "/*.json").sort();
   const inputDirLen = inputDir.length;
   const inputFileLen = "/2022-01-01".length;
   console.log("Found " + globFiles.length + " file(s)");
@@ -77,8 +76,7 @@ try {
 
     const convertedFile = { top50: convertedPlayersArr };
     const outPath = path.join(outputDir, date + ".json");
-    if (fs.existsSync(outPath)) console.log("File already exists, skipping writing");
-    else fs.writeFileSync(outPath, JSON.stringify(convertedFile));
+    fs.writeFileSync(outPath, JSON.stringify(convertedFile));
 
     const coll = client.db(process.env.DB_NAME).collection("rankings");
     const insertRes = await coll.updateOne(

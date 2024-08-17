@@ -8,12 +8,11 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
-import glob from "glob";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-const inputDir = path.resolve(__dirname, "archive").replace(/\\/g, "/");
+const inputDir = path.resolve(__dirname, "archive");
 const outputDir = path.resolve(__dirname, "archive-afterpeaks");
 const categoriesSkip = ["top100", "top15"]; // categories not in the db
 
@@ -25,7 +24,7 @@ try {
   const playersMap = new Map();
   for (const i of playersDatabase) playersMap.set(i._id, i);
 
-  const globFiles = glob.globSync(inputDir + "\\*.json");
+  const globFiles = fs.globSync(inputDir + "/*.json");
 
   for (const file of globFiles) {
     const split = file.split("/"); //path.sep didn't work on windows lol
@@ -90,9 +89,8 @@ try {
 
   const promises = new Array(playersNew.length);
   for (const i in playersNew) {
-    promises[i] = new Promise(async (resolve) => {
-      await plrColl.updateOne({ _id: playersNew[i]._id }, { $set: playersNew[i] });
-      resolve(1);
+    promises[i] = new Promise((resolve) => {
+      plrColl.updateOne({ _id: playersNew[i]._id }, { $set: playersNew[i] }).then(() => resolve(1));
     });
   }
 

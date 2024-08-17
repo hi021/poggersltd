@@ -28,7 +28,7 @@ for (const i of oldPlayers) {
       });
     }
   } else {
-    // convert old player (Type App.Player)
+    // convert old player (into App.Player type)
     const plr = {
       _id: i._id,
       name: i.nam,
@@ -40,7 +40,7 @@ for (const i of oldPlayers) {
         countryRank: i.cntrPos,
         scores: i.t50,
         gained: i.g50
-        //missing gainedRanks (and mostGained, but set those with a separate script)
+        // missing gainedRanks and mostGained - set those with a separate script
       }
     };
     if (i.oldNam?.length) plr.oldName = i.oldNam;

@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ params }) => {
     console.time("countries/" + date);
 
     const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
-    const rankMin = Number(ranks[0]) ?? 0;
+    const rankMin = Number(ranks[0]) || 0;
     const rankMax = Number(ranks[1]) || Infinity;
 
     const query: App.RankingQuery = { _id: params.date };

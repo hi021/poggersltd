@@ -5,7 +5,7 @@
   import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
-  import { formatNumber, getAvatarURL, RANKING_BADGES, tooltip } from "$lib/util";
+  import { formatNumber, getAvatarURL, tooltip } from "$lib/util";
   import type { PageData } from "./$types";
 
   export let data: PageData;
