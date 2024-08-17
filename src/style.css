@@ -70,7 +70,7 @@ textarea {
 }
 :is(input, select, textarea):focus {
   border-color: #80bdff;
-  outline: 0;
+  outline-color: transparent;
   box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
 }
 input[disabled],
@@ -132,7 +132,7 @@ button {
   cursor: pointer;
 }
 button:focus {
-  outline: 0;
+  outline-color: transparent;
   box-shadow: 0 0 0 0.15rem hsla(var(--clr), 0.5);
 }
 button[disabled] {
@@ -150,7 +150,7 @@ button[disabled] {
   border-radius: 9999px;
   border: none;
   background: none;
-  outline: none;
+  outline-color: transparent;
 }
 .btn-icon {
   display: inline-flex;
@@ -425,7 +425,7 @@ button[disabled] {
 .secondary-nav-tab:hover,
 .secondary-nav-tab:focus,
 .secondary-nav-tab:focus-visible {
-  outline: none;
+  outline-color: transparent;
   color: #fff;
 }
 /* SECONDARY NAV */
@@ -475,6 +475,7 @@ button[disabled] {
 .logo-text {
   color: inherit;
   text-decoration: none;
+  line-height: 1;
   padding: 0 20px;
 }
 .logo-text:hover,
@@ -503,8 +504,8 @@ button[disabled] {
   -webkit-background-clip: text;
   -moz-background-clip: text;
   color: transparent;
-  outline: 0;
-  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.2);
+  outline-color: transparent;
+  text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.5);
   animation: logo-rainbow 7s linear infinite alternate;
   background-size: 250% 100%;
 }

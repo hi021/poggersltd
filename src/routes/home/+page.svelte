@@ -44,9 +44,6 @@
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
   }
-  .logo-text {
-    transition: color 0.25s;
-  }
 
   main {
     padding: 0 2rem;

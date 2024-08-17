@@ -18,32 +18,27 @@ const promises = [];
 
 for (const day in rankingEntries) {
   promises.push(
-    new Promise(async (resolve, reject) => {
+    new Promise((resolve) => {
       const date = rankingEntries[day]._id;
-      try {
-        console.log(`Replacing field '${fieldOld}' on ${date}`);
+      console.log(`Replacing field '${fieldOld}' on ${date}`);
 
-        for (const cat in rankingEntries[day]) {
-          if (cat == "_id") continue;
+      for (const cat in rankingEntries[day]) {
+        if (cat == "_id") continue;
 
-          const categoryEntries = rankingEntries[day][cat];
-          // swap field names for every player in the category for that day
-          for (const i in categoryEntries) {
-            const value = categoryEntries[i][fieldOld];
-            delete categoryEntries[i][fieldOld];
+        const categoryEntries = rankingEntries[day][cat];
+        // swap field names for every player in the category for that day
+        for (const i in categoryEntries) {
+          const value = categoryEntries[i][fieldOld];
+          delete categoryEntries[i][fieldOld];
 
-            categoryEntries[i][fieldNew] = value;
-          }
+          categoryEntries[i][fieldNew] = value;
         }
-
-        await coll.deleteOne({ _id: date });
-        await coll.insertOne({ _id: date, ...rankingEntries[day] });
-
-        resolve(1);
-      } catch (e) {
-        console.error(e);
-        reject(e);
       }
+
+      coll
+        .deleteOne({ _id: date })
+        .then(() => coll.insertOne({ _id: date, ...rankingEntries[day] }))
+        .then((res) => resolve(res));
     })
   );
 }

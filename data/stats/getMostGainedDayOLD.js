@@ -1,12 +1,12 @@
 // returns an object {category: Array<{id, name, country, value, gained, date}>}
 // used for osu! wrapped stats
 
-// TODO
+// TODO :)
 
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
-import { getRankingCollections } from "./shared.js";
+import { getRankingCollections } from "../shared.js";
 import * as dotenv from "dotenv";
 import { writeFileSync } from "fs";
 

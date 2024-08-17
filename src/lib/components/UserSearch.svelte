@@ -19,12 +19,13 @@
     }
 
     try {
-      const res = await fetch("/api/player/" + query + "/search");
+      const res = await fetch(`/api/player/${query}/search`);
       const resJson = await res.json();
 
       if (resJson?.length) autocompleteEntries = resJson;
       else autocompleteEntries = [];
     } catch (e) {
+      console.error("Failed to fetch players autocomplete:", e);
       autocompleteEntries = [];
     }
   }
@@ -56,6 +57,7 @@
           autocompleteEntries = [];
         }
       }} />
+
     <ul class="autocmp-items">
       {#each autocompleteEntries as a}
         <li>

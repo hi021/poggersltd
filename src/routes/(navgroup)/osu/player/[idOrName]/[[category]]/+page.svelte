@@ -1,7 +1,7 @@
 <script lang="ts">
   import { COUNTRIES, formatNumber, getAvatarURL, RANKING_BADGES, tooltip } from "$lib/util";
   import Loader from "$lib/components/Loader.svelte";
-  //@ts-ignore
+  //@ts-expect-error well it works
   import * as Pancake from "@sveltejs/pancake";
   import { browser } from "$app/environment";
   import { fade } from "svelte/transition";

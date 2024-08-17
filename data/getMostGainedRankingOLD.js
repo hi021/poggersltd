@@ -1,24 +1,27 @@
-/* eslint-disable no-async-promise-executor */
+// Sets the most-gained ranking
+// TODO :)
+
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
 import fs from "fs";
+import { getRankingEntries } from "./shared";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 const client = await MongoClient.connect(process.env.DB_URI);
 const db = client.db(process.env.DB_NAME);
+const collRankings = db.collection("rankings");
 
-//
 const outputDir = "archive-other/";
 const arbitraryMin = { top50: 130, top25: 36, top8: 19, top1: 5 };
-//
 const scoreArr = { top50: [], top25: [], top8: [], top1: [] };
 // will skip these players at those dates, used to fix data for MystExiStentia once (unban?)
 const idToIgnore = { 9413991: ["2022-12-16"], 15787074: ["2023-01-10"] };
 
-const collections = await getRankingCollections();
+const collections = await getRankingEntries();
 for (const i of collections) {
   const date = i.name;
   const dayData = await db.collection("rankings").findOne({ _id: date });

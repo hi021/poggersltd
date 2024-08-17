@@ -40,27 +40,6 @@ export function createNGram(str) {
     .join(" ");
 }
 
-// // returns all files that match the filter regex from all directories starting from `root`
-// export function glob(root = "./", filter = /.*\.json$/i, filenamesOnly = true, recursive = true) {
-//   if (!fs.existsSync(root)) return [];
-
-//   let filesFiltered = [];
-//   const files = fs.readdirSync(root);
-//   for (const filename of files) {
-//     const filePath = path.join(root, filename);
-//     console.log(filename, filePath);
-//     const stat = fs.lstatSync(filePath);
-
-//     if (recursive && stat.isDirectory()) {
-//       filesFiltered = [...fromDir(filePath, filter, filenamesOnly, true)];
-//     } else if (filter.test(filePath)) {
-//       filesFiltered.push(filenamesOnly ? filename : filePath);
-//     }
-//   }
-
-//   return filesFiltered;
-// }
-
 // All ranking entries between start and end dates sorted oldest -> newest
 export async function getRankingEntries(start = "", end = "Z") {
   const client = await MongoClient.connect(process.env.DB_URI);

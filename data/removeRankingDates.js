@@ -1,9 +1,9 @@
+// remove rankings with dates between minDate and maxDate (inclusive) excluding dates in the exclude array
+
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
-
-// remove rankings with dates between minDate and maxDate (inclusive) excluding dates in the exclude array
 
 ////////////////////////////
 const exclude = ["2022-10-09", "2022-10-10", "2022-10-11", "2022-10-12"];

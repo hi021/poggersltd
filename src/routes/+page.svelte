@@ -45,8 +45,8 @@
     src="/senko_poggers.png"
     alt="senko poggers"
     height="256"
-    on:click|preventDefault={handleClick}
     on:keypress={() => false}
+    on:click|preventDefault={handleClick}
     on:contextmenu|preventDefault={handleClick}
     style="height: {25 + curCount * 0.5}%;
 			top: {75 - curCount * 0.25}%;
@@ -94,7 +94,8 @@
   #senko-clickable {
     border-radius: 12px;
     transition:
-      height 0.1s ease,
-      box-shadow 0.2s ease;
+      height 0.125s ease,
+      width 0.125s ease,
+      box-shadow 0.125s ease;
   }
 </style>

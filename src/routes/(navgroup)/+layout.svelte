@@ -6,25 +6,33 @@
 <!-- params: [.../osu/ranking]/type/date/category/country/ranks/extra -->
 
 <header class="row">
-  <a href="/home" class="logo-text flex-center">poggers</a>
+  <a href="/home" class="logo-text flex-center" style="font-size: 1.25rem; font-weight: 500;"
+    >poggers</a>
   <nav class="row" style="width: 100%;">
     <a
       href="/osu/ranking"
       class="nav-tab"
-      class:active={$page.url.pathname.startsWith("/osu/ranking")}>Ranking</a>
+      class:active={$page.url.pathname.startsWith("/osu/ranking")}>
+      Ranking
+    </a>
     <a
       href="/osu"
       class="nav-tab"
-      class:active={$page.url.pathname === "/osu" || $page.url.pathname.startsWith("/osu/player")}
-      >Player</a>
+      class:active={$page.url.pathname === "/osu" || $page.url.pathname.startsWith("/osu/player")}>
+      Player
+    </a>
     <a
       href="/osu/breakdown"
       class="nav-tab"
-      class:active={$page.url.pathname.startsWith("/osu/breakdown")}>Breakdown</a>
+      class:active={$page.url.pathname.startsWith("/osu/breakdown")}>
+      Breakdown
+    </a>
     <a
       href="/osu/gains/top50"
       class="nav-tab"
-      class:active={$page.url.pathname.startsWith("/osu/gains")}>Most Gained</a>
+      class:active={$page.url.pathname.startsWith("/osu/gains")}>
+      Most Gained
+    </a>
     <a href="/about" class="nav-tab right" class:active={$page.url.pathname.startsWith("/about")}>
       About
     </a>

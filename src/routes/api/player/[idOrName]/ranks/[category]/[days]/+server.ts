@@ -24,7 +24,9 @@ export const GET: RequestHandler = async ({ params }) => {
         $filter: {
           input: "$" + category,
           as: "cat",
-          cond: { $eq: isNaN(playerId) ? ["$$cat.name", params.idOrName] : ["$$cat._id", playerId] }
+          cond: {
+            $eq: isNaN(playerId) ? ["$$cat.name", params.idOrName] : ["$$cat._id", playerId]
+          }
         }
       }
     }
