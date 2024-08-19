@@ -365,9 +365,7 @@ try {
   await coll.createIndexes([
     { key: { "ranking._id": -1 } },
     { key: { "ranking.country": -1 } },
-    {
-      key: { "ranking.rank": 1 }
-    },
+    { key: { "ranking.rank": 1 } },
     { key: { "ranking.gained": -1 } },
     { key: { "ranking.countryRank": -1 } }
   ]);
