@@ -9,19 +9,14 @@ export const load: PageLoad = async ({ params, fetch }) => {
       throw error(resPlayer.status, resPlayer.statusText || "Oopsie");
     }
     const category = params.category ?? "all";
-    const resPlayerJson = await resPlayer.json();
+    const resPlayerJson: App.Player = await resPlayer.json();
 
     if (category === "all") return resPlayerJson;
 
-    const rankDays = 90;
-    const resRanks = await fetch(`/api/player/${resPlayerJson._id}/ranks/${category}/${rankDays}`);
-    const resRanksJson = await resRanks.json();
+    const resRanks = await fetch(`/api/player/${resPlayerJson._id}/ranks/${category}`);
+    const resRanksJson: {ranks: Array<{day: number, scores: number, rank: number} | null>, stats: {minRanks: number, maxRanks: number, minScores: number, maxScores: number}} = await resRanks.json();
 
-    return {
-      ...resPlayerJson,
-      ranks: resRanksJson.ranks,
-      rankStats: resRanksJson.rankStats
-    };
+    return {...resPlayerJson, ...resRanksJson};
   } catch (e: any) {
     console.error(e);
     throw error(e?.status ?? 500, e?.body?.message ?? "An unknown error has occurred");

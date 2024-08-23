@@ -82,7 +82,9 @@
       {/each}
     </ul>
   </div>
-  <button type="submit" class="btn-none icon icon-search" />
+  <button type="submit" class="btn-none">
+    <icon class="search"/>
+  </button>
 </div>
 
 <style>

@@ -18,7 +18,7 @@ declare namespace App {
   }
   type PlayerInfoFull = PlayerInfoCommon & {
     nameKey: string; //                                      n-gram index for searching by partial usernames (e.g. "wim wimp wimpn")
-    oldName?: string[]; //                                   set of all previous osu! usernames (stored as array)
+    oldNames?: string[]; //                                  set of all previous osu! usernames (stored as array)
   };
   interface PlayerRankingCommon {
     rank: number; //                                         global rank in given ranking category
@@ -30,9 +30,9 @@ declare namespace App {
   }
   type PlayerRankingFull = PlayerRankingCommon & {
     date: string; //                                         as YYYY-MM-DD, day from which the data was taken
-    mostGained?: { date: string; value: number }; //         most gained in one day (when and how much) - ignores entries where gainedDays > 1
-    peak?: { date: string; value: number };
-    lowest?: { date: string; value: number };
+    mostGained?: { date: string; scores: number }; //        most gained in one day (when and how much) - ignores entries where gainedDays > 1
+    peak?: { date: string; scores: number };
+    lowest?: { date: string; scores: number };
   };
   type Player = PlayerInfoFull & {
     [ranking in RankingCategory]?: PlayerRankingFull;

@@ -21,8 +21,8 @@ function putPlayerIntoMap(player, category, date) {
 
     playerObject.country = player.country;
     if (playerObject.name != player.name) {
-      playerObject.oldName = playerObject.oldName
-        ? playerObject.oldName.add(playerObject.name)
+      playerObject.oldNames = playerObject.oldNames
+        ? playerObject.oldNames.add(playerObject.name)
         : new Set([playerObject.name]);
       playerObject.name = player.name;
     }
@@ -38,22 +38,22 @@ function putPlayerIntoMap(player, category, date) {
       date
     };
 
-    if (!playerObject[category].peak || playerObject[category].peak.value < player.scores)
-      playerObject[category].peak = { date, value: player.scores };
-    if (!playerObject[category].lowest || playerObject[category].lowest.value > player.scores)
-      playerObject[category].lowest = { date, value: player.scores };
+    if (!playerObject[category].peak || playerObject[category].peak.scores < player.scores)
+      playerObject[category].peak = { date, scores: player.scores };
+    if (!playerObject[category].lowest || playerObject[category].lowest.scores > player.scores)
+      playerObject[category].lowest = { date, scores: player.scores };
     if (
       (!player.gainedDays || player.gainedDays == 1) &&
       player.gainedScores &&
       (!playerObject[category].mostGained ||
-        playerObject[category].mostGained.value < player.gainedScores)
+        playerObject[category].mostGained.scores < player.gainedScores)
     ) {
-      playerObject[category].mostGained = { date, value: player.gainedScores };
+      playerObject[category].mostGained = { date, scores: player.gainedScores };
     }
 
     players.set(player._id, playerObject);
   } else {
-    const peak = { date, value: player.scores };
+    const peak = { date, scores: player.scores };
     const playerObject /* type Player */ = {
       _id: player._id,
       name: player.name,
@@ -71,16 +71,17 @@ function putPlayerIntoMap(player, category, date) {
     };
     if (player.gainedDays) playerObject[category].gainedDays = player.gainedDays;
     else if (player.gainedScores)
-      playerObject[category].mostGained = { date, value: player.gainedScores };
+      playerObject[category].mostGained = { date, scores: player.gainedScores };
 
     players.set(player._id, playerObject);
   }
 }
 
-// set name keys, turn oldName set into array, and delete blank gainedDays
+// set name keys, turn oldNames set into array, and delete blank gainedDays
 function finalizePlayer(player) {
   const playerObject = { ...player, nameKey: createNGram(player.name) };
-  if (playerObject.oldName) playerObject.oldName = [...playerObject.oldName];
+
+  if (playerObject.oldNames) playerObject.oldNames = [...playerObject.oldNames];
   for (const category of categoriesDb) {
     if (!playerObject[category]) continue;
     if (!playerObject[category].gainedDays || playerObject[category].gainedDays == 1)

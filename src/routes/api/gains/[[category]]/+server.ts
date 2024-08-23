@@ -1,27 +1,17 @@
-import { error } from "@sveltejs/kit";
-import { DB_URI, DB_NAME } from "$env/static/private";
-import { MongoClient } from "mongodb";
+import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { SCORE_CATEGORIES } from "$lib/util";
+import { dbMostGained } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params }) => {
-  const scoreCategory = params.category;
+  const scoreCategory = params.category || "top50";
   if (!scoreCategory || !SCORE_CATEGORIES.includes(scoreCategory))
     throw error(400, "Invalid ranking score category");
 
-  // TODO
   console.time("gains/" + scoreCategory);
   try {
-    const client = await MongoClient.connect(DB_URI);
-    const res = JSON.stringify(
-      await client
-        .db(DB_NAME)
-        .collection("most-gained-" + scoreCategory)
-        .find()
-        .toArray()
-    );
-
-    return new Response(res);
+    const mostGained = await dbMostGained.findOne({ _id: scoreCategory as any });
+    return json(mostGained);
   } catch (e) {
     console.error(e);
     throw error(500, "Internal server error");

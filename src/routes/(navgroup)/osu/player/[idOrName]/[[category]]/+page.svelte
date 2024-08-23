@@ -13,16 +13,16 @@
   export let data: PageData;
   const maxRankDay = data.ranks ? data.ranks.length - 1 : 89;
   let loading = false;
-  let ranks = { ranks: data.ranks, rankStats: data.rankStats };
+  let ranks = { ranks: data.ranks, stats: data.stats };
   let category = $page.params.category;
 
   async function fetchRanks(category: string) {
     if (!browser || category === "all") return;
     loading = true;
-    const resRanks = await fetch(`/api/player/${data._id}/ranks/${category || "top50"}/90`);
+    const resRanks = await fetch(`/api/player/${data._id}/ranks/${category}`);
     const resRanksJson = await resRanks.json();
 
-    ranks = { ranks: resRanksJson.ranks, rankStats: resRanksJson.rankStats };
+    ranks = resRanksJson;
     loading = false;
   }
   $: fetchRanks(category);
@@ -51,10 +51,10 @@
                   content: RANKING_BADGES[plr._id].title ?? ""
                 }} />
             {/if}
-            {#if plr.oldName?.length}
+            {#if plr.oldNames?.length}
               <div
                 class="icon icon-profile-name"
-                use:tooltip={{ content: plr.oldName.join(", ") }} />
+                use:tooltip={{ content: plr.oldNames.join(", ") }} />
             {/if}
           </div>
           <div id="top-bar-bottom" class="row">
@@ -128,17 +128,17 @@
                             ","
                           )})</small>
                       </span>
-                      {#if plr[cat].peak?.value != null}
+                      {#if plr[cat].peak?.scores != null}
                         <span class="stat-name"> peak </span>
                         <span class="stat-value">
-                          {formatNumber(plr[cat].peak.value)}
+                          {formatNumber(plr[cat].peak.scores)}
                           <small class="stat-small">{plr[cat].peak.date}</small>
                         </span>
                       {/if}
-                      {#if plr[cat].lowest?.value != null}
+                      {#if plr[cat].lowest?.scores != null}
                         <span class="stat-name"> lowest </span>
                         <span class="stat-value">
-                          {formatNumber(plr[cat].lowest.value)}
+                          {formatNumber(plr[cat].lowest.scores)}
                           <small class="stat-small">{plr[cat].lowest.date}</small>
                         </span>
                       {/if}
@@ -159,19 +159,19 @@
                     <span
                       class="stat-value"
                       use:tooltip={{ content: plr[category].mostGained.date }}>
-                      {formatNumber(plr[category].mostGained.value)}
+                      {formatNumber(plr[category].mostGained.scores)}
                     </span>
                   {/if}
                   {#if plr[category].peak}
                     <span class="stat-name left"> peak </span>
                     <span class="stat-value" use:tooltip={{ content: plr[category].peak.date }}>
-                      {formatNumber(plr[category].peak.value)}
+                      {formatNumber(plr[category].peak.scores)}
                     </span>
                   {/if}
                   {#if plr[category].lowest}
                     <span class="stat-name left"> lowest </span>
                     <span class="stat-value" use:tooltip={{ content: plr[category].lowest.date }}>
-                      {formatNumber(plr[category].lowest.value)}
+                      {formatNumber(plr[category].lowest.scores)}
                     </span>
                   {/if}
                 </div>
@@ -179,8 +179,8 @@
                   <Pancake.Chart
                     x1={0}
                     x2={maxRankDay}
-                    y1={ranks.rankStats.minValue - 20}
-                    y2={ranks.rankStats.maxValue + 20}>
+                    y1={ranks.stats.minScores - 20}
+                    y2={ranks.stats.maxScores + 20}>
                     <Pancake.Svg>
                       <Pancake.SvgLine
                         data={ranks.ranks}
@@ -201,12 +201,12 @@
                           <span
                             class="chart-tooltip-line"
                             style="transform: translate(-50%, -{200 -
-                              (closest.value / (ranks.rankStats.maxValue - closest.value)) *
+                              (closest.value / (ranks.stats.maxScores - closest.value)) *
                                 200}px);" />
                           <span class="chart-tooltip-point" />
                         </Pancake.Point>
 
-                        <Pancake.Point x={0} y={ranks.rankStats.maxValue + 20}>
+                        <Pancake.Point x={0} y={ranks.stats.maxScores + 20}>
                           <div class="chart-tooltip column">
                             <span>
                               <strong>{category}s</strong>
@@ -232,7 +232,7 @@
                 <div class="stats-container">
                   <span class="stat-name"> count </span>
                   <span class="stat-value">
-                    {formatNumber(plr[category].value)}
+                    {formatNumber(plr[category].scores)}
                   </span>
                   <span class="stat-name"> rank </span>
                   <span class="stat-value">

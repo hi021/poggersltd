@@ -231,26 +231,6 @@ button[disabled] {
   font-size: 1rem;
 }
 
-/* ICONS */
-.icon {
-  display: inline-block;
-  aspect-ratio: 1/1;
-  background-size: contain;
-  background-origin: content-box;
-  background-color: currentColor;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.icon.disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.icon-search {
-  background-image: url("/icons/search.svg");
-}
-/* ICONS */
-
 /* OSU */
 .osu-flag-small {
   height: 24px;

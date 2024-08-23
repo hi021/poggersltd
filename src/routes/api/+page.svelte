@@ -7,11 +7,11 @@
   <p>
     This API is not private but it sure is a mess
     <br />
-    Yell at <code>hi#8112</code> in case it explodes
+    Yell at <code>hiihailey</code> in case it explodes
     <br />
     <small>server smol please be gentle;;</small>
   </p>
-  <small>v3.0 (2022-11-06)</small>
+  <small>v3.1 (2024-09-06)</small>
 
   <h2>Types</h2>
   <span class="type-name">PlayerRanking</span>
