@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ params }) => {
   console.time("gains/" + scoreCategory);
   try {
     const mostGained = await dbMostGained.findOne({ _id: scoreCategory as any });
-    return json(mostGained);
+    return json(mostGained?.ranking);
   } catch (e) {
     console.error(e);
     throw error(500, "Internal server error");

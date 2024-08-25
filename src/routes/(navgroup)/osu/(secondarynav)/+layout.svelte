@@ -4,12 +4,15 @@
   import { page } from "$app/stores";
 
   const MAX_DATE = formatDate();
-  let date = !$page.params.date || $page.params.date === "latest" ? MAX_DATE : $page.params.date;
+  let date = !$page.params.date || $page.params.date === "latest" || $page.params.date === "last"
+              ? MAX_DATE : $page.params.date;
   let scoreCategory: string;
   $: scoreCategory = $page.params.category;
-  let type: string; //players, countries, gains
+  let type: string; // players, countries, or gains
   $: type = $page.url.pathname.split("/")[3];
   let country = $page.params.country;
+  let rankingMode: string; // ranking or gains
+  $: rankingMode = $page.url.pathname.split("/")[2];
 
   function addDateNav(days: number) {
     let curDate = new Date(date);
@@ -24,11 +27,11 @@
   }
 
   const setURL = () =>
-    goto(
-      `/osu/ranking/${type || "players"}/${date || "latest"}/${scoreCategory || "top50"}/${
+    rankingMode === "ranking" ?
+      goto(`/osu/ranking/${type || "players"}/${date || "latest"}/${scoreCategory || "top50"}/${
         country || "all"
-      }/${$page.params.ranks || ""}/${$page.params.extra || ""}`
-    );
+      }/${$page.params.ranks || ""}/${$page.params.extra || ""}`)
+    : goto(`/osu/gains/${scoreCategory || "top50"}`);
 </script>
 
 <nav class="secondary-nav row">
@@ -75,40 +78,43 @@
     </button>
   </div>
 
+  {#if rankingMode === "ranking"}
   <div class="secondary-nav-inner row">
     <button
-      tabindex="0"
-      class="secondary-nav-tab btn-none btn-rect"
-      class:active={type === "countries"}
-      on:click={() => {
-        type = "countries";
-        setURL();
-      }}>
+    tabindex="0"
+    class="secondary-nav-tab btn-none btn-rect"
+    class:active={type === "countries"}
+    on:click={() => {
+      type = "countries";
+      setURL();
+    }}>
       Countries
     </button>
     <button
-      tabindex="0"
-      class="secondary-nav-tab btn-none btn-rect"
-      class:active={type === "gains"}
-      on:click={() => {
-        type = "gains";
-        setURL();
-      }}>
+    tabindex="0"
+    class="secondary-nav-tab btn-none btn-rect"
+    class:active={type === "gains"}
+    on:click={() => {
+      type = "gains";
+      setURL();
+    }}>
       Gains
     </button>
     <button
-      tabindex="0"
-      class="secondary-nav-tab btn-none btn-rect"
-      class:active={type === "players"}
-      on:click={() => {
-        type = "players";
-        setURL();
-      }}>
+    tabindex="0"
+    class="secondary-nav-tab btn-none btn-rect"
+    class:active={type === "players"}
+    on:click={() => {
+      type = "players";
+      setURL();
+    }}>
       Players
     </button>
   </div>
+  {/if}
 </nav>
 
+{#if rankingMode === "ranking"}  
 <form id="group-container" class="row" on:submit|preventDefault={setURL}>
   <button
     class="arrow-button btn-none"
@@ -129,6 +135,7 @@
     <icon class="single-arrow" />
   </button>
 </form>
+{/if}
 
 <slot />
 

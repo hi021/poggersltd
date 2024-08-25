@@ -14,9 +14,12 @@ export const load: PageLoad = async ({ params, fetch }) => {
     if (category === "all") return resPlayerJson;
 
     const resRanks = await fetch(`/api/player/${resPlayerJson._id}/ranks/${category}`);
-    const resRanksJson: {ranks: Array<{day: number, scores: number, rank: number} | null>, stats: {minRanks: number, maxRanks: number, minScores: number, maxScores: number}} = await resRanks.json();
+    const resRanksJson: {
+      ranks: Array<{ day: number; scores: number; rank: number } | null>;
+      stats: { minRanks: number; maxRanks: number; minScores: number; maxScores: number };
+    } = await resRanks.json();
 
-    return {...resPlayerJson, ...resRanksJson};
+    return { ...resPlayerJson, ...resRanksJson };
   } catch (e: any) {
     console.error(e);
     throw error(e?.status ?? 500, e?.body?.message ?? "An unknown error has occurred");

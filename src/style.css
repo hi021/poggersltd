@@ -584,6 +584,12 @@ button[disabled] {
   font-size: 1.75rem;
   text-align: center;
 }
+.solo-text > small {
+  opacity: 0.8;
+}
+.solo-text em {
+  color: var(--color-purple);
+}
 /* MISC */
 
 /* MEDIA */
