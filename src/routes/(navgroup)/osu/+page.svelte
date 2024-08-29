@@ -50,7 +50,7 @@
     margin-left: 0;
   }
 
-  @media screen and (max-width: 640px) {
+  @media screen and (max-width: 40rem) {
     .search-logo {
       font-size: 5.25rem;
       margin: 2rem;

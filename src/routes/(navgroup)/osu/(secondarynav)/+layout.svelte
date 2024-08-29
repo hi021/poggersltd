@@ -4,8 +4,10 @@
   import { page } from "$app/stores";
 
   const MAX_DATE = formatDate();
-  let date = !$page.params.date || $page.params.date === "latest" || $page.params.date === "last"
-              ? MAX_DATE : $page.params.date;
+  let date =
+    !$page.params.date || $page.params.date === "latest" || $page.params.date === "last"
+      ? MAX_DATE
+      : $page.params.date;
   let scoreCategory: string;
   $: scoreCategory = $page.params.category;
   let type: string; // players, countries, or gains
@@ -26,12 +28,18 @@
     setURL();
   }
 
-  const setURL = () =>
-    rankingMode === "ranking" ?
-      goto(`/osu/ranking/${type || "players"}/${date || "latest"}/${scoreCategory || "top50"}/${
-        country || "all"
-      }/${$page.params.ranks || ""}/${$page.params.extra || ""}`)
-    : goto(`/osu/gains/${scoreCategory || "top50"}`);
+  const setURL = () => {
+    const categoryUrl = "/" + (scoreCategory || "top50");
+
+    if (rankingMode === "ranking") {
+      const typeUrl = "/" + (type || "players");
+      const dateUrl = "/" + (date || "latest");
+      const extraUrl = $page.params.extra ? "/" + $page.params.extra : "";
+      const ranksUrl = $page.params.ranks || extraUrl ? "/" + ($page.params.ranks || "") : "";
+      const countryUrl = country || ranksUrl || extraUrl ? "/" + (country || "all") : "";
+      goto(`/osu/ranking${typeUrl}${dateUrl}${categoryUrl}${countryUrl}${ranksUrl}${extraUrl}`);
+    } else goto(`/osu/gains${categoryUrl}`);
+  };
 </script>
 
 <nav class="secondary-nav row">
@@ -79,62 +87,62 @@
   </div>
 
   {#if rankingMode === "ranking"}
-  <div class="secondary-nav-inner row">
-    <button
-    tabindex="0"
-    class="secondary-nav-tab btn-none btn-rect"
-    class:active={type === "countries"}
-    on:click={() => {
-      type = "countries";
-      setURL();
-    }}>
-      Countries
-    </button>
-    <button
-    tabindex="0"
-    class="secondary-nav-tab btn-none btn-rect"
-    class:active={type === "gains"}
-    on:click={() => {
-      type = "gains";
-      setURL();
-    }}>
-      Gains
-    </button>
-    <button
-    tabindex="0"
-    class="secondary-nav-tab btn-none btn-rect"
-    class:active={type === "players"}
-    on:click={() => {
-      type = "players";
-      setURL();
-    }}>
-      Players
-    </button>
-  </div>
+    <div class="secondary-nav-inner row">
+      <button
+        tabindex="0"
+        class="secondary-nav-tab btn-none btn-rect"
+        class:active={type === "countries"}
+        on:click={() => {
+          type = "countries";
+          setURL();
+        }}>
+        Countries
+      </button>
+      <button
+        tabindex="0"
+        class="secondary-nav-tab btn-none btn-rect"
+        class:active={type === "gains"}
+        on:click={() => {
+          type = "gains";
+          setURL();
+        }}>
+        Gains
+      </button>
+      <button
+        tabindex="0"
+        class="secondary-nav-tab btn-none btn-rect"
+        class:active={type === "players"}
+        on:click={() => {
+          type = "players";
+          setURL();
+        }}>
+        Players
+      </button>
+    </div>
   {/if}
 </nav>
 
-{#if rankingMode === "ranking"}  
-<form id="group-container" class="row" on:submit|preventDefault={setURL}>
-  <button
-    class="arrow-button btn-none"
-    type="button"
-    disabled={date <= MIN_DATE}
-    on:click={() => addDateNav(-1)}>
-    <icon class="single-arrow flip-h" />
-  </button>
-  <div class="group">
-    <input type="date" placeholder="date" max={MAX_DATE} min={MIN_DATE} bind:value={date} />
-    <button class="btn-blue" type="submit">yoink</button>
-  </div>
-  <button
-    class="arrow-button btn-none"
-    type="button"
-    disabled={date >= MAX_DATE}
-    on:click={() => addDateNav(1)}>
-    <icon class="single-arrow" />
-  </button>
-</form>
+{#if rankingMode === "ranking"}
+  <form id="group-container" class="row" on:submit|preventDefault={setURL}>
+    <button
+      class="arrow-button btn-none"
+      type="button"
+      disabled={date <= MIN_DATE}
+      on:click={() => addDateNav(-1)}>
+      <icon class="single-arrow flip-h" />
+    </button>
+    <div class="group">
+      <input type="date" placeholder="date" max={MAX_DATE} min={MIN_DATE} bind:value={date} />
+      <button class="btn-blue" type="submit">yoink</button>
+    </div>
+    <button
+      class="arrow-button btn-none"
+      type="button"
+      disabled={date >= MAX_DATE}
+      on:click={() => addDateNav(1)}>
+      <icon class="single-arrow" />
+    </button>
+  </form>
 {/if}
 
 <slot />
@@ -157,7 +165,6 @@
   .arrow-button {
     --radius: 10px;
     background-color: rgba(0, 0, 0, 0.1);
-    font-weight: 700;
     color: inherit;
     border-radius: 0;
     padding: 0 12px;
@@ -170,11 +177,15 @@
     border-bottom-right-radius: var(--radius);
     border-top-right-radius: var(--radius);
   }
-  .arrow-button:not([disabled]):hover {
+  .arrow-button:disabled {
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0.2;
+  }
+  .arrow-button:not(:disabled):hover {
     background-color: rgba(0, 0, 0, 0.5);
   }
 
-  @media screen and (max-width: 640px) {
+  @media screen and (max-width: 40rem) {
     :global(.osu-table) {
       border-spacing: 0;
       margin: 10px 2%;

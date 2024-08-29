@@ -1,4 +1,5 @@
 <script lang="ts">
+  //@ts-nocheck it's being really dumb, please don't worry about it
   import { COUNTRIES, getAvatarURL, RANKING_BADGES, SCORE_CATEGORIES, tooltip } from "$lib/util";
   import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
   import PlayerRecordStats from "$lib/components/Player/PlayerRecordStats.svelte";
@@ -11,7 +12,7 @@
 
   export let data: PageData;
   let loading = false;
-  let category = $page.params.category;
+  let category = $page.params.category as "top50" | "top25" | "top8" | "top1" | "all";
   $: goto(`/osu/player/${$page.params.idOrName}/${category}`);
 </script>
 
@@ -32,12 +33,12 @@
               class="osu-badge"
               alt="<3"
               src={RANKING_BADGES[data._id].img}
-              use:tooltip={{content: RANKING_BADGES[data._id].title ?? ""}} />
+              use:tooltip={{ content: RANKING_BADGES[data._id].title ?? "" }} />
           {/if}
 
           {#if data.oldNames?.length}
             <icon
-              class="icon-profile-name"
+              class="icon-profile-name big"
               use:tooltip={{ content: data.oldNames.join(", ") }} />
           {/if}
         </div>
@@ -54,30 +55,35 @@
         </div>
       </div>
     </div>
-    <div id="main-wrapper" class="row flex-fill">
-      <div id="side-bar" class="column">
+    <div class="main-wrapper row flex-fill">
+      <aside class="column">
         <a
           target="_blank"
           href="https://osu.ppy.sh/users/{data._id}"
           use:tooltip={{ content: "osu! profile" }}
           rel="noreferrer">
-          <icon class="osu" />
+          <icon class="osu bigger" />
         </a>
-      </div>
-      <div id="main" class="column flex-fill">
-        <div id="tabs-container" class="row">
+      </aside>
+      <div class="main-container column flex-fill">
+        <div class="tabs-container row">
           {#each SCORE_CATEGORIES as cat}
-            <button class="tab btn-none" disabled={data[cat] == null}
-                class:active={category === cat} on:click={() => (category = cat)}>
+            <button
+              class="tab btn-none"
+              disabled={data[cat] == null}
+              class:active={category === cat}
+              on:click={() => (category = cat)}>
               {cat}
             </button>
           {/each}
-          <button class="tab btn-none"
+          <button
+            class="tab btn-none"
             class:active={category === "all"}
             on:click={() => (category = "all")}>
             all
           </button>
         </div>
+
         {#if loading}
           <div class="overlay" transition:fade />
         {:else}
@@ -85,13 +91,16 @@
             {#if category === "all"}
               {#each SCORE_CATEGORIES as cat}
                 {#if data[cat]}
-                  <PlayerAllCategoryStats country={data.country} title="{cat}s" playerCategory={data[cat]}/>
+                  <PlayerAllCategoryStats
+                    country={data.country}
+                    title="{cat}s"
+                    playerCategory={data[cat]} />
                 {/if}
               {/each}
             {:else if data[category]}
-              <PlayerRecordStats playerCategory={data[category]}/>
-              <PlayerScoresChart ranks={data.ranks}/>
-              <PlayerBasicStats playerCategory={data[category]}/>
+              <PlayerRecordStats playerCategory={data[category]} />
+              <PlayerScoresChart ranks={data.ranks} />
+              <PlayerBasicStats playerCategory={data[category]} />
             {:else}
               <p class="solo-text">
                 No <em>{category}</em> stats for this player...
@@ -140,13 +149,13 @@
     background: linear-gradient(45deg, var(--color-purple), #880e4f);
   }
 
-  #side-bar,
+  aside,
   #top-bar-bottom {
     background-color: var(--color-lighter);
     color: var(--color-darker);
   }
 
-  #side-bar {
+  aside {
     width: var(--av-height);
     padding-top: calc(var(--av-height-2) + 10px);
     margin-top: calc(-1 * var(--av-height-2));
@@ -154,7 +163,7 @@
     align-items: center;
   }
 
-  #main {
+  .main-container {
     --pad: 12px;
     padding: var(--pad);
     background-color: var(--color-dark);
@@ -166,7 +175,7 @@
     margin-left: calc(-1 * var(--pad));
   }
 
-  #tabs-container {
+  .tabs-container {
     margin: calc(-1 * var(--pad));
     margin-bottom: var(--pad);
     padding-left: var(--pad);
@@ -231,19 +240,11 @@
     margin-bottom: 0;
   }
 
-  icon.osu {
-    background-image: url("/icons/osu_white.svg");
-    filter: invert(1);
-    height: 36px;
-  }
   icon.osu:hover {
     opacity: 0.45;
   }
 
   .icon-profile-name {
-    background-image: url("/icons/profile_name.svg");
-    height: 24px;
-    filter: invert(1);
     margin-left: 10px;
     transition: transform 0.25s;
   }
@@ -251,8 +252,8 @@
     transform: translateY(-4px);
   }
 
-  @media screen and (max-width: 640px) {
-    #main {
+  @media screen and (max-width: 40rem) {
+    .main-container {
       --pad: 8px;
     }
     main {

@@ -1,23 +1,25 @@
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 
-export const load: PageLoad = async ({ params, fetch }) => {
+interface PlayerProfileRanks {
+  ranks: Array<{ day: number; scores: number; rank: number } | null>;
+  stats: { minRanks: number; maxRanks: number; minScores: number; maxScores: number };
+}
+
+export const load: PageLoad = async ({
+  params,
+  fetch
+}): Promise<App.Player & Partial<PlayerProfileRanks>> => {
   try {
     const resPlayer = await fetch(`/api/player/${params.idOrName}`);
-    if (!resPlayer.ok) {
-      if (resPlayer.status == 400) return null;
-      throw error(resPlayer.status, resPlayer.statusText || "Oopsie");
-    }
+    if (!resPlayer.ok) throw error(resPlayer.status, resPlayer.statusText || "Oopsie");
+
     const category = params.category ?? "all";
     const resPlayerJson: App.Player = await resPlayer.json();
-
     if (category === "all") return resPlayerJson;
 
     const resRanks = await fetch(`/api/player/${resPlayerJson._id}/ranks/${category}`);
-    const resRanksJson: {
-      ranks: Array<{ day: number; scores: number; rank: number } | null>;
-      stats: { minRanks: number; maxRanks: number; minScores: number; maxScores: number };
-    } = await resRanks.json();
+    const resRanksJson: PlayerProfileRanks = await resRanks.json();
 
     return { ...resPlayerJson, ...resRanksJson };
   } catch (e: any) {

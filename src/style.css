@@ -10,7 +10,7 @@
   --color-light: #c1c1c1;
 
   --color-active: #b39ddb;
-  --color-active-dark: #6a1b9a;
+  /* --color-active-dark: #6a1b9a; */
   --color-purple: #4a148c;
 
   /* Buttons */
@@ -252,8 +252,8 @@ button[disabled] {
 .osu-main {
   background: linear-gradient(
     rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0.05) 200px,
-    rgba(49, 27, 146, 0.125) 900px
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(80, 55, 200, 0.1125) 100%
   );
   position: relative;
 }
@@ -285,6 +285,11 @@ button[disabled] {
   color: var(--color-darker);
   background-color: var(--color-light);
 }
+.osu-table tr:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  overflow: hidden;
+}
 .osu-table tr:first-child > td:first-child,
 .osu-table thead > th:first-child {
   border-top-left-radius: 8px;
@@ -293,6 +298,11 @@ button[disabled] {
 .osu-table tr:first-child > td:last-child,
 .osu-table thead > th:last-child {
   border-top-right-radius: 8px;
+  overflow: hidden;
+}
+.osu-table tr:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   overflow: hidden;
 }
 .osu-table tr:last-child > td:first-child {
@@ -307,7 +317,7 @@ button[disabled] {
   position: relative;
 }
 .osu-table tr.top-rank::after {
-  --color: var(--color-darker);
+  --color: var(--color-darkest);
   content: "";
   position: absolute;
   top: 0;
@@ -317,21 +327,15 @@ button[disabled] {
   background-color: color-mix(in srgb, var(--color) 50%, transparent);
 }
 .osu-table #rank-1.top-rank::after {
-  --color: goldenrod;
   border-top-right-radius: 8px;
 }
-.osu-table #rank-2.top-rank::after {
-  --color: silver;
-}
-.osu-table #rank-3.top-rank::after {
-  --color: saddlebrown;
-}
+
 .osu-table tr.osu-difference-column {
   background-color: rgba(255, 255, 255, 0.25);
 }
 .osu-table tr:not(.osu-difference-column):hover {
-  margin: 0 15%;
-  background-color: color-mix(in srgb, var(--color-active) 25%, var(--color-darker));
+  box-shadow: 0 0 2px 1px color-mix(in srgb, var(--color-light) 33%, transparent);
+  background-color: color-mix(in srgb, var(--color-active) 5%, var(--color-darker));
 }
 .osu-table td {
   line-height: 1;
@@ -593,9 +597,9 @@ button[disabled] {
 /* MISC */
 
 /* MEDIA */
-@media screen and (max-width: 1280px) {
-}
-@media screen and (max-width: 640px) {
+/* @media screen and (max-width: 80rem) {
+} */
+@media screen and (max-width: 40rem) {
   .hide-width-640 {
     display: none;
   }

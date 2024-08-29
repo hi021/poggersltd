@@ -12,7 +12,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
       if (res.status == 400) return { rankingData: [] };
       throw error(res.status, res.statusText || "Oopsie");
     }
-    const resJson: App.MostGainedRanking[] = await res.json();
+    const resJson: App.MostGainedRankingEntry[] = await res.json();
 
     return { rankingData: resJson };
   } catch (e: any) {

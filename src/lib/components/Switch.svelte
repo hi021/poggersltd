@@ -51,10 +51,10 @@
   }
 
   input:checked + .slider {
-    background-color: var(--color-active-dark);
+    background-color: var(--color-purple);
   }
   input:focus + .slider {
-    box-shadow: 0 0 1px var(--color-active-dark);
+    box-shadow: 0 0 1px var(--color-purple);
   }
   input:checked + .slider:before {
     transform: translateX(var(--size));

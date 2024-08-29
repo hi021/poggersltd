@@ -1,10 +1,11 @@
 <script lang="ts">
   import { RANKING_BADGES, tooltip } from "$lib/util";
   import { goto } from "$app/navigation";
-  export let plr: App.RankingEntry;
+  export let plr: App.RankingEntry | App.MostGainedRankingEntry;
   export let category: string; // score category url param
 
-  const goToProfile = (plr: App.RankingEntry) => goto(`/osu/player/${plr.name}/${category}`);
+  const goToProfile = (plr: App.RankingEntry | App.MostGainedRankingEntry) =>
+    goto(`/osu/player/${plr.name}/${category}`);
   const onKey = (e: KeyboardEvent) => {
     if (e.key === "Enter") goToProfile(plr);
   };

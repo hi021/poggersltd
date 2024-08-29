@@ -30,11 +30,11 @@
             {#if data.rankingSettings.avatars}
               <td class="hide-width-640" style="width: 64px;">
                 <a
-                  href="https://osu.ppy.sh/users/{plr.id}"
+                  href="https://osu.ppy.sh/users/{plr._id}"
                   target="_blank"
                   rel="noreferrer"
                   use:tooltip={{ content: "osu! profile" }}>
-                  <img class="osu-avatar-small" alt="" src={getAvatarURL(plr.id)} />
+                  <img class="osu-avatar-small" alt="" src={getAvatarURL(plr._id)} />
                 </a>
               </td>
             {/if}
@@ -66,7 +66,7 @@
     color: #999;
   }
 
-  @media screen and (max-width: 640px) {
+  @media screen and (max-width: 40rem) {
     .date-text {
       font-size: 57.5%;
     }

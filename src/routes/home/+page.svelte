@@ -8,7 +8,7 @@
 </svelte:head>
 
 <header>
-  <a href="/" class="logo-text">poggers</a>
+  <a href="/" class="logo-text unselectable">poggers</a>
 </header>
 
 <main class="row flex-fill">

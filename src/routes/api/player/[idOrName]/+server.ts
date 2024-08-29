@@ -29,5 +29,5 @@ export const GET: RequestHandler = async ({ params }) => {
     console.timeEnd("player/" + params.idOrName);
   }
 
-  throw error(400, "User does not exist");
+  throw error(404, "User does not exist");
 };

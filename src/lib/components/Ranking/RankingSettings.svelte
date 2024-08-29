@@ -43,7 +43,7 @@
     gap: 6px;
   }
   .background {
-    background-color: var(--color-darkest);
+    background-color: rgba(0, 0, 0, 0.2);
     min-width: 15svw;
     padding: 12px;
     border-radius: 8px;

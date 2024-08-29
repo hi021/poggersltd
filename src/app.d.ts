@@ -56,7 +56,7 @@ declare namespace App {
     weighted: number;
   }
 
-  interface MostGainedRanking {
+  interface MostGainedRankingEntry {
     _id: number; //                                          osu! id
     rank: number; //                                         most gained rank (1-99)
     name: string;

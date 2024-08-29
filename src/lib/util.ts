@@ -121,7 +121,12 @@ export function tooltip(
 // consts
 export const MIN_DATE = "2020-05-10";
 
-export const SCORE_CATEGORIES = ["top50", "top25", "top8", "top1"];
+export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
+  "top50",
+  "top25",
+  "top8",
+  "top1"
+];
 
 export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = {
   "5795337": { img: "/badges/pogu.png", title: "poggers" },

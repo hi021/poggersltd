@@ -83,7 +83,7 @@
     </ul>
   </div>
   <button type="submit" class="btn-none">
-    <icon class="search"/>
+    <icon class="search" />
   </button>
 </div>
 
@@ -158,7 +158,7 @@
   }
   .autocmp-item:hover,
   .autocmp-item:focus {
-    background-color: var(--color-active-dark);
+    background-color: var(--color-purple);
   }
   /* .autocmp-item-image {
 		background-size: cover;

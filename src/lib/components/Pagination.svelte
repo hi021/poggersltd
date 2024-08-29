@@ -28,7 +28,7 @@
       {#if showPageNumber}
         Page <span style="font-weight: 400;">{page}</span>/{maxPage}
         {#if entries}
-          |
+          ●
         {/if}
       {/if}
       {#if entries}

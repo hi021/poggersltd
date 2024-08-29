@@ -1,12 +1,10 @@
 <script lang="ts">
-    export let ranks: Array<{day: number, scores: number, rank: number}>;
+  export let ranks: Array<{ day: number; scores: number; rank: number }>;
 </script>
 
-<div>
+<div></div>
 
-</div>
-
-<style> 
+<style>
   path {
     stroke: var(--color-active);
     opacity: 1;

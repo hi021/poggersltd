@@ -1,6 +1,6 @@
 <footer>
-  <p>Poggers Limited 2024</p>
-  <small> v2024-06-01 </small>
+  <p>poggers limited 2024</p>
+  <small> v2024-09-01 </small>
 </footer>
 
 <style>
@@ -16,7 +16,7 @@
     margin: 1px 0;
   }
 
-  @media screen and (max-width: 640px) {
+  @media screen and (max-width: 40rem) {
     footer {
       padding: 0.25rem 0.125rem;
     }

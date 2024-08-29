@@ -10,7 +10,7 @@
     #{countryRank}
   </td>
 {/if}
-<td style="width: 40px; {!countryRank && 'margin-left: 8px;'}">
+<td style="width: 40px; line-height: 0; {!countryRank && 'margin-left: 8px;'}">
   <img
     class="osu-flag-small"
     alt={country}
