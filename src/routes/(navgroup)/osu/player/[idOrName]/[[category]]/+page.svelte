@@ -23,14 +23,14 @@
 <main class="flex-fill column">
   {#if data?.name}
     <div id="top-bar-container" class="row">
-      <img id="avatar" alt={data.name} src={getAvatarURL(data._id)} />
+      <img id="avatar" class="unselectable" alt={data.name} src={getAvatarURL(data._id)} />
       <div class="column" style="width: 100%;">
         <div id="top-bar-top">
           {data.name}
 
           {#if RANKING_BADGES[data._id]}
             <img
-              class="osu-badge"
+              class="osu-badge unselectable"
               alt="<3"
               src={RANKING_BADGES[data._id].img}
               use:tooltip={{ content: RANKING_BADGES[data._id].title ?? "" }} />
@@ -38,13 +38,13 @@
 
           {#if data.oldNames?.length}
             <icon
-              class="icon-profile-name big"
+              class="profile-name big"
               use:tooltip={{ content: data.oldNames.join(", ") }} />
           {/if}
         </div>
         <div id="top-bar-bottom" class="row">
           <img
-            class="osu-flag-small"
+            class="osu-flag-small unselectable"
             width="36"
             height="36"
             alt={data.country}
@@ -58,6 +58,7 @@
     <div class="main-wrapper row flex-fill">
       <aside class="column">
         <a
+        class="a"
           target="_blank"
           href="https://osu.ppy.sh/users/{data._id}"
           use:tooltip={{ content: "osu! profile" }}
@@ -130,7 +131,8 @@
     height: var(--av-height);
     aspect-ratio: 1/1;
     border-radius: 50%;
-    outline: 4px solid var(--color-lightest);
+    outline: 5px solid var(--color-lightest);
+    outline-offset: -1px;
     background-color: var(--color-lighter);
     z-index: 1;
   }
@@ -146,7 +148,7 @@
   #top-bar-top {
     font-size: 1.25rem;
     border-top-right-radius: 9999px;
-    background: linear-gradient(45deg, var(--color-purple), #880e4f);
+    background: linear-gradient(45deg, var(--color-purple), var(--color-claret));
   }
 
   aside,
@@ -163,6 +165,9 @@
     align-items: center;
   }
 
+  .main-wrapper {
+    box-shadow: 4px 4px 4px var(--color-darkest);
+  }
   .main-container {
     --pad: 12px;
     padding: var(--pad);
@@ -241,14 +246,15 @@
   }
 
   icon.osu:hover {
-    opacity: 0.45;
+    /* opacity: 0.45; */
+    background-color: #880e4f;
   }
 
-  .icon-profile-name {
+  .profile-name {
     margin-left: 10px;
     transition: transform 0.25s;
   }
-  .icon-profile-name:hover {
+  .profile-name:hover {
     transform: translateY(-4px);
   }
 
