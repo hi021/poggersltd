@@ -19,7 +19,7 @@
 
 <style>
   .btn-menu-main {
-    box-shadow: -2px 3px 8px 0 #777;
+    box-shadow: -2px 3px 8px 1px color-mix(in srgb, var(--color-light) 50%, transparent);
     border-radius: 20px;
     background-color: var(--color-lighter);
     background-position: center;

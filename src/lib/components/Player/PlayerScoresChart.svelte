@@ -2,15 +2,13 @@
   export let ranks: Array<{ day: number; scores: number; rank: number }>;
 </script>
 
-<div class="chart-container">
-
-</div>
+<div class="chart-container"></div>
 
 <style>
   .chart-container {
     width: 640px;
     height: 200px;
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     margin: 0 16px;
   }

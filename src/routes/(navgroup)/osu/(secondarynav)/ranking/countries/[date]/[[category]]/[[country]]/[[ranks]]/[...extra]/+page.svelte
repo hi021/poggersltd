@@ -139,17 +139,17 @@
     padding-left: 8px;
   }
   .osu-table tr:first-child {
-  border-radius: 0;
-  overflow: initial;
-}
-.osu-table tr:first-child > td:first-child {
-  border-radius: 0;
-  overflow: initial;
-}
-.osu-table tr:first-child > td:last-child {
-  border-radius: 0;
-  overflow: initial;
-}
+    border-radius: 0;
+    overflow: initial;
+  }
+  .osu-table tr:first-child > td:first-child {
+    border-radius: 0;
+    overflow: initial;
+  }
+  .osu-table tr:first-child > td:last-child {
+    border-radius: 0;
+    overflow: initial;
+  }
 
   .sortable {
     cursor: pointer;

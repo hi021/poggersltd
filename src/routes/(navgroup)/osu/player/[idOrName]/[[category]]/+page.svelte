@@ -37,9 +37,7 @@
           {/if}
 
           {#if data.oldNames?.length}
-            <icon
-              class="profile-name big"
-              use:tooltip={{ content: data.oldNames.join(", ") }} />
+            <icon class="profile-name big" use:tooltip={{ content: data.oldNames.join(", ") }} />
           {/if}
         </div>
         <div id="top-bar-bottom" class="row">
@@ -58,14 +56,14 @@
     <div class="main-wrapper row flex-fill">
       <aside class="column">
         <a
-        class="a"
+          class="a"
           target="_blank"
           href="https://osu.ppy.sh/users/{data._id}"
           use:tooltip={{ content: "osu! profile" }}
           rel="noreferrer">
           <div class="osu-icon-wrapper">
-            <div/>
-            <icon class="osu bigger"/>
+            <div />
+            <icon class="osu bigger" />
           </div>
         </a>
       </aside>
@@ -172,17 +170,17 @@
     display: flex;
   }
   .osu-icon-wrapper > div {
-    top:2px;
-    bottom:2px;
-    right:2px;
-    left:2px;
+    top: 2px;
+    bottom: 2px;
+    right: 2px;
+    left: 2px;
     border-radius: 50%;
-    position:absolute;
+    position: absolute;
     transition: background-color 0.2s linear;
-}
-.osu-icon-wrapper:hover > div {
-  background-color: var(--color-pink);
-}
+  }
+  .osu-icon-wrapper:hover > div {
+    background-color: var(--color-pink);
+  }
 
   .main-wrapper {
     box-shadow: 4px 4px 4px var(--color-darkest);

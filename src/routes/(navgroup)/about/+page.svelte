@@ -49,7 +49,8 @@
   <h2>osu! score ranking archive</h2>
   <h4>Why are there no scores at a given date?</h4>
   <p class="para">
-    Probably because the API was down for the entire day or it never updated with that day's data and it wasn't possible to retrieve the ranking.
+    Probably because the API was down for the entire day or it never updated with that day's data
+    and it wasn't possible to retrieve the ranking.
     <br />
     Top 25s, 8s, and 1s have been tracked since October 9th 2022 and there is no data beyond that date.
     <br />

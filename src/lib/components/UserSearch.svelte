@@ -44,7 +44,11 @@
   <div class="autocmp-wrapper">
     <input
       class="search-input input-dark"
-      style="--shadow-color: {autocompleteEntries.length ? 'transparent' : (value.length % 2 ? 'var(--color-claret)' : 'var(--color-darkest)')}"
+      style="--shadow-color: {autocompleteEntries.length
+        ? 'transparent'
+        : value.length % 2
+          ? 'var(--color-claret)'
+          : 'var(--color-darkest)'}"
       type="text"
       placeholder="osu! username"
       autocomplete="new-password"
@@ -166,7 +170,7 @@
   }
   .autocmp-item:hover,
   .autocmp-item:focus,
-	.autocmp-item:focus-visible {
+  .autocmp-item:focus-visible {
     outline-color: transparent;
     background-color: var(--color-purple);
   }
