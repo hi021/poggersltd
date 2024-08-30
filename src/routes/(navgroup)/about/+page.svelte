@@ -5,7 +5,7 @@
 <main>
   <h1>hii</h1>
   <p style="margin-bottom: 44px;">
-    This is an ongoing rewrite of a rewrite of pogowanie - a site that tracks osu! score
+    This is an ongoing rewrite of a rewrite of poggers.ltd/pogowanie - a site that tracks osu! score
     leaderboards.
     <br />
     Most of the functionality is already implemented, but some of it lacks polish. I'll be working on
@@ -16,11 +16,11 @@
   <p class="para">
     The site and API were remade from scratch to hopefully be much more performant and nicer to use.
     <br />
-    I've also moved away from osu!stats to respektive's API.
+    <s>I've also moved away from osu!stats to respektive's newer API.</s> Well that got shut down;
     <br />
     <br />
     The biggest change is the inclusion of tracking for top 25, top 8, and top 1 scores. There are also
-    user profiles and the site is in dark mode!
+    user profiles and woah... the site is in dark mode with a brand new UI...
   </p>
 
   <h2>Credits</h2>
@@ -43,27 +43,27 @@
   <h2>Contact</h2>
   <p class="para">
     Scream at <code>hiihailey</code> on Discord in case something breaks;;<br />
-    Ask me or <code>respektive</code> if in need of more detailed data that the site doesn't show
+    <!-- github here -->
   </p>
 
   <h2>osu! score ranking archive</h2>
   <h4>Why are there no scores at a given date?</h4>
   <p class="para">
-    Probably because the API was down for the entire day and it wasn't possible to save the ranking.
+    Probably because the API was down for the entire day or it never updated with that day's data and it wasn't possible to retrieve the ranking.
     <br />
     Top 25s, 8s, and 1s have been tracked since October 9th 2022 and there is no data beyond that date.
     <br />
     <br />
-    If you're looking at today's ranking, that becomes available around 10 a.m. UTC.
-    <br /><small
-      >respektive's API is still quite unstable, so the time may drastically vary from day to day.</small>
+    If you're looking at today's ranking, that becomes available around <em>2 p.m. UTC</em>.
+    <br />
+    <!-- <small>respektive's API is still quite unstable, so the time may drastically vary from day to day.</small> -->
   </p>
   <h4>How does it work?</h4>
   <p class="para">barely\</p>
 
   <h2>poggers API</h2>
   <p class="para">
-    The site's API is not private so you can probably use it. Maybe.<br />
+    The site's API is not private and possibly usable.<br />
     Basic documentation can be found <a href="/api">here</a>.
   </p>
 

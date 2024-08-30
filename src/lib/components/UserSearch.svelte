@@ -44,6 +44,7 @@
   <div class="autocmp-wrapper">
     <input
       class="search-input input-dark"
+      style="--shadow-color: {autocompleteEntries.length ? 'transparent' : (value.length % 2 ? 'var(--color-claret)' : 'var(--color-darkest)')}"
       type="text"
       placeholder="osu! username"
       autocomplete="new-password"
@@ -82,38 +83,50 @@
       {/each}
     </ul>
   </div>
-  <button type="submit" class="btn-none">
-    <icon class="search" />
+  <button type="submit" class="btn-search btn-none">
+    <icon class="search big" />
   </button>
 </div>
 
 <style>
   /* SEARCH WRAPPER */
   .search-input-wrapper {
+    --radius: 9999px;
     position: relative;
     width: 100%;
     margin-top: 22px;
     align-items: center;
     padding: 0;
-    /* overflow: hidden; would also hide input's focus shadow and autocomplete */
+    border-radius: var(--radius);
   }
-  .icon-search {
+  .btn-search {
     position: absolute;
-    width: 1.75rem;
-    right: 6px;
-    filter: invert(100%);
+    width: 3em;
+    height: 100%;
+    right: -1px;
+    color: var(--color-lighter);
+    padding: 10px;
+    border-radius: 0;
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
   }
-  .icon-search:hover,
-  .icon-search:focus {
-    filter: invert(0);
+  .btn-search:hover,
+  .btn-search:focus {
+    background-color: var(--color-darker);
   }
   .search-input {
-    padding-right: calc(2rem + 8px);
+    padding-left: 16px;
+    padding-right: calc(2em + 14px);
     background-color: transparent;
+    border-radius: var(--radius);
     width: 100%;
   }
-  .search-input:focus {
-    box-shadow: 0 0 2px 0.2rem rgba(255, 255, 255, 0.35);
+  .search-input:focus,
+  .search-input:focus-visible {
+    box-shadow: 1px 2px 4px var(--shadow-color);
+    /* box-shadow: 0 0 3px 0.125rem color-mix(in srgb, var(--shadow-color) 33%, transparent); */
+    outline: none;
+    outline-color: transparent;
   }
   /* SEARCH WRAPPER */
 
@@ -129,13 +142,17 @@
     left: 0;
     right: 0;
     margin: 0;
-    padding: 0 10px;
+    padding: 0 24px;
     z-index: 2;
     list-style: none;
   }
+  .autocmp-items > li:last-child > .autocmp-item {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 
   .autocmp-item {
-    /* .autocmp-item-image */
+    display: flex;
     top: 100%;
     left: 0;
     right: 0;
@@ -143,28 +160,16 @@
     color: inherit;
     background-color: var(--color-darkish);
     text-decoration: none;
-  }
-  .autocmp-item:focus,
-	.autocmp-item:focus-visible
-	/* .autocmp-item-image:focus,
-	.autocmp-item-image:focus-visible */ {
-    outline: none;
-  }
-  .autocmp-item {
-    display: flex;
     align-items: center;
     line-height: 1;
     padding: 0.5rem;
   }
   .autocmp-item:hover,
-  .autocmp-item:focus {
+  .autocmp-item:focus,
+	.autocmp-item:focus-visible {
+    outline-color: transparent;
     background-color: var(--color-purple);
   }
-  /* .autocmp-item-image {
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-	} */
 
   /* .autocmp-cntry {
 		padding: 10px;

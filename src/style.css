@@ -11,6 +11,7 @@
 
   --color-active: #b39ddb;
   /* --color-active-dark: #6a1b9a; */
+  --color-pink: #D3548D;
   --color-purple: #4a148c;
   --color-claret: #880e4f;
 
@@ -232,6 +233,43 @@ button[disabled] {
   font-size: 1rem;
 }
 
+/* PLAYER */
+.player-category-header {
+  font-weight: 300;
+  text-align: center;
+  margin-top: 6px;
+}
+.player-stats-container {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  border-radius: 8px;
+}
+.player-stats-container.hoverable {
+  padding: 10px;
+}
+.player-stats-container.hoverable > .player-stat-value {
+  margin-bottom: 12px;
+}
+.player-stats-container.hoverable:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.player-stat-name {
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--color-lighter);
+  border-bottom-left-radius: 1px;
+  border-bottom-right-radius: 1px;
+}
+.player-stat-value {
+  font-size: 1.25rem;
+  margin-bottom: 3px;
+}
+.player-stat-small {
+  font-size: 0.75rem;
+  font-weight: 300;
+}
+/* PLAYER */
+
 /* OSU */
 .osu-flag-small {
   height: 24px;
@@ -359,36 +397,6 @@ button[disabled] {
   color: var(--color-active);
 }
 /* TABLE */
-
-/* ARROWS */
-/* 18x12 px */
-.arrow,
-.arrow-down {
-  width: 0;
-  height: 0;
-  padding: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-}
-.arrow {
-  border-bottom: 11px solid hsl(110, 60%, 45%);
-}
-.arrow-down {
-  transform: rotate(180deg);
-  border-bottom: 11px solid hsl(0, 60%, 50%);
-}
-.line {
-  width: 18px;
-  height: 3px;
-  background-color: hsl(0, 0%, 50%);
-}
-.circle {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background-color: hsl(207, 60%, 50%);
-}
-/* ARROWS */
 /* OSU */
 
 /* SECONDARY NAV */

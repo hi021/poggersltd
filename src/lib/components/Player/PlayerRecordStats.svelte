@@ -3,22 +3,22 @@
   export let playerCategory: App.PlayerRankingFull;
 </script>
 
-<div class="stats-container">
+<div class="player-stats-container">
   {#if playerCategory.mostGained}
-    <span class="stat-name left"> most gained </span>
-    <span class="stat-value" use:tooltip={{ content: playerCategory.mostGained.date }}>
+    <span class="player-stat-name"> most gained </span>
+    <span class="player-stat-value" use:tooltip={{ content: playerCategory.mostGained.date }}>
       {formatNumber(playerCategory.mostGained.scores)}
     </span>
   {/if}
   {#if playerCategory.peak}
-    <span class="stat-name left"> peak </span>
-    <span class="stat-value" use:tooltip={{ content: playerCategory.peak.date }}>
+    <span class="player-stat-name"> peak </span>
+    <span class="player-stat-value" use:tooltip={{ content: playerCategory.peak.date }}>
       {formatNumber(playerCategory.peak.scores)}
     </span>
   {/if}
   {#if playerCategory.lowest}
-    <span class="stat-name left"> lowest </span>
-    <span class="stat-value" use:tooltip={{ content: playerCategory.lowest.date }}>
+    <span class="player-stat-name"> lowest </span>
+    <span class="player-stat-value" use:tooltip={{ content: playerCategory.lowest.date }}>
       {formatNumber(playerCategory.lowest.scores)}
     </span>
   {/if}

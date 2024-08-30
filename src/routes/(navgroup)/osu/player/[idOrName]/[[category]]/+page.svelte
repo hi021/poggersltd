@@ -63,7 +63,10 @@
           href="https://osu.ppy.sh/users/{data._id}"
           use:tooltip={{ content: "osu! profile" }}
           rel="noreferrer">
-          <icon class="osu bigger" />
+          <div class="osu-icon-wrapper">
+            <div/>
+            <icon class="osu bigger"/>
+          </div>
         </a>
       </aside>
       <div class="main-container column flex-fill">
@@ -156,7 +159,6 @@
     background-color: var(--color-lighter);
     color: var(--color-darker);
   }
-
   aside {
     width: var(--av-height);
     padding-top: calc(var(--av-height-2) + 10px);
@@ -164,6 +166,23 @@
     padding-bottom: 10px;
     align-items: center;
   }
+
+  .osu-icon-wrapper {
+    position: relative;
+    display: flex;
+  }
+  .osu-icon-wrapper > div {
+    top:2px;
+    bottom:2px;
+    right:2px;
+    left:2px;
+    border-radius: 50%;
+    position:absolute;
+    transition: background-color 0.2s linear;
+}
+.osu-icon-wrapper:hover > div {
+  background-color: var(--color-pink);
+}
 
   .main-wrapper {
     box-shadow: 4px 4px 4px var(--color-darkest);
@@ -206,48 +225,10 @@
   .data-container {
     margin: 0 auto;
   }
-  .category-header {
-    font-weight: 300;
-    text-align: center;
-    margin-top: 6px;
-  }
-  .stats-container {
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
-  }
-  .stats-container.hoverable {
-    padding: 10px;
-  }
-  .stats-container.hoverable > .stat-value {
-    margin-bottom: 12px;
-  }
-  .stats-container.hoverable:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  .stat-name {
-    font-size: 0.875rem;
-    border-bottom: 1px solid var(--color-lighter);
-    border-bottom-left-radius: 1px;
-    border-bottom-right-radius: 1px;
-  }
-  .stat-value {
-    font-size: 1.25rem;
-    margin-bottom: 3px;
-  }
-  .stat-small {
-    font-size: 0.75rem;
-    font-weight: 300;
-  }
 
   .date-container {
     margin: auto;
     margin-bottom: 0;
-  }
-
-  icon.osu:hover {
-    /* opacity: 0.45; */
-    background-color: #880e4f;
   }
 
   .profile-name {

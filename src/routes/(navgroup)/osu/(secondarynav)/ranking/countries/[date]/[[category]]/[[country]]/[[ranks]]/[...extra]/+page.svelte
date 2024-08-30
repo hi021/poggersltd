@@ -128,8 +128,8 @@
     margin: 40px 7.5%;
   }
   .osu-table th {
+    padding: 2px;
     user-select: none;
-    padding-bottom: 4px;
   }
   .osu-table td {
     padding: 4px 0;
@@ -138,6 +138,18 @@
   .osu-table td:first-child {
     padding-left: 8px;
   }
+  .osu-table tr:first-child {
+  border-radius: 0;
+  overflow: initial;
+}
+.osu-table tr:first-child > td:first-child {
+  border-radius: 0;
+  overflow: initial;
+}
+.osu-table tr:first-child > td:last-child {
+  border-radius: 0;
+  overflow: initial;
+}
 
   .sortable {
     cursor: pointer;
@@ -152,6 +164,7 @@
   }
   span.asc::after,
   span.desc::after {
+    content: "";
     display: inline-block;
     aspect-ratio: 1/1;
     background-size: contain;
@@ -160,9 +173,7 @@
     background-position: center;
     margin-left: 6px;
     height: 1.125rem;
-    content: "";
     background-image: url("/icons/arrow_up.svg");
-    filter: invert(1);
   }
   span.desc::after {
     transform: rotate(180deg);

@@ -2,10 +2,19 @@
   export let ranks: Array<{ day: number; scores: number; rank: number }>;
 </script>
 
-<div></div>
+<div class="chart-container">
+
+</div>
 
 <style>
-  path {
+  .chart-container {
+    width: 640px;
+    height: 200px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    margin: 0 16px;
+  }
+  /* path {
     stroke: var(--color-active);
     opacity: 1;
     stroke-linejoin: round;
@@ -42,5 +51,5 @@
     height: 200px;
     background-color: var(--color-active);
     pointer-events: none;
-  }
+  } */
 </style>
