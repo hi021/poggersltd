@@ -3,6 +3,7 @@
   import Switch from "$lib/components/Switch.svelte";
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { tooltip } from "$lib/util";
+    import { fly } from "svelte/transition";
 
   let singleRank = false;
   let rank: number;
@@ -13,7 +14,7 @@
     if (!singleRank) gotoPlayerForce(idOrName);
   };
   const gotoPlayerForce = (idOrName: string | number) =>
-    goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : "1-50"}/${mode}`);
+  idOrName && goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : "1-50"}/${mode}`);
 </script>
 
 <svelte:head>
@@ -31,6 +32,7 @@
     </select>
     {#if singleRank}
       <input
+      transition:fly={{duration: 200, x: -50}}
         class="input-dark"
         type="number"
         placeholder="Rank (1-100)"
@@ -40,11 +42,11 @@
         bind:value={rank} />
     {/if}
   </form>
-  <!-- svelte-ignore a11y-label-has-associated-control -->
-  <label class="row" style="align-items: center; margin-top: 16px; width: fit-content;">
-    <Switch bind:checked={singleRank} />
-    <span style="margin-left: 8px;">Single rank</span>
-  </label>
+  <div class="row" style="align-items: center; margin-top: 16px; width: fit-content;">
+    <Switch bind:checked={singleRank} style="flex-direction: row; gap: 8px; align-items: center;">
+      <span slot="after">Single rank</span>
+    </Switch>
+  </div>
 
   <slot />
 </main>
@@ -54,8 +56,5 @@
     margin-left: 22px;
     margin-top: 22px;
     width: 20%;
-  }
-  .input-dark:focus {
-    box-shadow: 0 0 2px 0.2rem rgba(255, 255, 255, 0.35);
   }
 </style>

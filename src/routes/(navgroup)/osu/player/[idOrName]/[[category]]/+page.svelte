@@ -9,11 +9,12 @@
   import { fade } from "svelte/transition";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
+    import { browser } from "$app/environment";
 
   export let data: PageData;
   let loading = false;
   let category = $page.params.category as "top50" | "top25" | "top8" | "top1" | "all";
-  $: goto(`/osu/player/${$page.params.idOrName}/${category}`);
+  $: () => browser && goto(`/osu/player/${$page.params.idOrName}/${category}`);
 </script>
 
 <svelte:head>
@@ -101,7 +102,7 @@
               {/each}
             {:else if data[category]}
               <PlayerRecordStats playerCategory={data[category]} />
-              <PlayerScoresChart ranks={data.ranks} />
+              <PlayerScoresChart ranks={data.ranks}/>
               <PlayerBasicStats playerCategory={data[category]} />
             {:else}
               <p class="solo-text">
@@ -178,8 +179,14 @@
     position: absolute;
     transition: background-color 0.2s linear;
   }
+  .osu-icon-wrapper > icon {
+    transition: color 0.2s linear;
+  }
   .osu-icon-wrapper:hover > div {
     background-color: var(--color-pink);
+  }
+  .osu-icon-wrapper:hover > icon {
+    color: var(--color-lightest);
   }
 
   .main-wrapper {
@@ -234,7 +241,7 @@
     transition: transform 0.25s;
   }
   .profile-name:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
   }
 
   @media screen and (max-width: 40rem) {

@@ -1,26 +1,57 @@
 <script lang="ts">
-  export let ranks: Array<{ day: number; scores: number; rank: number }>;
-</script>
+    import { formatNumber } from "$lib/util";
+    import { VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
 
-<div class="chart-container"></div>
+  type ChartEntry = { day: number; scores?: number; rank?: number };
+  export let ranks: Array<ChartEntry> | undefined;
+
+  let days: number;
+  let ranksMap: Array<ChartEntry> | undefined;
+  $: {
+   days = ranks?.length ?? 0;
+    ranksMap = ranks?.reverse().map((a, i) => {return {...a, day: i}});
+  }
+  const x = (d: ChartEntry) => d.day
+  const y = (d: ChartEntry) => d.scores
+  const color = (d: ChartEntry, i: number) => ['var(--color-active)', 'var(--color-claret)'][i]
+
+  function tooltipTemplate(d: ChartEntry) {
+    const daysAgo = days - d.day;
+    const daysAgoString = 'day' + (daysAgo == 1 ? '' : 's') + ' ago';
+    return d?.scores ? `<span>${formatNumber(d.scores)}
+    ${daysAgo ? `${daysAgo} ${daysAgoString}` : 'today'}</span>` : '';
+  }
+</script>
+  
+<div class="chart-wrapper">
+  {#if ranksMap}
+  <VisXYContainer class="player-chart-container" data={ranksMap} duration={200} padding={{top: 10, bottom: 10}}>
+    <VisLine {x} {y} {color} lineWidth={4} />
+    <VisTooltip />
+    <VisCrosshair template={tooltipTemplate} {x} {y}/>
+  </VisXYContainer>
+  {/if}
+</div>
 
 <style>
-  .chart-container {
-    width: 640px;
-    height: 200px;
+  .chart-wrapper {
+    width: 40rem;
+    height: 14rem;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     margin: 0 16px;
+    overflow: hidden;
   }
-  /* path {
-    stroke: var(--color-active);
-    opacity: 1;
+  :global(.player-chart-container) {
+    width: inherit;
+    height: inherit;
+  }
+  :global(.player-chart-container path) {
     stroke-linejoin: round;
     stroke-linecap: round;
-    stroke-width: 2px;
-    fill: none;
   }
 
+/*
   .tooltip {
     position: absolute;
     padding: 10px;

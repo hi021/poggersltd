@@ -6,7 +6,7 @@ import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
 import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params }) => {
-  const scoreCategory = params.category || "top50";
+  const scoreCategory = params.category as App.RankingCategory || "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
   const playerId = parseInt(params.idOrName);

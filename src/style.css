@@ -105,8 +105,11 @@ fieldset {
   background-color: var(--color-dark);
   border: none;
   color: var(--color-lighter);
-  padding: 8px 6px;
-  border-radius: 0;
+  padding: 0.75rem 0.625rem;
+  border-radius: 9999px;
+}
+.input-dark:focus-visible {
+  box-shadow: 0 0 2px 0.125rem var(--color-light);
 }
 
 /* BUTTONS */

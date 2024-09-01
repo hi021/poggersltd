@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
   import { getAvatarURL } from "$lib/util";
+    import { slide } from "svelte/transition";
 
   let searchInputElement: HTMLInputElement;
   let autocompleteEntries: Array<{ _id: number; name: string }> = [];
@@ -9,10 +10,11 @@
   export let gotoPlayerForce: (idOrName: string) => void;
 
   function handleClick(e: MouseEvent) {
-    if (!(e.target as Element).className?.includes("autocmp-item")) autocompleteEntries = [];
+    const target = e.target as HTMLElement;
+    if (!target?.className?.includes("autocmp-item") && !target?.className?.includes("search-input")) autocompleteEntries = [];
   }
 
-  async function getAutocomplete(query: string) {
+  async function getAutocomplete(query = value) {
     if (!query || query.length < 3) {
       autocompleteEntries = [];
       return;
@@ -55,6 +57,7 @@
       spellcheck="false"
       bind:this={searchInputElement}
       bind:value
+      on:focus={() => getAutocomplete(value)}
       on:input={() => getAutocomplete(value)}
       on:keypress={(e) => {
         if (e.key === "Enter") {
@@ -64,8 +67,8 @@
       }} />
 
     <ul class="autocmp-items">
-      {#each autocompleteEntries as a}
-        <li>
+      {#each autocompleteEntries as a (a._id)}
+        <li transition:slide={{duration: 100, axis: 'y'}}>
           <!-- svelte-ignore a11y-invalid-attribute -->
           <a
             href=""
@@ -119,16 +122,14 @@
     background-color: var(--color-darker);
   }
   .search-input {
-    padding-left: 16px;
-    padding-right: calc(2em + 14px);
+    padding-left: 1em;
+    padding-right: 2.875em;
     background-color: transparent;
-    border-radius: var(--radius);
     width: 100%;
   }
   .search-input:focus,
   .search-input:focus-visible {
-    box-shadow: 1px 2px 4px var(--shadow-color);
-    /* box-shadow: 0 0 3px 0.125rem color-mix(in srgb, var(--shadow-color) 33%, transparent); */
+    box-shadow: 2px 2px 4px var(--shadow-color);
     outline: none;
     outline-color: transparent;
   }

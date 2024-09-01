@@ -3,14 +3,17 @@
     | undefined
     | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void) = undefined;
   export let checked: boolean;
+  export let size = "26px";
+  export let style = "gap: 2px;";
 </script>
 
-<label class="column" style="gap: 2px;">
-  <slot />
+<label class="column" {style}>
+  <slot name="before"/>
   <div class="switch">
     <input type="checkbox" on:change={onChange} bind:checked />
-    <span class="slider" />
+    <span class="slider" style="--size: {size};" />
   </div>
+  <slot name="after"/>
 </label>
 
 <style>
@@ -21,13 +24,10 @@
     height: 34px;
   }
   .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+    appearance: none;
   }
 
   .slider {
-    --size: 26px;
     position: absolute;
     cursor: pointer;
     top: 0;
