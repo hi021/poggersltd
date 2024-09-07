@@ -1,12 +1,12 @@
 // get scores from `category` from the last `days` days (defaults to 90)
-// returns {ranks: Array<{rank: number, scores: number, day (0 - `days` where 0 is earliest): number} | null>, stats: {min & max ranks & scores}}
+// returns {ranks: Array<{rank: number, scores: number, day ([0 - days - 1] where 0 is most days ago): number} | null>, stats: {min & max ranks & scores}}
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
 import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params }) => {
-  const scoreCategory = params.category as App.RankingCategory || "top50";
+  const scoreCategory = (params.category as App.RankingCategory) || "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
   const playerId = parseInt(params.idOrName);
@@ -14,8 +14,8 @@ export const GET: RequestHandler = async ({ params }) => {
   if (isNaN(days) || days < 1) days = 90;
 
   const datesToFetch = getDaysBeforeDate(days);
-  const scoresArray = new Array(days);
-  const promises = new Array(days);
+  const scoresArray = new Array<App.PlayerChartEntry>(days);
+  const promises = new Array<Promise<any>>(days);
   const project = {
     $project: {
       [scoreCategory]: {
@@ -63,7 +63,7 @@ export const GET: RequestHandler = async ({ params }) => {
       }
       hasNonNull = true;
 
-      resolve(1);
+      resolve(player.scores);
     });
   }
 

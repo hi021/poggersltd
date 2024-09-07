@@ -39,6 +39,18 @@ declare namespace App {
   };
 
   type RankingEntry = PlayerInfoCommon & PlayerRankingCommon;
+  type PlayerChartEntry = { day: number; scores?: number; rank?: number };
+  type PlayerProfileStats = {
+    minRank: number;
+    maxRank: number;
+    minScores: number;
+    maxScores: number;
+  };
+
+  interface PlayerProfileRanks {
+    ranks: Array<PlayerChartEntry | null>;
+    stats: PlayerProfileStats;
+  }
 
   interface CountryRanking {
     country: string;

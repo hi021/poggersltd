@@ -9,6 +9,7 @@
 
 <header>
   <a href="/" class="logo-text unselectable">poggers</a>
+  <!-- <div class="header-gradient"/> -->
 </header>
 
 <main class="row flex-fill">
@@ -30,8 +31,8 @@
 
 <style>
   header {
+    position: relative;
     text-align: center;
-    background-color: var(--color-purple);
     font-weight: 600;
     font-size: 2rem;
     padding: 1.25rem 0.25rem;
@@ -43,6 +44,20 @@
     box-shadow: 0 3px 2px var(--color-darkest);
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+  }
+  header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+      160deg,
+      var(--color-purple) 25%,
+      color-mix(in srgb, transparent, var(--color-pink) 25%)
+    );
+    z-index: -1;
   }
 
   main {

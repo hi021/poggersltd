@@ -1,57 +1,120 @@
 <script lang="ts">
-    import { formatNumber } from "$lib/util";
-    import { VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
+  import { formatNumber } from "$lib/util";
+  import { VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
 
-  type ChartEntry = { day: number; scores?: number; rank?: number };
-  export let ranks: Array<ChartEntry> | undefined;
+  export let ranks: Array<App.PlayerChartEntry> | undefined;
+  export let stats: App.PlayerProfileStats;
+  export let days = 90;
+  export let scoresChartVisible = true;
+  export let rankChartVisible = true;
 
-  let days: number;
-  let ranksMap: Array<ChartEntry> | undefined;
+  let ranksMap: Array<App.PlayerChartEntry> | undefined;
   $: {
-   days = ranks?.length ?? 0;
-    ranksMap = ranks?.reverse().map((a, i) => {return {...a, day: i}});
+    ranksMap = ranks?.toReversed().map((a, i) => {
+      return { ...a, day: a?.day ?? i };
+    });
   }
-  const x = (d: ChartEntry) => d.day
-  const y = (d: ChartEntry) => d.scores
-  const color = (d: ChartEntry, i: number) => ['var(--color-active)', 'var(--color-claret)'][i]
+  const x = (d: App.PlayerChartEntry) => d.day;
+  const y = (d: App.PlayerChartEntry) => d.scores;
+  const yRank = (d: App.PlayerChartEntry) => (d.rank && stats ? stats.maxRank - d.rank : undefined);
 
-  function tooltipTemplate(d: ChartEntry) {
-    const daysAgo = days - d.day;
-    const daysAgoString = 'day' + (daysAgo == 1 ? '' : 's') + ' ago';
-    return d?.scores ? `<span>${formatNumber(d.scores)}
-    ${daysAgo ? `${daysAgo} ${daysAgoString}` : 'today'}</span>` : '';
+  function tooltipTemplate(d: App.PlayerChartEntry) {
+    const daysAgo = days - d.day - 1;
+    const daysAgoString = "day" + (daysAgo == 1 ? "" : "s") + " ago";
+    return (
+      d?.scores &&
+      d.rank &&
+      `<span><strong>rank</strong> #${formatNumber(d.rank, ",")}</span><br/>
+    <span><strong>scores</strong> ${formatNumber(d.scores)}</span><br/>
+    <small style="color: var(--color-active);"><em>${daysAgo ? `${daysAgo} ${daysAgoString}` : "today"}</em></small>`
+    );
   }
 </script>
-  
+
 <div class="chart-wrapper">
   {#if ranksMap}
-  <VisXYContainer class="player-chart-container" data={ranksMap} duration={200} padding={{top: 10, bottom: 10}}>
-    <VisLine {x} {y} {color} lineWidth={4} />
-    <VisTooltip />
-    <VisCrosshair template={tooltipTemplate} {x} {y}/>
-  </VisXYContainer>
+    {#if rankChartVisible}
+      <VisXYContainer
+        class="player-chart-container chart-ranks"
+        data={ranksMap}
+        duration={200}
+        padding={{ top: 10, bottom: 10 }}
+        yDomain={[-1, stats.maxRank - stats.minRank + 1]}>
+        <VisLine {x} y={yRank} color="var(--color-pink)" lineWidth={2} />
+        {#if !scoresChartVisible}
+          <VisTooltip horizontalShift={20} />
+          <VisCrosshair
+            template={tooltipTemplate}
+            {x}
+            y={yRank}
+            duration={0}
+            hideWhenFarFromPointerDistance={10}
+            strokeColor="var(--color-active)"
+            strokeWidth={3}
+            color="var(--color-darkish)" />
+        {/if}
+      </VisXYContainer>
+    {/if}
+
+    {#if scoresChartVisible}
+      <VisXYContainer
+        class="player-chart-container chart-scores"
+        data={ranksMap}
+        duration={200}
+        padding={{ top: 10, bottom: 10 }}>
+        <VisLine {x} {y} color="var(--color-active)" lineWidth={4} />
+        <VisTooltip horizontalShift={20} />
+        <VisCrosshair
+          template={tooltipTemplate}
+          duration={0}
+          {x}
+          {y}
+          hideWhenFarFromPointerDistance={10}
+          strokeColor="var(--color-active)"
+          strokeWidth={3}
+          color="var(--color-darkish)" />
+      </VisXYContainer>
+    {/if}
+  {:else}
+    <p class="solo-text">No data</p>
   {/if}
 </div>
 
 <style>
   .chart-wrapper {
+    position: relative;
     width: 40rem;
     height: 14rem;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-darkish);
     border-radius: 12px;
-    margin: 0 16px;
     overflow: hidden;
   }
   :global(.player-chart-container) {
-    width: inherit;
-    height: inherit;
+    --vis-crosshair-circle-stroke-opacity: 1;
+    --vis-crosshair-line-stroke-width: 3;
+    --vis-crosshair-line-stroke-color: var(--color-active);
+    --vis-tooltip-background-color: var(--color-darker);
+    --vis-dark-tooltip-background-color: var(--color-darker);
+    --vis-tooltip-border-color: transparent;
+    --vis-dark-tooltip-border-color: transparent;
+    --vis-tooltip-text-color: var(--color-light);
+    --vis-dark-tooltip-text-color: var(--color-light);
+    --vis-tooltip-padding: 4px 6px;
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  :global(.player-chart-container circle) {
+    r: 6;
   }
   :global(.player-chart-container path) {
     stroke-linejoin: round;
     stroke-linecap: round;
   }
 
-/*
+  /*
   .tooltip {
     position: absolute;
     padding: 10px;

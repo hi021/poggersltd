@@ -8,12 +8,12 @@
 </script>
 
 <label class="column" {style}>
-  <slot name="before"/>
+  <slot name="before" />
   <div class="switch">
     <input type="checkbox" on:change={onChange} bind:checked />
     <span class="slider" style="--size: {size};" />
   </div>
-  <slot name="after"/>
+  <slot name="after" />
 </label>
 
 <style>

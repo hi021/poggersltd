@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
   import { getAvatarURL } from "$lib/util";
-    import { slide } from "svelte/transition";
+  import { slide } from "svelte/transition";
 
   let searchInputElement: HTMLInputElement;
   let autocompleteEntries: Array<{ _id: number; name: string }> = [];
@@ -11,7 +11,11 @@
 
   function handleClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    if (!target?.className?.includes("autocmp-item") && !target?.className?.includes("search-input")) autocompleteEntries = [];
+    if (
+      !target?.className?.includes("autocmp-item") &&
+      !target?.className?.includes("search-input")
+    )
+      autocompleteEntries = [];
   }
 
   async function getAutocomplete(query = value) {
@@ -68,7 +72,7 @@
 
     <ul class="autocmp-items">
       {#each autocompleteEntries as a (a._id)}
-        <li transition:slide={{duration: 100, axis: 'y'}}>
+        <li transition:slide={{ duration: 100, axis: "y" }}>
           <!-- svelte-ignore a11y-invalid-attribute -->
           <a
             href=""

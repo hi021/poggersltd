@@ -6,10 +6,11 @@
   import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
   import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
   import type { PageData } from "./$types";
+  import { browser } from "$app/environment";
   import { fade } from "svelte/transition";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
-    import { browser } from "$app/environment";
+  import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
 
   export let data: PageData;
   let loading = false;
@@ -102,7 +103,12 @@
               {/each}
             {:else if data[category]}
               <PlayerRecordStats playerCategory={data[category]} />
-              <PlayerScoresChart ranks={data.ranks}/>
+              <div class="player-chart-stats-wrapper">
+                <PlayerScoresChart ranks={data.ranks} stats={data.stats} />
+                {#if data.stats}
+                  <PlayerChartStats stats={data.stats} />
+                {/if}
+              </div>
               <PlayerBasicStats playerCategory={data[category]} />
             {:else}
               <p class="solo-text">
@@ -177,10 +183,10 @@
     left: 2px;
     border-radius: 50%;
     position: absolute;
-    transition: background-color 0.2s linear;
+    transition: background-color 0.1s linear;
   }
   .osu-icon-wrapper > icon {
-    transition: color 0.2s linear;
+    transition: color 0.1s linear;
   }
   .osu-icon-wrapper:hover > div {
     background-color: var(--color-pink);
@@ -229,6 +235,13 @@
 
   .data-container {
     margin: 0 auto;
+    gap: 20px;
+  }
+
+  .player-chart-stats-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .date-container {
