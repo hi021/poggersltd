@@ -7,7 +7,7 @@
 
   let curCount = 0;
   let localCount = 0;
-  const colors = ["0000ff", "ff00ff", "ff0000", "ffff00", "00ff00", "00ffff"];
+  const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
   let audioElementPoggers: HTMLAudioElement;
 
   onMount(() => {

@@ -8,11 +8,13 @@
 
 <main>
   <h2>fuckie wuckie &gt; ~ &lt;</h2>
-  <div class="flex-center" style="margin-bottom: 36px; align-items: stretch; line-height: 1;">
+  <div
+    class="flex-center column-width-960"
+    style="margin-bottom: 36px; align-items: stretch; line-height: 1;">
     <div class="error-status">
       {$page.status || ":("}
     </div>
-    <div class="vr" style="margin: 26px 32px;" />
+    <div class="vr hide-width-960" style="margin: 26px 32px;" />
     <p class="flex-center" style="font-weight: 300; font-size: 2.25rem;">
       {$page?.error?.message || "An error has occurred..."}
     </p>
@@ -22,7 +24,6 @@
 </main>
 
 <style>
-  /* TODO switch to column direction on media width */
   h2 {
     font-weight: 400;
     font-size: 1.75rem;
@@ -39,5 +40,11 @@
   a {
     font-weight: 300;
     color: var(--color-lightest);
+  }
+
+  @media screen and (max-width: 60rem) {
+    .error-status {
+      margin-left: 0;
+    }
   }
 </style>

@@ -21,7 +21,7 @@ export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, to
   return arr;
 }
 
-//0-11, returns 3 letter short name
+// 0-11, returns 3 letter short name
 export function monthString(m: number) {
   switch (m) {
     default:
@@ -51,7 +51,7 @@ export function monthString(m: number) {
   }
 }
 
-//YYYY-MM-DD
+// YYYY-MM-DD
 export function formatDate(date?: Date) {
   if (!date) date = new Date();
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date
@@ -66,7 +66,7 @@ export function addDate(date: Date, days: number) {
   return d;
 }
 
-export const getAvatarURL = (id: number | string) => "https://a.ppy.sh/" + id + "?0.jpg"; //the 0 is the timestamp, should use latest to avoid caching
+export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is the timestamp, should use latest to avoid caching
 
 export function getDaysBeforeDate(days: number, startDate?: Date) {
   if (!startDate) startDate = new Date();

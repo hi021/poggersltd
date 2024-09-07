@@ -28,7 +28,11 @@
       <img id="avatar" class="unselectable" alt={data.name} src={getAvatarURL(data._id)} />
       <div class="column" style="width: 100%;">
         <div id="top-bar-top">
-          {data.name}
+          <span style="text-shadow: 0 1px 3px var(--color-dark);">{data.name}</span>
+
+          {#if data.oldNames?.length}
+            <icon class="profile-name" use:tooltip={{ content: data.oldNames.join(", ") }} />
+          {/if}
 
           {#if RANKING_BADGES[data._id]}
             <img
@@ -36,10 +40,6 @@
               alt="<3"
               src={RANKING_BADGES[data._id].img}
               use:tooltip={{ content: RANKING_BADGES[data._id].title ?? "" }} />
-          {/if}
-
-          {#if data.oldNames?.length}
-            <icon class="profile-name big" use:tooltip={{ content: data.oldNames.join(", ") }} />
           {/if}
         </div>
         <div id="top-bar-bottom" class="row">
@@ -51,7 +51,26 @@
             src={`/flags/${data.country}.svg`}
             style="margin-right: 10px;" />
 
-          {COUNTRIES[data.country] || data.country}
+          <span>{COUNTRIES[data.country] || data.country}</span>
+        </div>
+        <div class="tabs-container row">
+          {#each SCORE_CATEGORIES as cat}
+            <button
+              class="tab btn-none"
+              type="button"
+              disabled={data[cat] == null}
+              class:active={category === cat}
+              on:click={() => (category = cat)}>
+              {cat}
+            </button>
+          {/each}
+          <button
+            class="tab btn-none"
+            type="button"
+            class:active={category === "all"}
+            on:click={() => (category = "all")}>
+            all
+          </button>
         </div>
       </div>
     </div>
@@ -70,24 +89,6 @@
         </a>
       </aside>
       <div class="main-container column flex-fill">
-        <div class="tabs-container row">
-          {#each SCORE_CATEGORIES as cat}
-            <button
-              class="tab btn-none"
-              disabled={data[cat] == null}
-              class:active={category === cat}
-              on:click={() => (category = cat)}>
-              {cat}
-            </button>
-          {/each}
-          <button
-            class="tab btn-none"
-            class:active={category === "all"}
-            on:click={() => (category = "all")}>
-            all
-          </button>
-        </div>
-
         {#if loading}
           <div class="overlay" transition:fade />
         {:else}
@@ -130,8 +131,11 @@
 
 <style>
   main {
+    --pad: 12px;
+    --radius: 12px;
     --av-height: 96px;
     --av-height-2: calc(var(--av-height) / 2);
+    --tabs-height: calc(2rem + 4px);
     padding: calc(var(--av-height-2));
   }
 
@@ -142,6 +146,7 @@
     outline: 5px solid var(--color-lightest);
     outline-offset: -1px;
     background-color: var(--color-lighter);
+    box-shadow: 0 1px 2px 4px var(--color-darkish);
     z-index: 1;
   }
   #top-bar-top,
@@ -149,14 +154,14 @@
     display: flex;
     align-items: center;
     height: var(--av-height-2);
-    padding-left: calc(var(--av-height-2) + 10px);
+    padding-left: calc(var(--av-height-2) + 1rem);
     padding-right: 10px;
     margin-left: calc(-1 * var(--av-height-2));
   }
   #top-bar-top {
     font-size: 1.25rem;
     border-top-right-radius: 9999px;
-    background: linear-gradient(45deg, var(--color-purple), var(--color-claret));
+    background: linear-gradient(35deg, var(--color-purple), var(--color-claret));
   }
 
   aside,
@@ -166,10 +171,11 @@
   }
   aside {
     width: var(--av-height);
-    padding-top: calc(var(--av-height-2) + 10px);
-    margin-top: calc(-1 * var(--av-height-2));
+    padding-top: calc(var(--av-height-2) + 1rem);
+    margin-top: calc(-1 * (var(--av-height-2) + var(--tabs-height)));
     padding-bottom: 10px;
     align-items: center;
+    border-bottom-left-radius: var(--radius);
   }
 
   .osu-icon-wrapper {
@@ -197,12 +203,14 @@
 
   .main-wrapper {
     box-shadow: 4px 4px 4px var(--color-darkest);
+    border-bottom-right-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
   }
   .main-container {
-    --pad: 12px;
     padding: var(--pad);
     background-color: var(--color-dark);
     position: relative;
+    border-bottom-right-radius: var(--radius);
   }
   .overlay {
     --color-base: 0, 0, 0;
@@ -211,16 +219,16 @@
   }
 
   .tabs-container {
-    margin: calc(-1 * var(--pad));
-    margin-bottom: var(--pad);
     padding-left: var(--pad);
     background-color: var(--color-darker);
+    height: var(--tabs-height);
   }
   .tab {
     color: inherit;
     border: none;
     border-radius: 0;
-    padding: 8px;
+    padding: 0 8px;
+    height: 100%;
     cursor: pointer;
     transition: none;
   }
@@ -234,14 +242,20 @@
   }
 
   .data-container {
-    margin: 0 auto;
     gap: 20px;
+  }
+  :global(.data-container > .player-stats-container:first-child) {
+    margin-left: auto;
+  }
+  :global(.data-container > .player-stats-container:last-child) {
+    margin-right: auto;
   }
 
   .player-chart-stats-wrapper {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: clamp(20rem, 50%, 76rem);
   }
 
   .date-container {
@@ -258,10 +272,8 @@
   }
 
   @media screen and (max-width: 40rem) {
-    .main-container {
-      --pad: 8px;
-    }
     main {
+      --pad: 8px;
       padding: 16px 5px;
     }
     .data-container {

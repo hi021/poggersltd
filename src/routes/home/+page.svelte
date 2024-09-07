@@ -9,7 +9,6 @@
 
 <header>
   <a href="/" class="logo-text unselectable">poggers</a>
-  <!-- <div class="header-gradient"/> -->
 </header>
 
 <main class="row flex-fill">

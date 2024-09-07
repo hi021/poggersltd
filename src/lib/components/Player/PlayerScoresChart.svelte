@@ -24,9 +24,9 @@
     return (
       d?.scores &&
       d.rank &&
-      `<span><strong>rank</strong> #${formatNumber(d.rank, ",")}</span><br/>
-    <span><strong>scores</strong> ${formatNumber(d.scores)}</span><br/>
-    <small style="color: var(--color-active);"><em>${daysAgo ? `${daysAgo} ${daysAgoString}` : "today"}</em></small>`
+      `<span><strong><em>rank</em></strong> #${formatNumber(d.rank, ",")}</span><br/>
+    <span><strong><em>scores</em></strong> ${formatNumber(d.scores)}</span><br/>
+    <small style="color: var(--color-active);">${daysAgo ? `${daysAgo} ${daysAgoString}` : "today"}</small>`
     );
   }
 </script>
@@ -83,7 +83,6 @@
 <style>
   .chart-wrapper {
     position: relative;
-    width: 40rem;
     height: 14rem;
     background-color: var(--color-darkish);
     border-radius: 12px;
@@ -93,8 +92,8 @@
     --vis-crosshair-circle-stroke-opacity: 1;
     --vis-crosshair-line-stroke-width: 3;
     --vis-crosshair-line-stroke-color: var(--color-active);
-    --vis-tooltip-background-color: var(--color-darker);
-    --vis-dark-tooltip-background-color: var(--color-darker);
+    --vis-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
+    --vis-dark-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
     --vis-tooltip-border-color: transparent;
     --vis-dark-tooltip-border-color: transparent;
     --vis-tooltip-text-color: var(--color-light);
