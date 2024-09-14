@@ -12,6 +12,7 @@
     style="font-size: 1.25rem; font-weight: 500;">
     poggers
   </a>
+  <div class="vr"/>
   <nav class="row" style="width: 100%;">
     <a
       href="/osu/ranking"
@@ -48,6 +49,10 @@
 <style>
   header {
     background-color: var(--color-dark);
+  }
+
+  .vr {
+    margin: 14px 8px;
   }
 
   .nav-tab {

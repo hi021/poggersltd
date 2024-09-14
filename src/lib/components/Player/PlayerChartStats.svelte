@@ -4,22 +4,30 @@
   export let stats: App.PlayerProfileStats;
   export let days = 90;
 
-  let change: number;
+  let changeScores: number;
   let avgPerDay: number;
   $: {
-    change = stats.maxScores - stats.minScores;
-    avgPerDay = Math.round((change / days) * 100) / 100;
+    changeScores = stats.endScores - stats.startScores;
+    avgPerDay = Math.round((changeScores / days) * 100) / 100;
   }
 </script>
 
-<ul class="player-stats-container ul row" style="justify-content: space-around;">
+<span style="text-align: center;">Throughout the past {days} days:</span>
+<ul class="player-stats-container centered ul row">
   <li>
-    <span class="player-stat-name">Change</span>
-    <span class="player-stat-value">{formatNumber(change)}</span>
+    <span class="player-stat-name">Peak</span>
+    <span class="player-stat-value">{formatNumber(stats.maxScores)}</span>
   </li>
   <li>
-    <span class="player-stat-name">Average</span>
-    <span class="player-stat-value">{formatNumber(avgPerDay)}</span>
+    <span class="player-stat-name">Change</span>
+    <span class="player-stat-value">
+      {changeScores > 0 ? '+' : ''}{formatNumber(changeScores)}
+      <small class="player-stat-small">{avgPerDay}/day</small>
+    </span>
+  </li>
+  <li>
+    <span class="player-stat-name">Lowest</span>
+    <span class="player-stat-value">{formatNumber(stats.minScores)}</span>
   </li>
 </ul>
 

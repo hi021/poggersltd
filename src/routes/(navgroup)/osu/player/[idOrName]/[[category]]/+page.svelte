@@ -11,6 +11,7 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
+  import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
 
   export let data: PageData;
   let loading = false;
@@ -120,7 +121,7 @@
           </div>
         {/if}
         {#if data[category]}
-          <small class="date-container">Data from <strong>{data[category].date}</strong></small>
+          <PlayerDate categoryStats={data[category]} />
         {/if}
       </div>
     </div>
@@ -256,11 +257,6 @@
     flex-direction: column;
     gap: 8px;
     width: clamp(20rem, 50%, 76rem);
-  }
-
-  .date-container {
-    margin: auto;
-    margin-bottom: 0;
   }
 
   .profile-name {

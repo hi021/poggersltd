@@ -142,7 +142,7 @@ button:focus {
   box-shadow: 0 0 0 0.15rem hsla(var(--clr), 0.5);
 }
 button:hover {
-  background-color: hsl(var(--color-hover));
+  background-color: hsl(var(--clr-hover));
 }
 button:disabled {
   opacity: 0.55;
@@ -157,6 +157,8 @@ button:disabled {
 .btn-icon {
   padding: 0;
   border-radius: 9999px;
+  --clr: transparent;
+  --clr-hover: transparent;
   border: none;
   background: none;
   outline-color: transparent;
@@ -238,10 +240,17 @@ button:disabled {
   border-radius: 8px;
   gap: 8px;
 }
+.player-stats-container.centered {
+  justify-content: space-around;
+}
+.player-stats-container.centered .player-stat-name,
+.player-stats-container.centered .player-stat-value {
+  text-align: center;
+}
 .player-stats-container.hoverable {
   padding: 10px;
 }
-.player-stats-container.hoverable > .player-stat-value {
+.player-stats-container.hoverable .player-stat-value {
   margin-bottom: 12px;
 }
 .player-stats-container.hoverable:hover {
@@ -460,7 +469,7 @@ button:disabled {
   color: inherit;
   text-decoration: none;
   line-height: 1;
-  padding: 0 20px;
+  padding: 0 16px;
 }
 .logo-text:hover,
 .logo-text:focus,

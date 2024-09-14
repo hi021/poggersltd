@@ -47,13 +47,14 @@
 
       {#if pageData[0].gainedDays}
         <p class="gains-notice">
-          Showing gained counts over <strong>{pageData[0].gainedDays}</strong>
+          Showing gained scores over <strong>{pageData[0].gainedDays}</strong>
           days
           <br />
           <small>
             due to a gap between
-            {formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}
-            and {$page.params.date}
+            <em>{formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}</em>
+            and
+            <em>{$page.params.date}</em>
           </small>
         </p>
       {/if}
@@ -114,5 +115,12 @@
     margin: 1.75rem auto;
     font-size: 1.25rem;
     text-align: center;
+  }
+  .gains-notice small {
+    opacity: 0.8;
+  }
+  .gains-notice em {
+    color: var(--color-active);
+    font-style: normal;
   }
 </style>

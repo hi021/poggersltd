@@ -15,10 +15,10 @@
   {#if visible}
     <div class="column background" transition:slide={{ duration: 200, axis: "y" }}>
       <Switch bind:checked={settings.avatars}>
-        <span>Avatars</span>
+        <span slot="before">Avatars</span>
       </Switch>
       <Switch bind:checked={settings.scoreDifferences}>
-        <span>Score differences</span>
+        <span slot="before">Score differences</span>
       </Switch>
       <label>
         Players per page

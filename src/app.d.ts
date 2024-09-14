@@ -38,6 +38,11 @@ declare namespace App {
     [ranking in RankingCategory]?: PlayerRankingFull;
   };
 
+  type PlayerRankingFullAPI = PlayerRankingFull & { daysOutdated?: number };
+  type PlayerAPI = PlayerInfoFull & {
+    [ranking in RankingCategory]?: PlayerRankingFullAPI;
+  };
+
   type RankingEntry = PlayerInfoCommon & PlayerRankingCommon;
   type PlayerChartEntry = { day: number; scores?: number; rank?: number };
   type PlayerProfileStats = {
@@ -45,6 +50,10 @@ declare namespace App {
     maxRank: number;
     minScores: number;
     maxScores: number;
+    startRank: number;
+    endRank: number;
+    startScores: number;
+    endScores: number;
   };
 
   interface PlayerProfileRanks {

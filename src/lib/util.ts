@@ -51,13 +51,18 @@ export function monthString(m: number) {
   }
 }
 
-// YYYY-MM-DD
-export function formatDate(date?: Date) {
+export function formatDate(date?: Date, utc?: boolean) {
   if (!date) date = new Date();
-  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date
-    .getDate()
-    .toString()
-    .padStart(2, "0")}`;
+  const YYYY = utc ? date.getUTCFullYear() : date.getFullYear();
+  const MM = ((utc ? date.getUTCMonth() : date.getMonth()) + 1).toString().padStart(2, "0");
+  const DD = (utc ? date.getUTCDate() : date.getDate()).toString().padStart(2, "0");
+  return `${YYYY}-${MM}-${DD}`;
+}
+
+export function getServerDate() {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
 }
 
 export function addDate(date: Date, days: number) {

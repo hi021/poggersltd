@@ -78,6 +78,7 @@
             href=""
             class="autocmp-item"
             tabindex="0"
+            role="button"
             on:click|preventDefault={() => {
               value = a.name;
               gotoPlayer(a.name);
@@ -176,7 +177,7 @@
   .autocmp-item:hover,
   .autocmp-item:focus,
   .autocmp-item:focus-visible {
-    outline-color: transparent;
+    outline: none;
     background-color: var(--color-purple);
   }
 

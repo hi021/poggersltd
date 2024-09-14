@@ -2,26 +2,28 @@
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { dbPlayers } from "$lib/db";
+import { getServerDate, SCORE_CATEGORIES } from "$lib/util";
 
 export const GET: RequestHandler = async ({ params }) => {
+  console.time("player/" + params.idOrName);
   const idOrNameNumber = parseInt(params.idOrName);
 
-  console.time("player/" + params.idOrName);
   try {
-    if (!isNaN(idOrNameNumber)) {
-      // look by id
-      const player = await dbPlayers.findOne(
-        { _id: idOrNameNumber as any },
-        { projection: { nameKey: 0 } }
-      );
-      if (player) return json(player);
+    const query = isNaN(idOrNameNumber)
+      ? { name: params.idOrName }
+      : { _id: idOrNameNumber as any };
+    const player = await dbPlayers.findOne(query, { projection: { nameKey: 0 } });
+    if (player) {
+      for (const category in player) {
+        if (!SCORE_CATEGORIES.includes(category as App.RankingCategory)) continue;
+        const playerLastUpdateTimestamp = new Date(player[category].date).valueOf();
+        const daysOutdated = Math.floor(
+          (getServerDate().valueOf() - playerLastUpdateTimestamp) / (24 * 60 * 60 * 1000)
+        );
+        if (daysOutdated) player[category].daysOutdated = daysOutdated;
+      }
+      return json(player);
     }
-    // look by name
-    const player = await dbPlayers.findOne(
-      { name: params.idOrName },
-      { projection: { nameKey: 0 } }
-    );
-    if (player) return json(player);
   } catch (e) {
     console.error(e);
     throw error(500, "Internal server error");

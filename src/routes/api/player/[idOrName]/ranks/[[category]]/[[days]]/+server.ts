@@ -6,6 +6,8 @@ import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
 import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params }) => {
+  const route = `player/${params.idOrName}/ranks/${params.category}/${params.days}`;
+  console.time(route);
   const scoreCategory = (params.category as App.RankingCategory) || "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
@@ -30,11 +32,18 @@ export const GET: RequestHandler = async ({ params }) => {
     }
   };
 
+  // this is kind of poop, honestly just iterate over the array after all promises resolve
   let hasNonNull = false; // set on first iteration that finds any stats
+  let currentLastDay = days; // lowest iteration index so far (used for setting end scores & ranks)
+  let currentEarliestDay = 0; // highest iteration index so far (used for setting start scores & ranks)
   let minRank = 0;
   let maxRank = 0;
   let minScores = 0;
   let maxScores = 0;
+  let startRank = 0;
+  let endRank = 0;
+  let startScores = 0;
+  let endScores = 0;
   for (let i = 0; i < days; i++) {
     const aggregate = [{ $match: { _id: datesToFetch[i] } }, project];
 
@@ -55,13 +64,22 @@ export const GET: RequestHandler = async ({ params }) => {
       if (!hasNonNull) {
         minRank = maxRank = player.rank;
         minScores = maxScores = player.scores;
+        hasNonNull = true;
       } else {
         if (minRank > player.rank) minRank = player.rank;
         else if (maxRank < player.rank) maxRank = player.rank;
         if (minScores > player.scores) minScores = player.scores;
         else if (maxScores < player.scores) maxScores = player.scores;
       }
-      hasNonNull = true;
+      if (i < currentLastDay) {
+        endRank = player.rank;
+        endScores = player.scores;
+        currentLastDay = i;
+      } else if (i > currentEarliestDay) {
+        startRank = player.rank;
+        startScores = player.scores;
+        currentEarliestDay = i;
+      }
 
       resolve(player.scores);
     });
@@ -72,10 +90,21 @@ export const GET: RequestHandler = async ({ params }) => {
     return hasNonNull
       ? json({
           ranks: scoresArray,
-          stats: { minRank, maxRank, minScores, maxScores }
+          stats: {
+            minRank,
+            maxRank,
+            minScores,
+            maxScores,
+            startRank,
+            endRank,
+            startScores,
+            endScores
+          }
         })
       : json(null);
   } catch (e) {
     throw error(500, "Failed to fetch player ranks");
+  } finally {
+    console.timeEnd(route);
   }
 };
