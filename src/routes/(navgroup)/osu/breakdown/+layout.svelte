@@ -13,8 +13,9 @@
   const gotoPlayer = (idOrName: string | number) => {
     if (!singleRank) gotoPlayerForce(idOrName);
   };
-  const gotoPlayerForce = (idOrName: string | number) =>
-    idOrName && goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : "1-50"}/${mode}`);
+  const gotoPlayerForce = (idOrName: string | number) => false;
+  // re-implement for osustats api maybe
+  // idOrName && goto(`/osu/breakdown/${idOrName}/${singleRank ? rank || 1 : "1-50"}/${mode}`);
 </script>
 
 <svelte:head>
@@ -23,8 +24,12 @@
 
 <main class="flex-fill column" style="padding: 0 3.5%">
   <form class="row" spellcheck="false" on:submit|preventDefault={() => gotoPlayerForce(username)}>
-    <UserSearch {gotoPlayer} {gotoPlayerForce} bind:value={username} />
-    <select bind:value={mode} use:tooltip={{ content: "Game mode" }} class="input-dark">
+    <UserSearch disabled={true} {gotoPlayer} {gotoPlayerForce} bind:value={username} />
+    <select
+      class="input-dark"
+      bind:value={mode}
+      use:tooltip={{ content: "Game mode" }}
+      disabled={true}>
       <option value="0">osu!</option>
       <option value="1">taiko</option>
       <option value="2">catch</option>
@@ -47,6 +52,11 @@
       <span slot="after">Single rank</span>
     </Switch>
   </div>
+
+  <p class="solo-text">
+    respektive's api was taken down :(<br />
+    <small>go yell at peppy (violence)</small>
+  </p>
 
   <slot />
 </main>

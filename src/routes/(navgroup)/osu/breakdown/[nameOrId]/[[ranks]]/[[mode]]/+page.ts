@@ -4,6 +4,7 @@ export const load = async () => {
   throw error(505, "Not Implemented");
 };
 
+// re-implement for osustats maybe
 // /* eslint-disable no-async-promise-executor */
 // import { error } from "@sveltejs/kit";
 // import type { PageLoad } from "../$types";

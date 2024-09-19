@@ -12,7 +12,7 @@
     style="font-size: 1.25rem; font-weight: 500;">
     poggers
   </a>
-  <div class="vr"/>
+  <div class="vr" />
   <nav class="row" style="width: 100%;">
     <a
       href="/osu/ranking"

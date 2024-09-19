@@ -1,12 +1,12 @@
 <script lang="ts">
   import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight, tooltip } from "$lib/util";
   import Loader from "$lib/components/Loader.svelte";
-  import type { PageData } from "./$types";
   import { onMount } from "svelte";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
   let loading = true;
-  const chartHeight = 320; //px
+  const chartHeight = 320; // px
   let showRaw = false;
 
   onMount(() => {});
@@ -58,7 +58,7 @@
               duration: 200,
               delay: 12 * i
             }} />
-          <div class="chart-column-tooltip column flex-center">
+          <div class="column flex-center">
             <strong>#{d.rank}</strong>
             <div>{formatNumber(d.value)}</div>
           </div>
@@ -107,9 +107,9 @@
       type="button"
       class="btn-gray"
       style="margin-bottom: 16px;"
-      on:click={() => {
-        showRaw = !showRaw;
-      }}>Show raw data</button>
+      on:click={() => (showRaw = !showRaw)}>
+      Show raw data
+    </button>
     {#if showRaw}
       <div class="table-container" transition:transitionHeight={{ maxHeight: 3200, duration: 800 }}>
         <table class="raw-table">
@@ -164,9 +164,6 @@
     height: 100%;
     background-color: rgba(255, 255, 255, 0.04);
   }
-  .chart-column-container:hover > .chart-column-tooltip {
-    display: flex;
-  }
   .chart-column-container:hover > .chart-column-bar {
     opacity: 0.8;
   }
@@ -175,22 +172,6 @@
     background-color: var(--color-active);
     width: 100%;
     bottom: 0;
-  }
-
-  .chart-column-tooltip {
-    display: none;
-    position: absolute;
-    left: 50%;
-    top: 0;
-    padding: 10px;
-    border-radius: 10px;
-    color: var(--color-lightest);
-    background-color: rgba(0, 0, 0, 0.4);
-    font-size: 0.75rem;
-    width: max-content;
-    z-index: 3;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
   }
 
   .stats-container {

@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { formatNumber } from "$lib/util";
   import { VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
 
   export let ranks: Array<App.PlayerChartEntry> | undefined;
   export let stats: App.PlayerProfileStats;
+  export let category: App.RankingCategory;
+  export let idOrName: string;
   export let days = 90;
   export let scoresChartVisible = true;
   export let rankChartVisible = true;
@@ -49,7 +52,7 @@
             y={yRank}
             duration={0}
             hideWhenFarFromPointerDistance={10}
-            strokeColor="var(--color-active)"
+            strokeColor="var(--color-pink)"
             strokeWidth={3}
             color="var(--color-darkish)" />
         {/if}
@@ -79,6 +82,29 @@
     <p class="solo-text">No data</p>
   {/if}
 </div>
+<ul class="chart-buttons-container ul row">
+  <li>
+    <button
+      class="btn-icon"
+      class:active-rank={rankChartVisible}
+      on:click={() => (rankChartVisible = !rankChartVisible)}>
+      <icon class="hash" />
+    </button>
+  </li>
+  <li>
+    <button
+      class="btn-icon"
+      class:active-scores={scoresChartVisible}
+      on:click={() => (scoresChartVisible = !scoresChartVisible)}>
+      {category.substring(3)}
+    </button>
+  </li>
+  <li>
+    <button class="btn-icon" on:click={() => goto(`/osu/players/${idOrName}/${category}`)}>
+      <icon class="fullscreen" />
+    </button>
+  </li>
+</ul>
 
 <style>
   .chart-wrapper {
@@ -91,7 +117,6 @@
   :global(.player-chart-container) {
     --vis-crosshair-circle-stroke-opacity: 1;
     --vis-crosshair-line-stroke-width: 3;
-    --vis-crosshair-line-stroke-color: var(--color-active);
     --vis-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
     --vis-dark-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
     --vis-tooltip-border-color: transparent;
@@ -105,6 +130,12 @@
     left: 0;
     right: 0;
   }
+  :global(.player-chart-container.chart-ranks) {
+    --vis-crosshair-line-stroke-color: var(--color-pink);
+  }
+  :global(.player-chart-container.chart-scores) {
+    --vis-crosshair-line-stroke-color: var(--color-active);
+  }
   :global(.player-chart-container circle) {
     r: 6;
   }
@@ -113,34 +144,31 @@
     stroke-linecap: round;
   }
 
-  /*
-  .tooltip {
-    position: absolute;
-    padding: 10px;
-    border-radius: 10px;
-    color: var(--color-lightest);
-    background-color: rgba(0, 0, 0, 0.4);
-    font-size: 0.75rem;
-    width: max-content;
-    z-index: 2;
-    pointer-events: none;
+  .chart-buttons-container {
+    font-size: 0.75em;
+    padding-left: 12px;
   }
-  .tooltip-point {
-    position: absolute;
-    width: 10px;
-    height: 10px;
+  .chart-buttons-container button {
+    font-weight: 500;
+    color: var(--color-lighter);
+    background-color: var(--color-darkish);
+    border-radius: 0;
+    padding: 2px 5px;
+    opacity: 1;
+  }
+  .chart-buttons-container button.active-rank {
+    color: var(--color-pink);
+  }
+  .chart-buttons-container button.active-scores {
+    color: var(--color-active);
+  }
+  .chart-buttons-container button:hover {
     background-color: var(--color-dark);
-    border: 3px solid var(--color-active);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 1;
   }
-  .tooltip-line {
-    position: absolute;
-    width: 2px;
-    height: 200px;
-    background-color: var(--color-active);
-    pointer-events: none;
-  } */
+  .chart-buttons-container li:first-child button {
+    border-bottom-left-radius: 6px;
+  }
+  .chart-buttons-container li:last-child button {
+    border-bottom-right-radius: 6px;
+  }
 </style>

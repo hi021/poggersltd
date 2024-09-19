@@ -20,7 +20,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.name ?? "player"} - poggers</title>
+  <title>score chart - poggers</title>
 </svelte:head>
 
 <main class="flex-fill column">
@@ -106,11 +106,7 @@
             {:else if data[category]}
               <PlayerRecordStats playerCategory={data[category]} />
               <div class="player-chart-stats-wrapper">
-                <PlayerScoresChart
-                  ranks={data.ranks}
-                  stats={data.stats}
-                  {category}
-                  idOrName={$page.params.idOrName} />
+                <PlayerScoresChart ranks={data.ranks} stats={data.stats} />
                 {#if data.stats}
                   <PlayerChartStats stats={data.stats} />
                 {/if}
@@ -259,6 +255,7 @@
   .player-chart-stats-wrapper {
     display: flex;
     flex-direction: column;
+    gap: 8px;
     width: clamp(20rem, 50%, 76rem);
   }
 

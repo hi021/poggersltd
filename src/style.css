@@ -239,13 +239,21 @@ button:disabled {
   flex-direction: column;
   border-radius: 8px;
   gap: 8px;
+  cursor: default;
 }
-.player-stats-container.centered {
+.player-stats-container.center-align {
   justify-content: space-around;
 }
-.player-stats-container.centered .player-stat-name,
-.player-stats-container.centered .player-stat-value {
+.player-stats-container.center-align .player-stat-name,
+.player-stats-container.center-align .player-stat-value {
   text-align: center;
+}
+.player-stats-container.right-align {
+  justify-content: right;
+}
+.player-stats-container.right-align .player-stat-name,
+.player-stats-container.right-align .player-stat-value {
+  text-align: right;
 }
 .player-stats-container.hoverable {
   padding: 10px;

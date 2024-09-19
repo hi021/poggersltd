@@ -3,6 +3,7 @@
     | undefined
     | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void) = undefined;
   export let checked: boolean;
+  export let disabled = false;
   export let size = "26px";
   export let style = "gap: 2px;";
 </script>
@@ -10,7 +11,7 @@
 <label class="column" {style}>
   <slot name="before" />
   <div class="switch">
-    <input type="checkbox" on:change={onChange} bind:checked />
+    <input type="checkbox" {disabled} on:change={onChange} bind:checked />
     <span class="slider" style="--size: {size};" />
   </div>
   <slot name="after" />

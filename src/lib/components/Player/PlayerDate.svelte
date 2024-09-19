@@ -31,4 +31,10 @@
     line-height: 1;
     gap: 0.333ch;
   }
+
+  @media screen and (max-width: 40rem) {
+    .date-container {
+      margin-top: 20px;
+    }
+  }
 </style>

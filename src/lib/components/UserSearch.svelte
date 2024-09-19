@@ -6,6 +6,7 @@
   let searchInputElement: HTMLInputElement;
   let autocompleteEntries: Array<{ _id: number; name: string }> = [];
   export let value = "";
+  export let disabled = false;
   export let gotoPlayer: (idOrName: string) => void;
   export let gotoPlayerForce: (idOrName: string) => void;
 
@@ -18,8 +19,9 @@
       autocompleteEntries = [];
   }
 
+  // TODO: debounce
   async function getAutocomplete(query = value) {
-    if (!query || query.length < 3) {
+    if (query?.length < 3 || disabled) {
       autocompleteEntries = [];
       return;
     }
@@ -61,6 +63,7 @@
       spellcheck="false"
       bind:this={searchInputElement}
       bind:value
+      {disabled}
       on:focus={() => getAutocomplete(value)}
       on:input={() => getAutocomplete(value)}
       on:keypress={(e) => {

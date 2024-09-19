@@ -3,7 +3,7 @@
   export let playerCategory: App.PlayerRankingFull;
 </script>
 
-<ul class="player-stats-container ul">
+<ul class="player-stats-container right-align ul">
   {#if playerCategory.mostGained}
     <li>
       <span class="player-stat-name"> most gained </span>
