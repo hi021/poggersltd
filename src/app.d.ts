@@ -61,6 +61,23 @@ declare namespace App {
     stats: PlayerProfileStats;
   }
 
+  type PlayersChartEntry = { scores: number; rank: number; date: string };
+  interface PlayerChartRanks {
+    [id: string]: {
+      name: string;
+      country: string;
+      ranks: Array<PlayersChartEntry | null>;
+      stats?: App.PlayerProfileStats;
+    };
+  }
+  interface PlayerChartRanksWeb {
+    id: string;
+    name: string;
+    country: string;
+    ranks: Array<PlayersChartEntry | null>;
+    stats?: App.PlayerProfileStats;
+  }
+
   interface CountryRanking {
     country: string;
     total: number;

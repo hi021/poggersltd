@@ -21,7 +21,7 @@ export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, to
   return arr;
 }
 
-// 0-11, returns 3 letter short name
+// m 0-11, returns 3 letter short name
 export function monthString(m: number) {
   switch (m) {
     default:
@@ -71,7 +71,10 @@ export function addDate(date: Date, days: number) {
   return d;
 }
 
-export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is the timestamp, should use latest to avoid caching
+export const getDaysBetweenDates = (
+  startTimestamp: number,
+  endTimestamp = getServerDate().valueOf()
+) => Math.ceil((endTimestamp - startTimestamp) / (24 * 60 * 60 * 1000));
 
 export function getDaysBeforeDate(days: number, startDate?: Date) {
   if (!startDate) startDate = new Date();
@@ -85,6 +88,8 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
 
   return dates;
 }
+
+export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is the timestamp, should use latest to avoid caching
 
 export function transitionHeight(
   node: Element,
@@ -132,6 +137,8 @@ export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
   "top8",
   "top1"
 ];
+
+export const MAX_CHART_PLAYERS = 20;
 
 export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = {
   "5795337": { img: "/badges/pogu.png", title: "poggers" },

@@ -2,7 +2,7 @@
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { dbPlayers } from "$lib/db";
-import { getServerDate, SCORE_CATEGORIES } from "$lib/util";
+import { getDaysBetweenDates, getServerDate, SCORE_CATEGORIES } from "$lib/util";
 
 export const GET: RequestHandler = async ({ params }) => {
   console.time("player/" + params.idOrName);
@@ -17,9 +17,7 @@ export const GET: RequestHandler = async ({ params }) => {
       for (const category in player) {
         if (!SCORE_CATEGORIES.includes(category as App.RankingCategory)) continue;
         const playerLastUpdateTimestamp = new Date(player[category].date).valueOf();
-        const daysOutdated = Math.floor(
-          (getServerDate().valueOf() - playerLastUpdateTimestamp) / (24 * 60 * 60 * 1000)
-        );
+        const daysOutdated = getDaysBetweenDates(playerLastUpdateTimestamp);
         if (daysOutdated) player[category].daysOutdated = daysOutdated;
       }
       return json(player);
