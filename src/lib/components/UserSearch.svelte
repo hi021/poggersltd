@@ -6,15 +6,16 @@
   let searchInputElement: HTMLInputElement;
   let autocompleteEntries: Array<{ _id: number; name: string }> = [];
   export let value = "";
+  export let style = "";
   export let disabled = false;
   export let gotoPlayer: (idOrName: string) => void;
-  export let gotoPlayerForce: (idOrName: string) => void;
+  export let gotoPlayerForce: (idOrName: string) => void = gotoPlayer;
 
   function handleClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
     if (
-      !target?.className?.includes("autocmp-item") &&
-      !target?.className?.includes("search-input")
+      !target?.className?.includes?.("autocmp-item") &&
+      !target?.className?.includes?.("search-input")
     )
       autocompleteEntries = [];
   }
@@ -42,13 +43,11 @@
     addEventListener("click", handleClick);
     tick().then(() => searchInputElement.focus());
 
-    return () => {
-      removeEventListener("click", handleClick);
-    };
+    return () => removeEventListener("click", handleClick);
   });
 </script>
 
-<div class="search-input-wrapper input-dark row">
+<div class="search-input-wrapper input-dark row" {style}>
   <div class="autocmp-wrapper">
     <input
       class="search-input input-dark"

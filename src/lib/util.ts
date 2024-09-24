@@ -6,11 +6,11 @@ export function formatNumber(number: number | string, delimiter = " "): string {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
 }
 
-export function equalArray(arr1: unknown[], arr2: unknown[]): boolean {
+export function equalArray(arr1: unknown[], arr2: unknown[]) {
   return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 }
 
-export function isObjEmpty(obj: Record<string, unknown>): boolean {
+export function isObjEmpty(obj: Record<any, unknown>) {
   for (const i in obj) return false;
   return true;
 }

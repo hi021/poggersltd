@@ -278,11 +278,50 @@ button:disabled {
 }
 /* PLAYER */
 
+/* CHARTS */
+.player-chart-container {
+  --vis-crosshair-circle-stroke-opacity: 1;
+  --vis-crosshair-line-stroke-width: 3;
+  --vis-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
+  --vis-dark-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
+  --vis-tooltip-border-color: transparent;
+  --vis-dark-tooltip-border-color: transparent;
+  --vis-tooltip-text-color: var(--color-light);
+  --vis-dark-tooltip-text-color: var(--color-light);
+  --vis-tooltip-padding: 4px 6px;
+  --vis-axis-grid-color: var(--color-light);
+  --vis-dark-axis-grid-color: var(--color-light);
+  position: absolute !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.player-chart-container.chart-ranks {
+  --vis-crosshair-line-stroke-color: var(--color-pink);
+}
+.player-chart-container.chart-scores {
+  --vis-crosshair-line-stroke-color: var(--color-active);
+}
+.player-chart-container circle {
+  r: 6;
+}
+.player-chart-container path {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+/* CHARTS */
+
 /* OSU */
 .osu-flag-small {
-  height: 24px;
+  height: 1.5rem;
   aspect-ratio: 4/3;
-  border-radius: 5px;
+  border-radius: 0.333rem;
+}
+.osu-flag-smaller {
+  height: 1rem;
+  aspect-ratio: 4/3;
+  border-radius: 0.25rem;
 }
 .osu-avatar-small {
   width: 36px;

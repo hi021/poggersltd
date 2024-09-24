@@ -114,35 +114,6 @@
     border-radius: 12px;
     overflow: hidden;
   }
-  :global(.player-chart-container) {
-    --vis-crosshair-circle-stroke-opacity: 1;
-    --vis-crosshair-line-stroke-width: 3;
-    --vis-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
-    --vis-dark-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
-    --vis-tooltip-border-color: transparent;
-    --vis-dark-tooltip-border-color: transparent;
-    --vis-tooltip-text-color: var(--color-light);
-    --vis-dark-tooltip-text-color: var(--color-light);
-    --vis-tooltip-padding: 4px 6px;
-    position: absolute !important;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
-  :global(.player-chart-container.chart-ranks) {
-    --vis-crosshair-line-stroke-color: var(--color-pink);
-  }
-  :global(.player-chart-container.chart-scores) {
-    --vis-crosshair-line-stroke-color: var(--color-active);
-  }
-  :global(.player-chart-container circle) {
-    r: 6;
-  }
-  :global(.player-chart-container path) {
-    stroke-linejoin: round;
-    stroke-linecap: round;
-  }
 
   .chart-buttons-container {
     font-size: 0.75em;

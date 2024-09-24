@@ -16,7 +16,7 @@ function prepareFetchPlayer(
   idOrName: string,
   days: number,
   datesToFetch: string[],
-  resultObj: App.PlayerChartRanks
+  resultObj: App.ComparisonChartAPI
 ) {
   const promises = new Array<Promise<any>>(days);
   const playerId = parseInt(idOrName);
@@ -65,9 +65,11 @@ function prepareFetchPlayer(
   return promises;
 }
 
-function calculatePlayerStats(ranks: Array<App.PlayersChartEntry | null>): App.PlayerProfileStats {
-  const firstEntry = ranks[0] as App.PlayersChartEntry;
-  const lastEntry = ranks[ranks.length - 1] as App.PlayersChartEntry;
+function calculatePlayerStats(
+  ranks: Array<App.ComparisonChartEntry | null>
+): App.PlayerProfileStats {
+  const firstEntry = ranks[0] as App.ComparisonChartEntry;
+  const lastEntry = ranks[ranks.length - 1] as App.ComparisonChartEntry;
   let maxScores = firstEntry.scores,
     minScores = firstEntry.scores,
     maxRank = firstEntry.rank,
@@ -117,7 +119,7 @@ export const GET: RequestHandler = async ({ params }) => {
   const datesToFetch = getDaysBeforeDate(days, new Date(dateEnd));
 
   const allPlayerPromises = new Array<Promise<any>>();
-  const players: App.PlayerChartRanks = {};
+  const players: App.ComparisonChartAPI = {};
 
   for (const tmpId of idsOrNames) {
     allPlayerPromises.push(
