@@ -8,7 +8,8 @@
   import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
 
   export let data: PageData;
-  let loading = false;
+  //   let loading = false;
+  let playersPanelVisible = true;
   let category = $page.params.category as App.RankingCategory;
   let comparePlayerName: string;
   const comparePlayerSearch = () => console.log(comparePlayerName);
@@ -27,51 +28,70 @@
 
     <aside class="column">
       <div style="margin-inline-start: 1.25rem;">
-        <span>Compare players</span> <button type="button" class="btn-icon">collapse</button>
+        <span>Compare players</span>
+        <button
+          type="button"
+          class="btn-icon"
+          on:click={() => (playersPanelVisible = !playersPanelVisible)}
+          ><icon class="collapse" /></button>
       </div>
-      <UserSearch
-        bind:value={comparePlayerName}
-        gotoPlayer={comparePlayerSearch}
-        style="margin-top: 4px; margin-bottom: 6px;" />
+      {#if playersPanelVisible}
+        <UserSearch
+          bind:value={comparePlayerName}
+          gotoPlayer={comparePlayerSearch}
+          style="margin-top: 4px; margin-bottom: 6px;" />
 
-      <ul class="players-container ul column">
-        {#each data.players as player (player.id)}
-          <li style="--color: {player.color ?? 'var(--color-pink)'};">
-            <div class="player-entry-info-container">
-              <a
-                class="osu-avatar-small"
-                href="https://osu.ppy.sh/users/{player.id}"
-                target="_blank"
-                rel="noreferrer"
-                use:tooltip={{ content: "osu! profile" }}
-                style="display: block;">
-                <img
+        <ul class="players-container ul column">
+          {#each data.players as player (player.id)}
+            <li style="--color: {player.color};">
+              <div class="player-entry-info-container">
+                <a
                   class="osu-avatar-small"
-                  height="36"
-                  width="36"
-                  draggable="false"
-                  alt=""
-                  src={getAvatarURL(player.id)} />
-              </a>
-              <span>{player.name}</span>
-              <img
-                class="osu-flag-smaller unselectable"
-                height="24"
-                alt={player.country}
-                src={`/flags/${player.country}.svg`}
-                use:tooltip={{ content: COUNTRIES[player.country] || player.country }} />
-            </div>
-            <div class="player-entry-button-container">
-              <button type="button" class="btn-icon" use:tooltip={{ content: "Toggle ranks" }}>
-                <icon class="hash" />
-              </button>
-              <button type="button" class="btn-icon" use:tooltip={{ content: "Toggle scores" }}>
-                {category.substring(3)}
-              </button>
-            </div>
-          </li>
-        {/each}
-      </ul>
+                  href="https://osu.ppy.sh/users/{player.id}"
+                  target="_blank"
+                  rel="noreferrer"
+                  use:tooltip={{ content: "osu! profile" }}
+                  style="display: block;">
+                  <img
+                    class="osu-avatar-small"
+                    height="36"
+                    width="36"
+                    draggable="false"
+                    alt=""
+                    src={getAvatarURL(player.id)} />
+                </a>
+                <span>{player.name}</span>
+                <img
+                  class="osu-flag-smaller unselectable"
+                  height="24"
+                  alt={player.country}
+                  src={`/flags/${player.country}.svg`}
+                  use:tooltip={{ content: COUNTRIES[player.country] || player.country }} />
+              </div>
+              <div class="player-entry-button-container">
+                <button
+                  type="button"
+                  class="btn-icon"
+                  use:tooltip={{ content: "Toggle ranks" }}
+                  on:click={() =>
+                    (player.rankVisible =
+                      player.rankVisible == null || player.rankVisible == false)}>
+                  <icon class="hash" />
+                </button>
+                <button
+                  type="button"
+                  class="btn-icon"
+                  use:tooltip={{ content: "Toggle scores" }}
+                  on:click={() =>
+                    (player.scoresVisible =
+                      player.scoresVisible == null || player.scoresVisible == false)}>
+                  {category.substring(3)}
+                </button>
+              </div>
+            </li>
+          {/each}
+        </ul>
+      {/if}
     </aside>
   {:else}
     <p class="solo-text">Player not found</p>

@@ -6,7 +6,7 @@ export function formatNumber(number: number | string, delimiter = " "): string {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
 }
 
-export function equalArray(arr1: unknown[], arr2: unknown[]) {
+export function arraysEqual(arr1: unknown[], arr2: unknown[]) {
   return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 }
 
@@ -136,6 +136,31 @@ export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
   "top25",
   "top8",
   "top1"
+];
+
+export const CHART_COLORS = [
+  "var(--color-active)",
+  "#9FA8DA",
+  "#CE93D8",
+  "#F48FB1",
+  "#EF9A9A",
+  "#FFAB91",
+  "#FFCC80",
+  "#FFE082",
+  "#FFF59D",
+  "#E6EE9C"
+];
+export const CHART_RANK_COLORS = [
+  "var(--color-pink)",
+  "#D32F2F",
+  "#7B1FA2",
+  "#512DA8",
+  "#303F9F",
+  "#1976D2",
+  "#0288D1",
+  "#0097A7",
+  "#00796B",
+  "#388E3C"
 ];
 
 export const MAX_CHART_PLAYERS = 20;

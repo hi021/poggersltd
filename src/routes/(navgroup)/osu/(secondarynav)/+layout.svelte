@@ -187,7 +187,7 @@
 
   @media screen and (max-width: 40rem) {
     :global(.osu-table) {
-      border-spacing: 0;
+      border-spacing: 0 2px;
       margin: 10px 2%;
     }
     :global(.osu-table td:first-child) {
@@ -196,9 +196,6 @@
     }
     :global(.osu-table td:last-child) {
       padding-right: 1px;
-    }
-    :global(.osu-table tr.top-rank) {
-      display: none;
     }
 
     .secondary-nav-inner {

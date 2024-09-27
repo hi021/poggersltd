@@ -1,5 +1,5 @@
 // get scores from `category` from the last `days` days (defaults to 90)
-// returns {ranks: Array<{rank: number, scores: number, day ([0 - days - 1] where 0 is most days ago): number} | null>, stats: {min & max ranks & scores}}
+// returns {ranks: Array<{rank: number, scores: number, day ([0 - (days - 1)] where 0 is most days ago): number} | null>, stats: {min & max ranks & scores}}
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { formatNumber } from "$lib/util";
+  import { formatNumber, tooltip } from "$lib/util";
   import { VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
 
   export let ranks: Array<App.PlayerChartEntry> | undefined;
@@ -87,7 +87,8 @@
     <button
       class="btn-icon"
       class:active-rank={rankChartVisible}
-      on:click={() => (rankChartVisible = !rankChartVisible)}>
+      on:click={() => (rankChartVisible = !rankChartVisible)}
+      use:tooltip={{ content: "Toggle ranks" }}>
       <icon class="hash" />
     </button>
   </li>
@@ -95,12 +96,16 @@
     <button
       class="btn-icon"
       class:active-scores={scoresChartVisible}
-      on:click={() => (scoresChartVisible = !scoresChartVisible)}>
+      on:click={() => (scoresChartVisible = !scoresChartVisible)}
+      use:tooltip={{ content: "Toggle scores" }}>
       {category.substring(3)}
     </button>
   </li>
   <li>
-    <button class="btn-icon" on:click={() => goto(`/osu/players/${idOrName}/${category}`)}>
+    <button
+      class="btn-icon"
+      on:click={() => goto(`/osu/players/${idOrName}/${category}`)}
+      use:tooltip={{ content: "Go to full chart" }}>
       <icon class="fullscreen" />
     </button>
   </li>

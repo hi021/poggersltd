@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { formatDate, formatNumber, isObjEmpty } from "$lib/util";
+  import { CHART_COLORS, CHART_RANK_COLORS, formatDate, formatNumber } from "$lib/util";
   import { VisAxis, VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
 
-//   TODO: TYPINGS AND COLORS
   export let data: {
     players: Array<App.ComparisonChartPlayer & { scoresVisible?: boolean; rankVisible?: boolean }>;
     ranks: App.ComparisonChartEntries[];
@@ -10,20 +9,20 @@
   export let category: App.RankingCategory;
 
   const x = (d: App.ComparisonChartEntry) => Number(d.date);
-  const y = (d: any, plrId: string, field: string) => d[plrId]?.[field];
+  const y = (d: any, plrId: string, field: string) => d.players[plrId]?.[field];
 
   function tooltipPlayerHTML(d: any, plrId: string) {
     const plrDataIndex = data.players.findIndex((plr) => plr.id == plrId);
-    const scores = d[plrId]?.scores;
+    const scores = d.players?.[plrId]?.scores;
     if (!scores || plrDataIndex === -1) return "";
-    const rank = d[plrId].rank;
+    const rank = d.players[plrId].rank;
     const name = data.players[plrDataIndex].name;
     const color = data.players[plrDataIndex].color ?? "inherit";
 
     return `<tr>
-    <td style="color: ${color}; text-align: right;">${name}</td>
-    <td><strong>#</strong> ${formatNumber(rank, ",")}</td>
-    <td><strong>${category.substring(3)}</strong> ${formatNumber(scores)}</td>
+    <td style="text-align: right;">${name}</td>
+    <td><strong style="color: ${color};">#</strong> ${formatNumber(rank, ",")}</td>
+    <td><strong style="color: ${color};">${category.substring(3)}</strong> ${formatNumber(scores)}</td>
     </tr>`;
   }
 
@@ -32,7 +31,7 @@
     if (isNaN(timestamp)) return;
 
     let tooltipString = "<table class='comparison-tooltip-table'><tbody>";
-    for (const plrId in d) tooltipString += tooltipPlayerHTML(d, plrId);
+    for (const plrId in d.players) tooltipString += tooltipPlayerHTML(d, plrId);
 
     return (
       tooltipString +
@@ -49,7 +48,7 @@
   const tickFormatY = (scores: number) => formatNumber(scores);
 </script>
 
-{#if data?.ranks && !isObjEmpty(data.ranks)}
+{#if data?.ranks?.length}
   <VisXYContainer
     class="player-chart-container chart-ranks"
     yDirection="south"
@@ -58,18 +57,22 @@
     autoMargin={false}
     {margin}
     padding={{ top: 22, bottom: 22 }}>
-    {#each data.players as player (player.id)}
+    {#each data.players as player, i (player.id)}
       {#if player.rankVisible !== false}
-        <VisLine {x} y={(d) => y(d, player.id, "rank")} color="var(--color-pink)" lineWidth={2} />
+        <VisLine
+          {x}
+          y={(d) => y(d, player.id, "rank")}
+          color={CHART_RANK_COLORS[i % CHART_RANK_COLORS.length]}
+          lineWidth={2} />
         {#if player.scoresVisible === false}
           <VisTooltip horizontalShift={20} />
           <VisCrosshair
-            template={(d) => tooltipTemplate(d, player.id)}
+            template={tooltipTemplate}
             {x}
             y={(d) => y(d, player.id, "rank")}
             duration={0}
             hideWhenFarFromPointerDistance={10}
-            strokeColor="var(--color-pink)"
+            strokeColor={CHART_RANK_COLORS[i % CHART_RANK_COLORS.length]}
             strokeWidth={3}
             color="var(--color-darkish)" />
         {/if}
@@ -106,16 +109,12 @@
       position="left" />
     {#each data.players as player (player.id)}
       {#if player.scoresVisible !== false}
-        <VisLine
-          {x}
-          y={(d) => y(d, player.id, "scores")}
-          color="var(--color-active)"
-          lineWidth={4} />
+        <VisLine {x} y={(d) => y(d, player.id, "scores")} color={player.color} lineWidth={4} />
         <VisTooltip horizontalShift={20} {x} y={(d) => y(d, player.id, "scores")} />
         <VisCrosshair
-          template={(d) => tooltipTemplate(d, player.id)}
+          template={tooltipTemplate}
           duration={0}
-          strokeColor="var(--color-active)"
+          strokeColor={CHART_COLORS}
           strokeWidth={3}
           color="var(--color-darkish)" />
       {/if}

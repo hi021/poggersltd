@@ -3,17 +3,10 @@
   import { page } from "$app/stores";
 </script>
 
-<!-- params: [.../osu/ranking]/type/date/category/country/ranks/extra -->
-
 <header class="row">
-  <a
-    href="/home"
-    class="logo-text flex-center unselectable"
-    style="font-size: 1.25rem; font-weight: 500;">
-    poggers
-  </a>
-  <div class="vr" />
-  <nav class="row" style="width: 100%;">
+  <a href="/home" class="logo-text flex-center unselectable"> poggers </a>
+  <div class="vr hide-width-640" />
+  <nav class="row column-width-640">
     <a
       href="/osu/ranking"
       class="nav-tab"
@@ -50,9 +43,16 @@
   header {
     background-color: var(--color-dark);
   }
-
+  .logo-text {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
   .vr {
     margin: 14px 8px;
+  }
+
+  nav {
+    width: 100%;
   }
 
   .nav-tab {
@@ -63,7 +63,7 @@
   .nav-tab:hover,
   .nav-tab:focus,
   .nav-tab:focus-visible {
-    outline: none;
+    outline-color: transparent;
     background-color: rgba(0, 0, 0, 0.2);
   }
   .nav-tab.active {
@@ -77,12 +77,10 @@
     header {
       flex-direction: column;
     }
-    nav {
-      flex-direction: column;
-    }
 
     .nav-tab {
       padding: 6px;
+      text-align: center;
     }
     .nav-tab.right {
       margin-left: 0;

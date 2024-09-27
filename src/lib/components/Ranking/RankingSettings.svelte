@@ -22,7 +22,7 @@
       </Switch>
       <label>
         Players per page
-        <select bind:value={settings.perPage}>
+        <select class="input-dark" bind:value={settings.perPage}>
           <option value={10}>10</option>
           <option value={25}>25</option>
           <option value={50}>50</option>
@@ -47,6 +47,7 @@
     min-width: 15svw;
     padding: 12px;
     border-radius: 8px;
+    align-items: flex-start;
     gap: 8px;
   }
 
@@ -67,6 +68,6 @@
     box-shadow: none;
   }
   icon.settings {
-    transition: transform 0.4s;
+    transition: transform 0.2s;
   }
 </style>
