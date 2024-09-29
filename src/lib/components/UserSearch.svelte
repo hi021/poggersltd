@@ -8,8 +8,8 @@
   export let value = "";
   export let style = "";
   export let disabled = false;
-  export let gotoPlayer: (idOrName: string) => void;
-  export let gotoPlayerForce: (idOrName: string) => void = gotoPlayer;
+  export let gotoPlayer: ({_id, name}: {_id?: number, name: string}) => void;
+  export let gotoPlayerOnEnter: ({_id, name}: {_id?: number, name: string}) => void = gotoPlayer;
 
   function handleClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
@@ -67,7 +67,7 @@
       on:input={() => getAutocomplete(value)}
       on:keypress={(e) => {
         if (e.key === "Enter") {
-          gotoPlayerForce(value);
+          gotoPlayerOnEnter({name: value});
           autocompleteEntries = [];
         }
       }} />
@@ -83,7 +83,7 @@
             role="button"
             on:click|preventDefault={() => {
               value = a.name;
-              gotoPlayer(a.name);
+              gotoPlayer(a);
               autocompleteEntries = [];
             }}>
             <img
@@ -108,6 +108,7 @@
     --radius: 9999px;
     position: relative;
     width: 100%;
+    min-width: 2rem;
     margin-top: 22px;
     align-items: center;
     padding: 0;

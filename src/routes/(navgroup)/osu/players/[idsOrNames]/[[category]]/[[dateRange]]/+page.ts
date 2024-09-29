@@ -57,8 +57,7 @@ export const load: PageLoad = async ({
       ++i;
     }
 
-    console.log(players, ranksObj, ranksArray);
-    return { players, ranks: ranksArray.reverse() };
+    return { players, ranks: ranksArray.sort((a, b) => a.date < b.date ? -1 : 1) };
   } catch (e: any) {
     console.error(e);
     throw error(e?.status ?? 500, e?.body?.message ?? "An unknown error has occurred");

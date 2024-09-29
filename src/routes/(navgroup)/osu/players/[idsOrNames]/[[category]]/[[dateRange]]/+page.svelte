@@ -1,19 +1,31 @@
 <script lang="ts">
-  import { COUNTRIES, getAvatarURL, RANKING_BADGES, SCORE_CATEGORIES, tooltip } from "$lib/util";
+  import { COUNTRIES, getAvatarURL, tooltip } from "$lib/util";
   import type { PageData } from "../$types";
-  import { browser } from "$app/environment";
+//   import { browser } from "$app/environment";
   import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
+  import { afterNavigate, goto } from "$app/navigation";
   import UserSearch from "$lib/components/UserSearch.svelte";
   import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
+    import { fly, slide } from "svelte/transition";
+    import Loader from "$lib/components/Loader.svelte";
 
   export let data: PageData;
-  //   let loading = false;
+  let loading = false;
   let playersPanelVisible = true;
   let category = $page.params.category as App.RankingCategory;
   let comparePlayerName: string;
-  const comparePlayerSearch = () => console.log(comparePlayerName);
-  //   $: () => browser && goto(`/osu/player/${$page.params.idOrName}/${category}`);
+  const comparePlayerSearch = ({_id, name}: {_id?: number, name: string}) => {
+    if(!_id) return false;
+    refreshUrl(`${$page.params.idsOrNames},${_id}`);
+    comparePlayerName = "";
+  }
+
+  const refreshUrl = (idsOrNames = $page.params.idsOrNames) => {
+    loading = true;
+    goto(`/osu/players/${idsOrNames}/${category}`);
+  }
+
+  afterNavigate(() => loading = false)
 </script>
 
 <svelte:head>
@@ -26,16 +38,22 @@
       <PlayerComparisonChart {data} {category} />
     </div>
 
-    <aside class="column">
-      <div style="margin-inline-start: 1.25rem;">
-        <span>Compare players</span>
+    <aside class="column" class:collapsed={!playersPanelVisible}>
+        {#if loading}
+<div class="overlay">
+    <Loader />
+</div>
+{/if}
         <button
           type="button"
           class="btn-icon"
-          on:click={() => (playersPanelVisible = !playersPanelVisible)}
-          ><icon class="collapse" /></button>
-      </div>
-      {#if playersPanelVisible}
+          use:tooltip={{content: "Toggle players panel"}}
+          on:click={() => (playersPanelVisible = !playersPanelVisible)}>
+          <icon class={playersPanelVisible ? "expand-left" : "expand-right"} />
+        </button>
+        {#if playersPanelVisible}
+        <div class="column" style="height: 100%;" transition:slide={{axis: 'x', duration: 200}}>
+        <span style="margin-inline-start: 1.25rem;">Compare players</span>
         <UserSearch
           bind:value={comparePlayerName}
           gotoPlayer={comparePlayerSearch}
@@ -43,7 +61,7 @@
 
         <ul class="players-container ul column">
           {#each data.players as player (player.id)}
-            <li style="--color: {player.color};">
+            <li style="--color: {player.color};" transition:fly={{x: -100, duration: 200}}>
               <div class="player-entry-info-container">
                 <a
                   class="osu-avatar-small"
@@ -72,26 +90,29 @@
                 <button
                   type="button"
                   class="btn-icon"
+                  class:active={player.rankVisible || player.rankVisible == null}
                   use:tooltip={{ content: "Toggle ranks" }}
                   on:click={() =>
-                    (player.rankVisible =
-                      player.rankVisible == null || player.rankVisible == false)}>
+                    player.rankVisible = (player.rankVisible != null && player.rankVisible == false)}>
                   <icon class="hash" />
                 </button>
                 <button
                   type="button"
                   class="btn-icon"
+                  class:active={player.scoresVisible || player.scoresVisible == null}
                   use:tooltip={{ content: "Toggle scores" }}
-                  on:click={() =>
-                    (player.scoresVisible =
-                      player.scoresVisible == null || player.scoresVisible == false)}>
+                  on:click={() => {
+
+            console.log(data)
+                      player.scoresVisible = (player.scoresVisible != null && player.scoresVisible == false)}}>
                   {category.substring(3)}
                 </button>
               </div>
             </li>
           {/each}
         </ul>
-      {/if}
+    </div>
+        {/if}
     </aside>
   {:else}
     <p class="solo-text">Player not found</p>
@@ -112,19 +133,26 @@
     overflow: hidden;
   }
 
-  aside {
+  aside:not(.collapsed) {
+      position: relative;
     border-radius: 12px;
     min-width: 14.5rem;
+  }
+  aside .btn-icon icon {
+    color: var(--color-lighter);
+    font-size: 1.5rem;
   }
   .players-container {
     margin-top: auto;
     gap: 6px;
     overflow-y: auto;
+    overflow-x: hidden;
   }
   .players-container li {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    min-width: 2rem;
     padding: 6px;
     border-radius: 6px;
     background: linear-gradient(150deg, var(--color-darkish) 55%, var(--color));
@@ -140,7 +168,19 @@
   }
   .player-entry-button-container button {
     color: inherit;
+    opacity: 0.4;
+    font-weight: 500;
   }
+  .player-entry-button-container button icon {
+    font-size: 1rem;
+  }
+  .player-entry-button-container button.active {
+    opacity: 1;
+  }
+  .overlay {
+    --color-base: 0,0,0;
+    position: absolute;
+}
 
   @media screen and (max-width: 40rem) {
   }

@@ -5,7 +5,6 @@ import {
   MAX_CHART_PLAYERS,
   MIN_DATE,
   SCORE_CATEGORIES,
-  trimArray
 } from "$lib/util";
 import { error, json } from "@sveltejs/kit";
 import { dbRankings } from "$lib/db";
@@ -50,7 +49,7 @@ function prepareFetchPlayer(
         resultObj[player._id] = {
           name: player.name,
           country: player.country,
-          ranks: new Array<any>(days)
+          ranks: new Array<App.ComparisonChartEntry>(days)
         };
       resultObj[player._id].ranks[i] = {
         rank: player.rank,
@@ -129,7 +128,7 @@ export const GET: RequestHandler = async ({ params }) => {
   try {
     await Promise.all(allPlayerPromises);
     for (const i in players) {
-      players[i].ranks = trimArray(players[i].ranks);
+        players[i].ranks = players[i].ranks.sort((a, b) => (a?.date ?? '0') < (b?.date ?? '0') ? 1 : -1).filter(a => a);
       players[i].stats = calculatePlayerStats(players[i].ranks);
     }
 

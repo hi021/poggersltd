@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import UserSearch from "$lib/components/UserSearch.svelte";
 
-  const gotoPlayer = (idOrName: string | number) => goto("/osu/player/" + idOrName + "/top50");
+  const gotoPlayer = ({_id, name}: {_id?: number, name: string}) => goto(`osu/player/${_id}/top50`);
 </script>
 
 <svelte:head>
@@ -19,7 +19,7 @@
     <div class="logo-letter" style="color: #ff82e3;">r</div>
     <div class="logo-letter" style="color: #5cc4ff;">s</div>
   </div>
-  <UserSearch {gotoPlayer} gotoPlayerForce={gotoPlayer} />
+  <UserSearch {gotoPlayer} />
 </main>
 
 <style>
