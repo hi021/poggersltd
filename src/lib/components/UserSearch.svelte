@@ -8,6 +8,7 @@
   export let value = "";
   export let style = "";
   export let disabled = false;
+  export let autofocus = true;
   export let gotoPlayer: ({ _id, name }: { _id?: number; name: string }) => void;
   export let gotoPlayerOnEnter: ({ _id, name }: { _id?: number; name: string }) => void =
     gotoPlayer;
@@ -45,7 +46,7 @@
 
   onMount(() => {
     addEventListener("click", handleClick);
-    tick().then(() => searchInputElement.focus());
+    if(autofocus) tick().then(() => searchInputElement.focus());
 
     return () => removeEventListener("click", handleClick);
   });

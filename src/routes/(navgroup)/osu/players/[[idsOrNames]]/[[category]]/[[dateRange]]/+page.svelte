@@ -6,6 +6,7 @@
     getOsuProfileURL,
     MAX_CHART_PLAYERS,
     MIN_DATE,
+    SCORE_CATEGORIES,
     tooltip
   } from "$lib/util";
   import type { PageData } from "../$types";
@@ -20,10 +21,11 @@
   export let data: PageData;
   let loading = false;
   let playersPanelVisible = true;
-  let category = $page.params.category || ("top50" as App.RankingCategory);
+  let category = ($page.params.category || "top50") as App.RankingCategory;
   let dateFrom = $page.params.dateRange?.split(" ")?.[0];
   let dateTo = $page.params.dateRange?.split(" ")?.[1];
   let comparePlayerName: string;
+
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
     const idsOrNames = $page.params.idsOrNames ? $page.params.idsOrNames + "," : "";
@@ -33,12 +35,13 @@
 
   const refreshUrl = (
     idsOrNames = $page.params.idsOrNames,
-    rangeFrom = dateFrom,
-    rangeTo = dateTo
+    newCategory = category,
+    newDateFrom = dateFrom,
+    newDateTo = dateTo
   ) => {
     loading = true;
-    const rangeString = rangeFrom || rangeTo ? `/${rangeFrom ?? ""} ${rangeTo ?? ""}` : "";
-    goto(`/osu/players/${idsOrNames}/${category ?? ""}${rangeString}`);
+    const rangeString = newDateFrom || newDateTo ? `/${newDateFrom ?? ""} ${newDateTo ?? ""}` : "";
+    goto(`/osu/players/${idsOrNames}/${newCategory ?? ""}${rangeString}`);
   };
 
   afterNavigate(() => (loading = false));
@@ -50,11 +53,7 @@
 
 <main class="flex-fill row">
   <div class="chart-container flex-fill">
-    {#if data?.players?.length}
-      <PlayerComparisonChart {data} {category} />
-    {:else}
-      <p class="solo-text">No data</p>
-    {/if}
+    <PlayerComparisonChart {data} {category} />
   </div>
 
   <aside class="column" class:collapsed={!playersPanelVisible}>
@@ -105,10 +104,20 @@
               on:change={() => refreshUrl()} />
           </span>
 
-          <!-- TODO: CATEGORY TABS UI -->
+          <select
+            class="input-dark normal-size"
+            title="Score category"
+            bind:value={category}
+            on:change={() => refreshUrl()}>
+            {#each SCORE_CATEGORIES as cat}
+              <option>{cat}</option>
+            {/each}
+          </select>
+
           <hr />
         </form>
 
+        <!-- TODO: UI for color picker, removing players, stats -->
         <ul class="players-container ul column">
           {#each data.players as player (player.id)}
             <li style="--color: {player.color};" transition:fly={{ x: -100, duration: 200 }}>
@@ -209,8 +218,7 @@
   .players-container {
     margin-top: auto;
     gap: 6px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden auto;
   }
   .players-container li {
     flex-direction: row;
@@ -232,20 +240,23 @@
   }
   .player-entry-button-container button {
     color: inherit;
-    opacity: 0.4;
+    opacity: 0.333;
     font-weight: 500;
+    padding: 6px;
+    border-radius: 6px;
   }
   .player-entry-button-container button icon {
     font-size: 1rem;
   }
   .player-entry-button-container button.active {
     opacity: 1;
+    background-color: rgba(0, 0, 0, 0.1);
   }
   .overlay {
     --color-base: 0, 0, 0;
     position: absolute;
   }
 
-  @media screen and (max-width: 40rem) {
-  }
+  /* @media screen and (max-width: 40rem) {
+  } */
 </style>

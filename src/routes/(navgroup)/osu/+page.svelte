@@ -5,7 +5,7 @@
   let dialogElement: HTMLDialogElement;
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
-    goto(`osu/player/${_id}/top50`);
+    goto(`osu/player/${_id || name}/top50`);
 </script>
 
 <svelte:head>

@@ -17,7 +17,7 @@ function prepareFetchPlayer(
   datesToFetch: string[],
   resultObj: App.ComparisonChartAPI
 ) {
-  const promises = new Array<Promise<any>>(days);
+  const promises = new Array<Promise<number | null>>(days);
   const playerId = parseInt(idOrName);
   const project = {
     $project: {
@@ -39,7 +39,7 @@ function prepareFetchPlayer(
 
     promises[i] = new Promise(async (resolve) => {
       const resArray = await dbRankings.aggregate(aggregate).toArray();
-      const player = resArray?.[0]?.[scoreCategory]?.[0];
+      const player: App.RankingEntry = resArray?.[0]?.[scoreCategory]?.[0];
       if (!player) {
         resolve(null);
         return;
@@ -49,7 +49,7 @@ function prepareFetchPlayer(
         resultObj[player._id] = {
           name: player.name,
           country: player.country,
-          ranks: new Array<App.ComparisonChartEntry>(days)
+          ranks: new Array<App.ComparisonChartEntryWithDate>(days)
         };
       resultObj[player._id].ranks[i] = {
         rank: player.rank,
@@ -65,10 +65,10 @@ function prepareFetchPlayer(
 }
 
 function calculatePlayerStats(
-  ranks: Array<App.ComparisonChartEntry | null>
+  ranks: Array<App.ComparisonChartEntryWithDate | null>
 ): App.PlayerProfileStats {
-  const firstEntry = ranks[0] as App.ComparisonChartEntry;
-  const lastEntry = ranks[ranks.length - 1] as App.ComparisonChartEntry;
+  const firstEntry = ranks[0] as App.ComparisonChartEntryWithDate;
+  const lastEntry = ranks[ranks.length - 1] as App.ComparisonChartEntryWithDate;
   let maxScores = firstEntry.scores,
     minScores = firstEntry.scores,
     maxRank = firstEntry.rank,
@@ -117,16 +117,16 @@ export const GET: RequestHandler = async ({ params }) => {
   const dateRange = params.dateRange?.split(" ");
   const dateStartTimestamp = dateRange && Date.parse(dateRange[0]); // assume beginning of ranking data if invalid
   const dateEndTimestamp = dateRange && Date.parse(dateRange[1]); // assume today if invalid
-  const dateStart = isNaN(dateStartTimestamp as any)
+  const dateStart = isNaN(dateStartTimestamp as number)
     ? Date.parse(MIN_DATE)
     : (dateStartTimestamp as number);
-  const dateEnd = isNaN(dateEndTimestamp as any)
+  const dateEnd = isNaN(dateEndTimestamp as number)
     ? getServerDate().valueOf()
     : (dateEndTimestamp as number);
   const days = getDaysBetweenDates(dateStart, dateEnd);
   const datesToFetch = getDaysBeforeDate(days, new Date(dateEnd));
 
-  const allPlayerPromises = new Array<Promise<any>>();
+  const allPlayerPromises = new Array<Promise<number | null>>();
   const players: App.ComparisonChartAPI = {};
 
   for (const tmpId of idsOrNames) {

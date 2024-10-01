@@ -61,23 +61,26 @@ declare namespace App {
     stats: PlayerProfileStats;
   }
 
-  type ComparisonChartEntry = { scores: number; rank: number; date: string };
-  interface ComparisonChartAPI {
-    [id: string]: {
-      name: string;
-      country: string;
-      ranks: Array<ComparisonChartEntry | null>;
-      stats?: App.PlayerProfileStats;
-    };
-  }
+  type ComparisonChartEntry = { scores: number; rank: number };
+  type ComparisonChartEntryWithDate = ComparisonChartEntry & { date: string };
   interface ComparisonChartPlayer {
     id: string;
     name: string;
     country: string;
+    ranks: ComparisonChartEntries;
     stats?: App.PlayerProfileStats;
   }
-  type ComparisonChartEntries = Array<ComparisonChartEntry | null>;
-  type ComparisonChartPlayerFull = ComparisonChartPlayer & { ranks: ComparisonChartEntries };
+  interface ComparisonChartAPI {
+    [id: string]: Omit<ComparisonChartPlayer, "id">;
+  }
+  type ComparisonChartEntries = Array<ComparisonChartEntryWithDate | null>;
+  type ComparisonChartPlayerCustomizable = Omit<ComparisonChartPlayer, "ranks"> & {
+    color?: string;
+    rankVisible?: boolean;
+    scoresVisible?: boolean;
+  };
+  type ComparisonChartPlayerProcessed = { [id: string]: ComparisonChartEntry };
+  type ComparisonChartEntryProcessed = { date: string; players: ComparisonChartPlayerProcessed };
 
   interface CountryRanking {
     country: string;

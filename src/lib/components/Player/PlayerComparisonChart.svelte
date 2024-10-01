@@ -1,17 +1,39 @@
 <script lang="ts">
   import { CHART_COLORS, CHART_RANK_COLORS, formatDate, formatNumber } from "$lib/util";
   import { VisAxis, VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
+  import type { NumericAccessor } from "@unovis/ts";
 
-  export let data: {
-    players: Array<App.ComparisonChartPlayer & { scoresVisible?: boolean; rankVisible?: boolean }>;
-    ranks: App.ComparisonChartEntries[];
-  };
   export let category: App.RankingCategory;
+  export let data: {
+    players: App.ComparisonChartPlayerCustomizable[];
+    ranks: App.ComparisonChartEntryProcessed[];
+  };
 
-  const x = (d: App.ComparisonChartEntry) => Number(d.date);
-  const y = (d: any, plrId: string, field: string) => d.players[plrId]?.[field];
+  const x = (d: App.ComparisonChartEntryProcessed) => Number(d.date);
+  const rankColors = (d: App.ComparisonChartEntryProcessed, i: number) =>
+    CHART_RANK_COLORS[i % CHART_RANK_COLORS.length];
+  let rankY: NumericAccessor<App.ComparisonChartEntryProcessed>[];
+  let scoreY: NumericAccessor<App.ComparisonChartEntryProcessed>[];
+  let scoreColors: string[];
 
-  function tooltipPlayerHTML(d: any, plrId: string) {
+  function resetAccessors() {
+    rankY = [];
+    scoreY = [];
+    scoreColors = [];
+
+    for (const i in data.players) {
+      const player = data.players[i];
+
+      rankY.push((d) => (player.rankVisible === false ? undefined : d.players[player.id]?.rank));
+      scoreY.push((d) =>
+        player.scoresVisible === false ? undefined : d.players[player.id]?.scores
+      );
+      scoreColors.push(player.color || CHART_COLORS[Number(i) % CHART_COLORS.length]);
+    }
+  }
+  $: data, resetAccessors();
+
+  function tooltipPlayerHTML(d: App.ComparisonChartEntryProcessed, plrId: string) {
     const plrDataIndex = data.players.findIndex((plr) => plr.id == plrId);
     const scores = d.players?.[plrId]?.scores;
     if (!scores || plrDataIndex === -1) return "";
@@ -26,7 +48,7 @@
     </tr>`;
   }
 
-  function tooltipTemplate(d: any) {
+  function tooltipTemplate(d: App.ComparisonChartEntryProcessed) {
     const timestamp = Number(d?.date);
     if (isNaN(timestamp)) return;
 
@@ -55,24 +77,16 @@
     padding={{ top: 30, bottom: 30 }}
     autoMargin={false}
     {margin}>
-    {#each data.players as player, i (player.id)}
-      {#if player.rankVisible !== false}
-        <VisLine
-          {x}
-          y={(d) => y(d, player.id, "rank")}
-          color={CHART_RANK_COLORS[i % CHART_RANK_COLORS.length]}
-          lineWidth={4} />
-        {#if player.scoresVisible === false}
+    <VisLine {x} y={rankY} color={rankColors} lineWidth={4} />
+    <!-- {#if player.scoresVisible === false}
           <VisTooltip horizontalShift={20} {x} y={(d) => y(d, player.id, "rank")} />
           <VisCrosshair
             template={tooltipTemplate}
             duration={0}
             strokeColor={CHART_RANK_COLORS}
             strokeWidth={4}
-            color="var(--color-darkish)" />
-        {/if}
-      {/if}
-    {/each}
+            color="var(--color-darkish)" /> -->
+    <!-- {/if}-->
   </VisXYContainer>
 
   <VisXYContainer
@@ -102,23 +116,17 @@
       tickTextFontSize="14px"
       tickCount={5}
       position="left" />
-
-    {#each data.players as player (player.id)}
-      {#if player.scoresVisible !== false}
-        <VisLine {x} y={(d) => y(d, player.id, "scores")} color={player.color} lineWidth={6} />
-        <VisTooltip horizontalShift={20} {x} y={(d) => y(d, player.id, "scores")} />
-        <VisCrosshair
-          template={tooltipTemplate}
-          duration={0}
-          strokeColor={CHART_COLORS}
-          strokeWidth={4}
-          color="var(--color-darkish)" />
-      {/if}
-    {/each}
+    <VisLine {x} y={scoreY} color={scoreColors} lineWidth={6} />
+    <VisTooltip horizontalShift={20} {x} y={scoreY} />
+    <VisCrosshair
+      template={tooltipTemplate}
+      duration={0}
+      {x}
+      y={scoreY}
+      strokeColor={scoreColors}
+      strokeWidth={4}
+      color="var(--color-darkish)" />
   </VisXYContainer>
 {:else}
   <p class="solo-text">No data</p>
 {/if}
-
-<style>
-</style>
