@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { formatNumber, COUNTRIES, getAvatarURL, transitionHeight, tooltip } from "$lib/util";
+  import {
+    formatNumber,
+    COUNTRIES,
+    getAvatarURL,
+    transitionHeight,
+    tooltip,
+    getOsuProfileURL
+  } from "$lib/util";
   import Loader from "$lib/components/Loader.svelte";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
@@ -20,7 +27,7 @@
   <Loader sticky={true} />
 {:then data}
   <div class="user-header row flex-center">
-    <a use:tooltip={{ content: "osu! profile" }} href="https://osu.ppy.sh/users/{data.user.id}">
+    <a use:tooltip={{ content: "osu! profile" }} href={getOsuProfileURL(data.user.id)}>
       <img class="osu-avatar-small" alt="" src={getAvatarURL(data.user.id)} />
     </a>
     <span style="font-size: 1.125rem; margin: 0 12px;">{data.user.name}</span>

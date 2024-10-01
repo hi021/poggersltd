@@ -4,7 +4,7 @@ import {
   getServerDate,
   MAX_CHART_PLAYERS,
   MIN_DATE,
-  SCORE_CATEGORIES,
+  SCORE_CATEGORIES
 } from "$lib/util";
 import { error, json } from "@sveltejs/kit";
 import { dbRankings } from "$lib/db";
@@ -96,14 +96,23 @@ function calculatePlayerStats(
 }
 
 export const GET: RequestHandler = async ({ params }) => {
-  const route = `player/${params.idsOrNames}/${params.category ?? ""}/${params.dateRange ?? ""}`;
+  const route = `players/${params.idsOrNames}/${params.category ?? ""}/${params.dateRange ?? ""}`;
   console.time(route);
   const scoreCategory = (params.category as App.RankingCategory) || "top50";
-  if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
+  if (!SCORE_CATEGORIES.includes(scoreCategory)) {
+    console.timeEnd(route);
+    throw error(400, "Invalid ranking score category");
+  }
 
-  const idsOrNames = params.idsOrNames.split(",");
-  if (idsOrNames.length > MAX_CHART_PLAYERS)
+  const idsOrNames = params.idsOrNames?.split(",");
+  if (!idsOrNames?.length) {
+    console.timeEnd(route);
+    return json({});
+  }
+  if (idsOrNames.length > MAX_CHART_PLAYERS) {
+    console.timeEnd(route);
     throw error(400, `The maximum amount of players is ${MAX_CHART_PLAYERS}`);
+  }
 
   const dateRange = params.dateRange?.split(" ");
   const dateStartTimestamp = dateRange && Date.parse(dateRange[0]); // assume beginning of ranking data if invalid
@@ -128,7 +137,9 @@ export const GET: RequestHandler = async ({ params }) => {
   try {
     await Promise.all(allPlayerPromises);
     for (const i in players) {
-        players[i].ranks = players[i].ranks.sort((a, b) => (a?.date ?? '0') < (b?.date ?? '0') ? 1 : -1).filter(a => a);
+      players[i].ranks = players[i].ranks
+        .sort((a, b) => ((a?.date ?? "0") < (b?.date ?? "0") ? 1 : -1))
+        .filter((a) => a);
       players[i].stats = calculatePlayerStats(players[i].ranks);
     }
 

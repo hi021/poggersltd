@@ -21,6 +21,30 @@ export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, to
   return arr;
 }
 
+export function debounce(task: (...args: any) => unknown, ms: number) {
+  let t: { promise: Promise<any> | null; cancel: (value?: unknown) => void } = {
+    promise: null,
+    cancel: () => void 0
+  };
+  return async (...args: any) => {
+    try {
+      t.cancel();
+      t = deferred(ms);
+      await t.promise;
+      await task(...args);
+    } catch (_) {}
+  };
+}
+
+function deferred(ms: number) {
+  let cancel = (value?: unknown) => {};
+  const promise = new Promise((resolve, reject) => {
+    cancel = reject;
+    setTimeout(resolve, ms);
+  });
+  return { promise, cancel };
+}
+
 // m 0-11, returns 3 letter short name
 export function monthString(m: number) {
   switch (m) {
@@ -91,6 +115,11 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
 
 export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is the timestamp, should use latest to avoid caching
 
+export const getOsuProfileURL = (idOrName: number | string) =>
+  `https://osu.ppy.sh/users/${idOrName}`;
+
+export const getOsuStatsURL = (name: string) => `https://osustats.ppy.sh/u/${name}//1/////-/1-50`;
+
 export function transitionHeight(
   node: Element,
   { delay = 0, duration = 400, easing = linear, maxHeight = 1024 }
@@ -140,7 +169,6 @@ export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
 
 export const CHART_COLORS = [
   "var(--color-active)",
-  "#9FA8DA",
   "#CE93D8",
   "#F48FB1",
   "#EF9A9A",
@@ -148,19 +176,20 @@ export const CHART_COLORS = [
   "#FFCC80",
   "#FFE082",
   "#FFF59D",
-  "#E6EE9C"
+  "#E6EE9C",
+  "#C5E1A5"
 ];
 export const CHART_RANK_COLORS = [
   "var(--color-pink)",
-  "#D32F2F",
-  "#7B1FA2",
-  "#512DA8",
-  "#303F9F",
-  "#1976D2",
-  "#0288D1",
-  "#0097A7",
-  "#00796B",
-  "#388E3C"
+  "#C51162",
+  "#AA00FF",
+  "#6200EA",
+  "#2962FF",
+  "#00B8D4",
+  "#00BFA5",
+  "#64DD17",
+  "#FFD600",
+  "#FF6D00"
 ];
 
 export const MAX_CHART_PLAYERS = 20;

@@ -15,9 +15,9 @@ export const load: PageLoad = async ({
   ranks: Array<{ date: string; players: { [plrId: string]: RanksObj } }>;
 }> => {
   try {
-    const resPlayers = await fetch(
-      `/api/players/${params.idsOrNames}/${params.category}/${params.dateRange}`
-    );
+    const dateRange = params.dateRange ? `/${params.dateRange}` : "";
+    const category = params.category || dateRange ? `/${params.category}` : "";
+    const resPlayers = await fetch(`/api/players/${params.idsOrNames}${category}${dateRange}`);
     if (!resPlayers.ok) throw error(resPlayers.status, resPlayers.statusText || "Oopsie");
 
     const resPlayersJson: App.ComparisonChartAPI = await resPlayers.json();
@@ -57,7 +57,7 @@ export const load: PageLoad = async ({
       ++i;
     }
 
-    return { players, ranks: ranksArray.sort((a, b) => a.date < b.date ? -1 : 1) };
+    return { players, ranks: ranksArray.sort((a, b) => (a.date < b.date ? -1 : 1)) };
   } catch (e: any) {
     console.error(e);
     throw error(e?.status ?? 500, e?.body?.message ?? "An unknown error has occurred");

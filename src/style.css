@@ -91,6 +91,15 @@ fieldset {
   border-radius: 3px;
 }
 
+hr {
+  height: 2px;
+  margin: 8px 10px;
+  border-radius: 9999px;
+  background-color: var(--color-lighter);
+  border: none;
+  opacity: 0.325;
+}
+
 .vr {
   width: 2px;
   margin: 16px 12px;
@@ -107,9 +116,14 @@ fieldset {
   color: var(--color-lighter);
   padding: 0.75rem 0.625rem;
   border-radius: 9999px;
+  color-scheme: dark;
 }
 .input-dark:focus-visible {
   box-shadow: 0 0 2px 0.125rem var(--color-light);
+}
+.input-dark.normal-size {
+  font-size: 1rem;
+  padding: 0.5rem 0.425rem;
 }
 
 /* BUTTONS */
@@ -289,8 +303,8 @@ button:disabled {
   --vis-tooltip-text-color: var(--color-light);
   --vis-dark-tooltip-text-color: var(--color-light);
   --vis-tooltip-padding: 4px 6px;
-  --vis-axis-grid-color: var(--color-light);
-  --vis-dark-axis-grid-color: var(--color-light);
+  --vis-axis-grid-color: color-mix(in srgb, var(--color-lighter) 70%, transparent);
+  --vis-dark-axis-grid-color: color-mix(in srgb, var(--color-lighter) 70%, transparent);
   position: absolute !important;
   top: 0;
   bottom: 0;
@@ -662,9 +676,16 @@ button:disabled {
 /* MISC */
 
 /* MEDIA */
+.show-width-960,
+.show-width-640 {
+  display: none;
+}
 @media screen and (max-width: 60rem) {
   .hide-width-960 {
     display: none;
+  }
+  .show-width-960 {
+    display: initial;
   }
   .column-width-960 {
     flex-direction: column;
@@ -673,6 +694,9 @@ button:disabled {
 @media screen and (max-width: 40rem) {
   .hide-width-640 {
     display: none;
+  }
+  .show-width-640 {
+    display: initial;
   }
   .column-width-640 {
     flex-direction: column;

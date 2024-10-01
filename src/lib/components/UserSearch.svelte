@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import { getAvatarURL } from "$lib/util";
+  import { debounce, getAvatarURL } from "$lib/util";
   import { slide } from "svelte/transition";
 
   let searchInputElement: HTMLInputElement;
@@ -8,8 +8,9 @@
   export let value = "";
   export let style = "";
   export let disabled = false;
-  export let gotoPlayer: ({_id, name}: {_id?: number, name: string}) => void;
-  export let gotoPlayerOnEnter: ({_id, name}: {_id?: number, name: string}) => void = gotoPlayer;
+  export let gotoPlayer: ({ _id, name }: { _id?: number; name: string }) => void;
+  export let gotoPlayerOnEnter: ({ _id, name }: { _id?: number; name: string }) => void =
+    gotoPlayer;
 
   function handleClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
@@ -20,13 +21,16 @@
       autocompleteEntries = [];
   }
 
-  // TODO: debounce
   async function getAutocomplete(query = value) {
     if (query?.length < 3 || disabled) {
       autocompleteEntries = [];
       return;
     }
 
+    autocompleteDebounced(query);
+  }
+
+  const autocompleteDebounced = debounce(async (query) => {
     try {
       const res = await fetch(`/api/player/${query}/search`);
       const resJson = await res.json();
@@ -37,7 +41,7 @@
       console.error("Failed to fetch players autocomplete:", e);
       autocompleteEntries = [];
     }
-  }
+  }, 500);
 
   onMount(() => {
     addEventListener("click", handleClick);
@@ -67,7 +71,7 @@
       on:input={() => getAutocomplete(value)}
       on:keypress={(e) => {
         if (e.key === "Enter") {
-          gotoPlayerOnEnter({name: value});
+          gotoPlayerOnEnter({ name: value });
           autocompleteEntries = [];
         }
       }} />

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { getAvatarURL, tooltip } from "$lib/util";
+  import { getAvatarURL, getOsuProfileURL, tooltip } from "$lib/util";
   export let id: number; // player osu id
 </script>
 
 <td class="hide-width-640" style="width: 36px;">
   <a
     class="osu-avatar-small"
-    href="https://osu.ppy.sh/users/{id}"
+    href={getOsuProfileURL(id)}
     target="_blank"
     rel="noreferrer"
     use:tooltip={{ content: "osu! profile" }}

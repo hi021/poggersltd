@@ -33,14 +33,12 @@
     let tooltipString = "<table class='comparison-tooltip-table'><tbody>";
     for (const plrId in d.players) tooltipString += tooltipPlayerHTML(d, plrId);
 
-    return (
-      tooltipString +
-      `<tr><td colspan='3' style='text-align: center;'>
+    return `${tooltipString}
+    <tr><td colspan='3' style='text-align: center;'>
     <small style="color: var(--color-active);">${formatDate(new Date(timestamp))}</small>
     </td></tr>
     </tbody>
-    </table>`
-    );
+    </table>`;
   }
 
   const margin = { left: 62, right: 0, top: 0, bottom: 36 };
@@ -51,29 +49,26 @@
 {#if data?.ranks?.length}
   <VisXYContainer
     class="player-chart-container chart-ranks"
-    yDirection="south"
     data={data.ranks}
+    yDirection="south"
     duration={200}
+    padding={{ top: 30, bottom: 30 }}
     autoMargin={false}
-    {margin}
-    padding={{ top: 22, bottom: 22 }}>
+    {margin}>
     {#each data.players as player, i (player.id)}
       {#if player.rankVisible !== false}
         <VisLine
           {x}
           y={(d) => y(d, player.id, "rank")}
           color={CHART_RANK_COLORS[i % CHART_RANK_COLORS.length]}
-          lineWidth={2} />
+          lineWidth={4} />
         {#if player.scoresVisible === false}
-          <VisTooltip horizontalShift={20} />
+          <VisTooltip horizontalShift={20} {x} y={(d) => y(d, player.id, "rank")} />
           <VisCrosshair
             template={tooltipTemplate}
-            {x}
-            y={(d) => y(d, player.id, "rank")}
             duration={0}
-            hideWhenFarFromPointerDistance={10}
-            strokeColor={CHART_RANK_COLORS[i % CHART_RANK_COLORS.length]}
-            strokeWidth={3}
+            strokeColor={CHART_RANK_COLORS}
+            strokeWidth={4}
             color="var(--color-darkish)" />
         {/if}
       {/if}
@@ -84,9 +79,9 @@
     class="player-chart-container chart-scores"
     data={data.ranks}
     duration={200}
+    padding={{ top: 10, bottom: 10 }}
     autoMargin={false}
-    {margin}
-    padding={{ top: 10, bottom: 10 }}>
+    {margin}>
     <VisAxis
       type="x"
       gridLine={false}
@@ -104,18 +99,19 @@
       tickLine={false}
       tickTextColor="var(--color-lighter)"
       tickFormat={tickFormatY}
-      tickCount={5}
       tickTextFontSize="14px"
+      tickCount={5}
       position="left" />
+
     {#each data.players as player (player.id)}
       {#if player.scoresVisible !== false}
-        <VisLine {x} y={(d) => y(d, player.id, "scores")} color={player.color} lineWidth={4} />
+        <VisLine {x} y={(d) => y(d, player.id, "scores")} color={player.color} lineWidth={6} />
         <VisTooltip horizontalShift={20} {x} y={(d) => y(d, player.id, "scores")} />
         <VisCrosshair
           template={tooltipTemplate}
           duration={0}
           strokeColor={CHART_COLORS}
-          strokeWidth={3}
+          strokeWidth={4}
           color="var(--color-darkish)" />
       {/if}
     {/each}

@@ -1,6 +1,14 @@
 <script lang="ts">
   //@ts-nocheck it's being really dumb, please don't worry about it
-  import { COUNTRIES, getAvatarURL, RANKING_BADGES, SCORE_CATEGORIES, tooltip } from "$lib/util";
+  import {
+    COUNTRIES,
+    getAvatarURL,
+    getOsuProfileURL,
+    getOsuStatsURL,
+    RANKING_BADGES,
+    SCORE_CATEGORIES,
+    tooltip
+  } from "$lib/util";
   import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
   import PlayerRecordStats from "$lib/components/Player/PlayerRecordStats.svelte";
   import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
@@ -80,8 +88,19 @@
         <a
           class="a"
           target="_blank"
-          href="https://osu.ppy.sh/users/{data._id}"
+          href={getOsuProfileURL(data._id)}
           use:tooltip={{ content: "osu! profile" }}
+          rel="noreferrer">
+          <div class="osu-icon-wrapper">
+            <div />
+            <icon class="osu bigger" />
+          </div>
+        </a>
+        <a
+          class="a"
+          target="_blank"
+          href={getOsuStatsURL(data.name)}
+          use:tooltip={{ content: "osu!Stats" }}
           rel="noreferrer">
           <div class="osu-icon-wrapper">
             <div />
@@ -136,7 +155,7 @@
 
 <style>
   main {
-    --pad: 12px;
+    --pad: 18px;
     --radius: 12px;
     --av-height: 96px;
     --av-height-2: calc(var(--av-height) / 2);
@@ -180,6 +199,7 @@
     margin-top: calc(-1 * (var(--av-height-2) + var(--tabs-height)));
     padding-bottom: 10px;
     align-items: center;
+    gap: 8px;
     border-bottom-left-radius: var(--radius);
   }
 
@@ -224,7 +244,7 @@
   }
 
   .tabs-container {
-    padding-left: var(--pad);
+    padding-left: 8px;
     background-color: var(--color-darker);
     height: var(--tabs-height);
   }
@@ -238,8 +258,8 @@
     transition: none;
   }
   .tab:not(:disabled):is(:hover, :focus, :focus-visible) {
-    outline: none;
     box-shadow: none;
+    outline-color: transparent;
     background-color: rgba(0, 0, 0, 0.4);
   }
   .tab.active {
@@ -272,12 +292,14 @@
 
   @media screen and (max-width: 40rem) {
     main {
-      --pad: 8px;
+      --pad: 12px;
       padding: 16px 5px;
     }
     .data-container {
       flex-direction: column;
-      margin: 0 4px;
+    }
+    .player-chart-stats-wrapper {
+      width: 100%;
     }
     #top-bar-top {
       border-radius: 0;

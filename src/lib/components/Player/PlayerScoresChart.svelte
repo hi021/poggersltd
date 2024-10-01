@@ -20,6 +20,7 @@
   const x = (d: App.PlayerChartEntry) => d.day;
   const y = (d: App.PlayerChartEntry) => d.scores;
   const yRank = (d: App.PlayerChartEntry) => (d.rank && stats ? stats.maxRank - d.rank : undefined);
+  const padding = { top: 10, bottom: 10 };
 
   function tooltipTemplate(d: App.PlayerChartEntry) {
     const daysAgo = days - d.day - 1;
@@ -41,17 +42,16 @@
         class="player-chart-container chart-ranks"
         data={ranksMap}
         duration={200}
-        padding={{ top: 10, bottom: 10 }}
+        {padding}
         yDomain={[-1, stats.maxRank - stats.minRank + 1]}>
         <VisLine {x} y={yRank} color="var(--color-pink)" lineWidth={2} />
         {#if !scoresChartVisible}
           <VisTooltip horizontalShift={20} />
           <VisCrosshair
             template={tooltipTemplate}
+            duration={0}
             {x}
             y={yRank}
-            duration={0}
-            hideWhenFarFromPointerDistance={10}
             strokeColor="var(--color-pink)"
             strokeWidth={3}
             color="var(--color-darkish)" />
@@ -64,7 +64,7 @@
         class="player-chart-container chart-scores"
         data={ranksMap}
         duration={200}
-        padding={{ top: 10, bottom: 10 }}>
+        {padding}>
         <VisLine {x} {y} color="var(--color-active)" lineWidth={4} />
         <VisTooltip horizontalShift={20} />
         <VisCrosshair
@@ -72,7 +72,6 @@
           duration={0}
           {x}
           {y}
-          hideWhenFarFromPointerDistance={10}
           strokeColor="var(--color-active)"
           strokeWidth={3}
           color="var(--color-darkish)" />
@@ -82,34 +81,37 @@
     <p class="solo-text">No data</p>
   {/if}
 </div>
-<ul class="chart-buttons-container ul row">
-  <li>
-    <button
-      class="btn-icon"
-      class:active-rank={rankChartVisible}
-      on:click={() => (rankChartVisible = !rankChartVisible)}
-      use:tooltip={{ content: "Toggle ranks" }}>
-      <icon class="hash" />
-    </button>
-  </li>
-  <li>
-    <button
-      class="btn-icon"
-      class:active-scores={scoresChartVisible}
-      on:click={() => (scoresChartVisible = !scoresChartVisible)}
-      use:tooltip={{ content: "Toggle scores" }}>
-      {category.substring(3)}
-    </button>
-  </li>
-  <li>
-    <button
-      class="btn-icon"
-      on:click={() => goto(`/osu/players/${idOrName}/${category}`)}
-      use:tooltip={{ content: "Go to full chart" }}>
-      <icon class="fullscreen" />
-    </button>
-  </li>
-</ul>
+
+{#if ranksMap}
+  <ul class="chart-buttons-container ul row">
+    <li>
+      <button
+        class="btn-icon"
+        class:active-rank={rankChartVisible}
+        on:click={() => (rankChartVisible = !rankChartVisible)}
+        use:tooltip={{ content: "Toggle ranks" }}>
+        <icon class="hash" />
+      </button>
+    </li>
+    <li>
+      <button
+        class="btn-icon"
+        class:active-scores={scoresChartVisible}
+        on:click={() => (scoresChartVisible = !scoresChartVisible)}
+        use:tooltip={{ content: "Toggle scores" }}>
+        {category.substring(3)}
+      </button>
+    </li>
+    <li>
+      <button
+        class="btn-icon"
+        on:click={() => goto(`/osu/players/${idOrName}/${category}`)}
+        use:tooltip={{ content: "Go to full chart" }}>
+        <icon class="fullscreen" />
+      </button>
+    </li>
+  </ul>
+{/if}
 
 <style>
   .chart-wrapper {

@@ -2,7 +2,7 @@
   import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
-  import { formatNumber, getAvatarURL, tooltip } from "$lib/util";
+  import { formatNumber, getAvatarURL, getOsuProfileURL, tooltip } from "$lib/util";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
 
@@ -30,7 +30,7 @@
             {#if data.rankingSettings.avatars}
               <td class="hide-width-640" style="width: 64px;">
                 <a
-                  href="https://osu.ppy.sh/users/{plr._id}"
+                  href={getOsuProfileURL(plr._id)}
                   target="_blank"
                   rel="noreferrer"
                   use:tooltip={{ content: "osu! profile" }}>

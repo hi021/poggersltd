@@ -33,7 +33,7 @@
     >, the other 10% goes to stack overflow.
     <br />
     The site also uses images from
-    <a class="a" href="https://osu.ppy.sh/" target="_blank" rel="noreferrer">osu.ppy.sh</a>
+    <a class="a" href="https://osu.ppy.sh" target="_blank" rel="noreferrer">osu.ppy.sh</a>
     and flag icons from
     <a class="a" href="https://github.com/lipis/flag-icons" target="_blank" rel="noreferrer"
       >this repository</a
@@ -71,19 +71,19 @@
   <h2>Other osu! stat-tracking sites</h2>
   <ul>
     <li>
-      <strong><a href="https://osustats.respektive.pw/">respektive's osu!stats</a></strong> - the site
+      <strong><a href="https://osustats.respektive.pw">respektive's osu!stats</a></strong> - the site
       where all the data comes from with the full ranking including people below 1000 top 50s
     </li>
     <li>
-      <strong><a href="https://osustats.ppy.sh/">osu!Stats</a></strong> - the original site for score
+      <strong><a href="https://osustats.ppy.sh">osu!Stats</a></strong> - the original site for score
       rankings
     </li>
     <li>
-      <strong><a href="https://snipe.huismetbenen.nl/">osu!snipe</a></strong> - for country #1s
+      <strong><a href="https://snipe.huismetbenen.nl">osu!snipe</a></strong> - for country #1s
     </li>
     <li>
-      <strong><a href="https://ameobea.me/osutrack/">osu!track</a></strong> - profile stats tracking
-      with satisfying charts
+      <strong><a href="https://ameobea.me/osutrack">osu!track</a></strong> - profile stats tracking with
+      satisfying charts
     </li>
     <li>
       <strong><a href="https://osudaily.net">osu!daily</a></strong> - lots of rankings like playcount,

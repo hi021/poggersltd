@@ -1,5 +1,5 @@
 <script lang="ts">
-//   import { goto } from "$app/navigation";
+  //   import { goto } from "$app/navigation";
   import Switch from "$lib/components/Switch.svelte";
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { tooltip } from "$lib/util";
@@ -10,10 +10,10 @@
   let mode: string = "0";
   let username: string;
 
-  const gotoPlayer = ({_id, name}: {_id?: number, name: string}) => {
-    if (!singleRank) gotoPlayerOnEnter({_id, name});
+  const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) => {
+    if (!singleRank) gotoPlayerOnEnter({ _id, name });
   };
-  const gotoPlayerOnEnter = ({_id, name}: {_id?: number, name: string}) => false;
+  const gotoPlayerOnEnter = ({ _id, name }: { _id?: number; name: string }) => false;
   // TODO: re-implement for osustats api maybe
   // _id || name && goto(`/osu/breakdown/${_id || name}/${singleRank ? rank || 1 : "1-50"}/${mode}`);
 </script>
@@ -23,7 +23,10 @@
 </svelte:head>
 
 <main class="flex-fill column" style="padding: 0 3.5%">
-  <form class="row" spellcheck="false" on:submit|preventDefault={() => gotoPlayerOnEnter({name: username})}>
+  <form
+    class="row"
+    spellcheck="false"
+    on:submit|preventDefault={() => gotoPlayerOnEnter({ name: username })}>
     <UserSearch disabled={true} {gotoPlayer} {gotoPlayerOnEnter} bind:value={username} />
     <select
       class="input-dark"
