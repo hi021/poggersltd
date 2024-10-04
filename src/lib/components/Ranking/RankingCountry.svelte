@@ -5,6 +5,7 @@
   export let country: string; // 2-letter country code
 </script>
 
+<!-- TODO: Minor bug where country rank order might be out of whack for equal score counts (like #134 above #133 in the ranking) -->
 {#if countryRank}
   <td style="width: 4.25ch; text-align: end; padding-right: 3px;">
     #{countryRank}

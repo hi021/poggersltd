@@ -1,14 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { PUBLIC_SOCKET_URI } from "$env/static/public";
+  import { formatNumber, tooltip } from "$lib/util";
   import ioClient from "socket.io-client";
 
   const socket = ioClient(PUBLIC_SOCKET_URI);
 
-  let curCount = 0;
+  let sessionCount = 0;
   let localCount = 0;
+  //   let globalCount = 0;
+  let height = 0;
+  let shadowColor = "#aaa";
   const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
   let audioElementPoggers: HTMLAudioElement;
+
+  $: height = 20 + sessionCount * 0.5;
+  $: shadowColor = "#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa");
 
   onMount(() => {
     if (localStorage.senko) localCount = localStorage.senko;
@@ -18,8 +25,11 @@
   });
 
   function handleClick() {
-    (audioElementPoggers.cloneNode(false) as HTMLAudioElement).play();
-    ++curCount;
+    const audio = audioElementPoggers.cloneNode(false) as HTMLAudioElement;
+    audio.volume = 0.675;
+    audio.play();
+
+    ++sessionCount;
     ++localCount;
     localStorage.senko = localCount;
     socket.emit("senko", { add: 1 });
@@ -33,26 +43,30 @@
 <audio src="/poggers.mp3" bind:this={audioElementPoggers} />
 
 <main class="flex-center flex-fill">
-  <div id="counter" class="stroke" style="opacity: {curCount ? 1 : 0}">
-    {localCount}
-  </div>
-  <span class="stroke" id="click-text" style="opacity: {localCount ? 0 : 1};"> Click me! </span>
+  <span
+    id="counter"
+    class="stroke"
+    style="opacity: {sessionCount ? 1 : 0};"
+    use:tooltip={{ content: "Your total senkos" }}>
+    {formatNumber(localCount)}
+  </span>
+  <span id="click-text" class="stroke" style="opacity: {localCount ? 0 : 1};"> Click me! </span>
+  <span id="counter-global" class="stroke">{localCount}</span>
 
   <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <img
     id="senko-clickable"
     class="unselectable"
+    draggable="false"
     src="/senko_poggers.png"
-    alt="senko poggers"
+    alt="senko says poggers"
     height="256"
     on:keypress={() => false}
     on:click|preventDefault={handleClick}
     on:contextmenu|preventDefault={handleClick}
-    style="height: {25 + curCount * 0.5}%;
-			top: {75 - curCount * 0.25}%;
-			box-shadow: 0 0 2svw 0 #{curCount ? colors[(curCount - 1) % colors.length] : 'aaa'};" />
+    style="height: {height}%; box-shadow: 0 0 2svw 1px {shadowColor};" />
 
-  <a class="a stroke" href="/home">home</a>
+  <a class="a stroke" href="/home" draggable="false">home</a>
 </main>
 
 <style>
@@ -60,12 +74,7 @@
     background-color: var(--color-lightest);
     color: var(--color-dark);
     overflow: hidden;
-  }
-  a {
-    position: fixed;
-    bottom: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    user-select: none;
   }
 
   .stroke {
@@ -77,12 +86,17 @@
   }
 
   #counter,
-  #click-text {
-    transition: opacity 1s;
+  #counter-global,
+  #click-text,
+  a {
     position: fixed;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1;
+    transition: opacity 1s;
+    z-index: 2;
+  }
+  a {
+    bottom: 5%;
   }
   #counter {
     cursor: default;
@@ -91,11 +105,23 @@
   #click-text {
     top: 15%;
   }
+  #counter-global {
+    font-size: 3.5rem;
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: 15svw;
+    color: var(--color-darkish);
+    opacity: 0.7;
+    pointer-events: none;
+    transform: translate(calc(-50% + 7.5svw), -50%);
+  }
+
   #senko-clickable {
     border-radius: 12px;
     transition:
       height 0.125s ease,
       width 0.125s ease,
       box-shadow 0.125s ease;
+    z-index: 1;
   }
 </style>

@@ -43,9 +43,9 @@
 
             <RankingName category={$page.params.category} {plr} />
 
-            <td style="width: 25%;">
+            <td style="width: 30%;">
               +{formatNumber(plr.gained ?? 0, " ")}
-              <small class="hide-width-640" style="margin-left: 8px;">
+              <small class="hide-width-640" style="margin-left: 8px; white-space: nowrap;">
                 {formatNumber(plr.scores - (plr.gained ?? 0), " ")} → {formatNumber(plr.scores)}
               </small>
               <small class="date-text">

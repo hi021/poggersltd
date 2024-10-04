@@ -83,7 +83,7 @@
           </th>
         </thead>
         <tbody>
-          {#each countries as country, i}
+          {#each countries as country, i (country.country)}
             <tr>
               <td style="width: 5.25ch;">
                 <strong>#{sortDescending ? i + 1 : countries.length - i}</strong>

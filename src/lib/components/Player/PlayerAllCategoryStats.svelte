@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatNumber } from "$lib/util";
+  import { addDate, formatDate, formatNumber } from "$lib/util";
   export let playerCategory: App.PlayerRankingFull;
   export let country: string;
   export let title = "";
@@ -41,8 +41,10 @@
       <span class="player-stat-name"> gained </span>
       <span class="player-stat-value">
         {playerCategory.gainedScores}
-        <!-- TODO: Say when that entry was -->
-        <small class="player-stat-small">since last entry</small>
+        <small class="player-stat-small"
+          >since {formatDate(
+            addDate(new Date(playerCategory.date), -((playerCategory.gainedDays ?? 0) + 1))
+          )}</small>
       </span>
     </li>
   {/if}

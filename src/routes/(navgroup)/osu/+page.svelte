@@ -5,7 +5,7 @@
   let dialogElement: HTMLDialogElement;
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
-    goto(`osu/player/${_id || name}/top50`);
+    (_id || name) && goto(`osu/player/${_id || name}`);
 </script>
 
 <svelte:head>
@@ -84,8 +84,10 @@
 
   .buttons-container {
     display: inline-flex;
+    flex-wrap: wrap-reverse;
+    justify-content: center;
     font-size: 1.125rem;
-    margin: 20px auto;
+    margin: 20px 0;
     gap: 12px;
   }
   .search-button {
@@ -163,7 +165,11 @@
     justify-content: space-between;
     margin-top: 0;
     padding-left: 4px;
+    line-height: 1;
     font-size: 2rem;
+  }
+  dialog h2 form {
+    display: inline-flex;
   }
   dialog h2 icon {
     color: var(--color-lighter);

@@ -9,7 +9,7 @@ export const load: PageLoad = async ({
     const resPlayer = await fetch(`/api/player/${params.idOrName}`);
     if (!resPlayer.ok) throw error(resPlayer.status, resPlayer.statusText || "Oopsie");
 
-    const category = params.category ?? "all";
+    const category = params.category ?? "top50";
     const resPlayerJson: App.PlayerAPI = await resPlayer.json();
     if (category === "all") return resPlayerJson;
 

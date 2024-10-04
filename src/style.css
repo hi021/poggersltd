@@ -125,9 +125,6 @@ hr {
   font-size: 1rem;
   padding: 0.5rem 0.425rem;
 }
-select.input-dark.normal-size {
-  padding-right: 0.5rem;
-}
 
 /* BUTTONS */
 button {
@@ -674,7 +671,7 @@ button:disabled {
   opacity: 0.8;
 }
 .solo-text em {
-  color: var(--color-purple);
+  color: var(--color-active);
 }
 /* MISC */
 
@@ -704,8 +701,19 @@ button:disabled {
   .column-width-640 {
     flex-direction: column;
   }
+
   .logo-text {
     line-height: 1.5;
+  }
+  .player-stats-container,
+  .player-stats-container.right-align {
+    justify-content: center;
+  }
+  .player-stats-container .player-stat-name,
+  .player-stats-container.right-align .player-stat-name,
+  .player-stats-container .player-stat-value,
+  .player-stats-container.right-align .player-stat-value {
+    text-align: center;
   }
 }
 /* MEDIA */

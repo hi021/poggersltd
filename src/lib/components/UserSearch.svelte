@@ -46,13 +46,16 @@
 
   onMount(() => {
     addEventListener("click", handleClick);
-    if(autofocus) tick().then(() => searchInputElement.focus());
+    if (autofocus) tick().then(() => searchInputElement.focus());
 
     return () => removeEventListener("click", handleClick);
   });
 </script>
 
-<div class="search-input-wrapper input-dark row" {style}>
+<form
+  class="search-input-wrapper input-dark row"
+  {style}
+  on:submit|preventDefault={() => gotoPlayerOnEnter({ name: value })}>
   <div class="autocmp-wrapper">
     <input
       class="search-input input-dark"
@@ -69,13 +72,7 @@
       bind:value
       {disabled}
       on:focus={() => getAutocomplete(value)}
-      on:input={() => getAutocomplete(value)}
-      on:keypress={(e) => {
-        if (e.key === "Enter") {
-          gotoPlayerOnEnter({ name: value });
-          autocompleteEntries = [];
-        }
-      }} />
+      on:input={() => getAutocomplete(value)} />
 
     <ul class="autocmp-items">
       {#each autocompleteEntries as a (a._id)}
@@ -102,10 +99,10 @@
       {/each}
     </ul>
   </div>
-  <button type="submit" class="btn-search btn-none">
+  <button type="submit" class="btn-search btn-none" {disabled}>
     <icon class="search big" />
   </button>
-</div>
+</form>
 
 <style>
   /* SEARCH WRAPPER */

@@ -45,7 +45,7 @@
       <RankingSettings bind:settings={data.rankingSettings} />
       <table class="osu-table">
         <tbody>
-          {#each pageData as plr, i}
+          {#each pageData as plr, i (plr._id)}
             <tr>
               <td style="width: 5.25ch;">
                 <strong>#{i + 1 + (curPage - 1) * perPage}</strong>
@@ -63,7 +63,7 @@
 
               <td style="width: 25%;">
                 {(plr.gainedScores ?? -1) >= 0 ? "+" : ""}{formatNumber(plr.gainedScores ?? 0, " ")}
-                <small style="margin-left: 8px;">
+                <small style="margin-left: 8px; white-space: nowrap;">
                   <span class="hide-width-640">
                     {formatNumber(plr.scores - (plr.gainedScores ?? 0), " ")} → {formatNumber(
                       plr.scores

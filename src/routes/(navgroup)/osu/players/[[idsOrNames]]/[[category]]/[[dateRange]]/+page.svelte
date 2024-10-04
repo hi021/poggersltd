@@ -51,7 +51,7 @@
   <title>score chart - poggers</title>
 </svelte:head>
 
-<main class="flex-fill row">
+<main class="flex-fill row column-width-640">
   <div class="chart-container flex-fill">
     <PlayerComparisonChart {data} {category} />
   </div>
@@ -178,12 +178,13 @@
 <style>
   main {
     padding: 12px;
+    gap: 12px;
   }
 
   .chart-container {
     position: relative;
     height: 100%;
-    margin-right: 12px;
+    min-height: 70svh;
     border-radius: 12px;
     background-color: var(--color-darkish);
     overflow: hidden;

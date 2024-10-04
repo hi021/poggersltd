@@ -6,7 +6,7 @@
   export let ranks: Array<App.PlayerChartEntry> | undefined;
   export let stats: App.PlayerProfileStats;
   export let category: App.RankingCategory;
-  export let idOrName: string;
+  export let playerId: number;
   export let days = 90;
   export let scoresChartVisible = true;
   export let rankChartVisible = true;
@@ -105,7 +105,7 @@
     <li>
       <button
         class="btn-icon"
-        on:click={() => goto(`/osu/players/${idOrName}/${category}`)}
+        on:click={() => goto(`/osu/players/${playerId}/${category}`)}
         use:tooltip={{ content: "Go to full chart" }}>
         <icon class="fullscreen" />
       </button>

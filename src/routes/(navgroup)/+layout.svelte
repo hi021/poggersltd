@@ -6,6 +6,7 @@
 <header class="row">
   <a href="/home" class="logo-text flex-center unselectable"> poggers </a>
   <div class="vr hide-width-640" />
+  <hr class="show-width-640" />
   <nav class="row column-width-640">
     <a
       href="/osu/ranking"
@@ -49,6 +50,9 @@
   }
   .vr {
     margin: 14px 8px;
+  }
+  hr {
+    margin: 6px 10% 2px 10%;
   }
 
   nav {

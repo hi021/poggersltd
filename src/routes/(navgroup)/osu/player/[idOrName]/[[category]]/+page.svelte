@@ -23,7 +23,7 @@
 
   export let data: PageData;
   let loading = false;
-  let category = $page.params.category as App.RankingCategory | "all";
+  let category = ($page.params.category || "top50") as App.RankingCategory | "all";
   $: () => browser && goto(`/osu/player/${$page.params.idOrName}/${category}`);
 </script>
 
@@ -102,9 +102,9 @@
           href={getOsuStatsURL(data.name)}
           use:tooltip={{ content: "osu!Stats" }}
           rel="noreferrer">
-          <div class="osu-icon-wrapper">
+          <div class="chart-icon-wrapper">
             <div />
-            <icon class="osu bigger" />
+            <icon class="chart-outline" />
           </div>
         </a>
       </aside>
@@ -129,7 +129,7 @@
                   ranks={data.ranks}
                   stats={data.stats}
                   {category}
-                  idOrName={$page.params.idOrName} />
+                  playerId={data._id} />
                 {#if data.stats}
                   <PlayerChartStats stats={data.stats} />
                 {/if}
@@ -137,7 +137,7 @@
               <PlayerBasicStats playerCategory={data[category]} />
             {:else}
               <p class="solo-text">
-                No <em>{category}</em> stats for this player...
+                No <em>{category}</em> stats for this player...<br />
                 <small>Check a different tab!</small>
               </p>
             {/if}
@@ -203,11 +203,12 @@
     border-bottom-left-radius: var(--radius);
   }
 
-  .osu-icon-wrapper {
+  .osu-icon-wrapper,
+  .chart-icon-wrapper {
     position: relative;
     display: flex;
   }
-  .osu-icon-wrapper > div {
+  :is(.osu-icon-wrapper, .chart-icon-wrapper) > div {
     top: 2px;
     bottom: 2px;
     right: 2px;
@@ -216,13 +217,16 @@
     position: absolute;
     transition: background-color 0.1s linear;
   }
-  .osu-icon-wrapper > icon {
+  :is(.osu-icon-wrapper, .chart-icon-wrapper) > icon {
     transition: color 0.1s linear;
   }
-  .osu-icon-wrapper:hover > div {
+  .chart-icon-wrapper > icon {
+    font-size: 1.8em;
+  }
+  :is(.osu-icon-wrapper, .chart-icon-wrapper):hover > div {
     background-color: var(--color-pink);
   }
-  .osu-icon-wrapper:hover > icon {
+  :is(.osu-icon-wrapper, .chart-icon-wrapper):hover > icon {
     color: var(--color-lightest);
   }
 
@@ -292,6 +296,8 @@
 
   @media screen and (max-width: 40rem) {
     main {
+      --av-height: 76px;
+      --av-height-2: calc(var(--av-height) / 2);
       --pad: 12px;
       padding: 16px 5px;
     }
@@ -303,6 +309,12 @@
     }
     #top-bar-top {
       border-radius: 0;
+    }
+    :global(.data-container > .player-stats-container:first-child) {
+      margin-left: 0;
+    }
+    :global(.data-container > .player-stats-container:last-child) {
+      margin-right: 0;
     }
   }
 </style>

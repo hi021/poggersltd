@@ -2,18 +2,23 @@
   import { tooltip } from "$lib/util";
   export let gainedRanks: number | undefined;
 
-  let text = "No change";
-  let className = "line";
+  let text: string;
+  let className: string;
 
-  if (gainedRanks == null) {
-    className = "circle";
-    text = "New";
-  } else if (gainedRanks > 0) {
-    className = "arrow";
-    text = `Up by ${gainedRanks}`;
-  } else if (gainedRanks < 0) {
-    className = "arrow-down";
-    text = `Down by ${-gainedRanks}`;
+  $: {
+    if (gainedRanks == null) {
+      className = "circle";
+      text = "New";
+    } else if (gainedRanks > 0) {
+      className = "arrow";
+      text = `Up by ${gainedRanks}`;
+    } else if (gainedRanks < 0) {
+      className = "arrow-down";
+      text = `Down by ${-gainedRanks}`;
+    } else {
+      text = "No change";
+      className = "line";
+    }
   }
 </script>
 

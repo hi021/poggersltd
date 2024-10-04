@@ -37,77 +37,73 @@
     </div>
   {/if}
 
-  {#await pageData}
-    <Loader margin="2rem" sticky={true} />
-  {:then pageData}
-    {#if !pageData?.length}
-      <RankingEmpty />
-    {:else}
-      <RankingSettings bind:settings={data.rankingSettings} />
+  {#if !pageData?.length}
+    <RankingEmpty />
+  {:else}
+    <RankingSettings bind:settings={data.rankingSettings} />
 
-      {#if pageData[0].gainedDays}
-        <p class="gains-notice">
-          Showing gained scores over <strong>{pageData[0].gainedDays}</strong>
-          days
-          <br />
-          <small>
-            due to a gap between
-            <em>{formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}</em>
-            and
-            <em>{$page.params.date}</em>
-          </small>
-        </p>
-      {/if}
+    {#if pageData[0].gainedDays}
+      <p class="gains-notice">
+        Showing gained scores over <strong>{pageData[0].gainedDays}</strong>
+        days
+        <br />
+        <small>
+          due to a gap between
+          <em>{formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}</em>
+          and
+          <em>{$page.params.date}</em>
+        </small>
+      </p>
+    {/if}
 
-      <table class="osu-table">
-        <tbody>
-          {#each pageData as plr, i (plr._id)}
-            <tr class:top-rank={plr.rank <= 5} id="rank-{plr.rank}">
-              <td style="width: 5.25ch;">
-                <strong>#{plr.rank}</strong>
-              </td>
+    <table class="osu-table">
+      <tbody>
+        {#each pageData as plr, i (plr._id)}
+          <tr class:top-rank={plr.rank <= 5} id="rank-{plr.rank}">
+            <td style="width: 5.25ch;">
+              <strong>#{plr.rank}</strong>
+            </td>
 
-              <RankingGainedRanks gainedRanks={plr.gainedRanks} />
+            <RankingGainedRanks gainedRanks={plr.gainedRanks} />
 
-              {#if data.rankingSettings.avatars}
-                <RankingAvatar id={plr._id} />
-              {/if}
+            {#if data.rankingSettings.avatars}
+              <RankingAvatar id={plr._id} />
+            {/if}
 
-              <RankingCountry country={plr.country} countryRank={plr.countryRank} />
+            <RankingCountry country={plr.country} countryRank={plr.countryRank} />
 
-              <RankingName category={$page.params.category} {plr} />
+            <RankingName category={$page.params.category} {plr} />
 
-              <td style="width: 25%;">
-                {formatNumber(plr.scores ?? 0)}
-                {plr.gainedScores == undefined
-                  ? ""
-                  : `(${(plr.gainedScores ?? -1) >= 0 ? "+" : ""}${plr.gainedScores})`}
+            <td style="width: 25%;">
+              {formatNumber(plr.scores ?? 0)}
+              {plr.gainedScores == null
+                ? ""
+                : `(${(plr.gainedScores ?? -1) >= 0 ? "+" : ""}${plr.gainedScores})`}
+            </td>
+          </tr>
+
+          {#if data.rankingSettings.scoreDifferences && pageData[i + 1]}
+            <tr class="osu-difference-column">
+              <td /><td /><td /><td /><td /><td />
+              <td style="width: 25%; padding: 2px;">
+                +{formatNumber(plr.scores - pageData[i + 1].scores)}
               </td>
             </tr>
+          {/if}
+        {/each}
+      </tbody>
+    </table>
 
-            {#if data.rankingSettings.scoreDifferences && pageData[i + 1]}
-              <tr class="osu-difference-column">
-                <td /><td /><td /><td /><td /><td />
-                <td style="width: 25%; padding: 2px;">
-                  +{formatNumber(plr.scores - pageData[i + 1].scores)}
-                </td>
-              </tr>
-            {/if}
-          {/each}
-        </tbody>
-      </table>
-
-      {#if maxPage > 1}
-        <Pagination
-          {maxPage}
-          page={curPage}
-          showPageNumber={true}
-          style="margin-bottom: 21px;"
-          entries={data.rankingData.length}
-          onPageChange={(newPage) => (curPage = newPage)} />
-      {/if}
+    {#if maxPage > 1}
+      <Pagination
+        {maxPage}
+        page={curPage}
+        showPageNumber={true}
+        style="margin-bottom: 21px;"
+        entries={data.rankingData.length}
+        onPageChange={(newPage) => (curPage = newPage)} />
     {/if}
-  {/await}
+  {/if}
 </main>
 
 <style>

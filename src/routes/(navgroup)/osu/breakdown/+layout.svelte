@@ -51,7 +51,10 @@
     {/if}
   </form>
   <div class="row" style="align-items: center; margin-top: 16px; width: fit-content;">
-    <Switch bind:checked={singleRank} style="flex-direction: row; gap: 8px; align-items: center;">
+    <Switch
+      disabled={true}
+      bind:checked={singleRank}
+      style="flex-direction: row; gap: 8px; align-items: center;">
       <span slot="after">Single rank</span>
     </Switch>
   </div>
