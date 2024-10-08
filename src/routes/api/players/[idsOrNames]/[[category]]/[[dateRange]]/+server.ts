@@ -66,7 +66,7 @@ function prepareFetchPlayer(
 
 function calculatePlayerStats(
   ranks: Array<App.ComparisonChartEntryWithDate | null>
-): App.PlayerProfileStats {
+): App.PlayerProfileStatsWithDates {
   const firstEntry = ranks[0] as App.ComparisonChartEntryWithDate;
   const lastEntry = ranks[ranks.length - 1] as App.ComparisonChartEntryWithDate;
   let maxScores = firstEntry.scores,
@@ -91,7 +91,9 @@ function calculatePlayerStats(
     startRank: lastEntry.rank,
     endRank: firstEntry.rank,
     startScores: lastEntry.scores,
-    endScores: firstEntry.scores
+    endScores: firstEntry.scores,
+    startDate: lastEntry.date,
+    endDate: firstEntry.date
   };
 }
 
@@ -138,8 +140,8 @@ export const GET: RequestHandler = async ({ params }) => {
     await Promise.all(allPlayerPromises);
     for (const i in players) {
       players[i].ranks = players[i].ranks
-        .sort((a, b) => ((a?.date ?? "0") < (b?.date ?? "0") ? 1 : -1))
-        .filter((a) => a);
+        .filter((a) => a)
+        .sort((a, b) => ((a?.date ?? "0") < (b?.date ?? "0") ? 1 : -1));
       players[i].stats = calculatePlayerStats(players[i].ranks);
     }
 

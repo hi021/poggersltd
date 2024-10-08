@@ -55,6 +55,7 @@ declare namespace App {
     startScores: number;
     endScores: number;
   };
+  type PlayerProfileStatsWithDates = PlayerProfileStats & { startDate: string; endDate: string };
 
   interface PlayerProfileRanks {
     ranks: Array<PlayerChartEntry | null>;

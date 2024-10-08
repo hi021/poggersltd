@@ -1,8 +1,11 @@
 <script lang="ts">
   import {
+    CHART_COLORS,
     COUNTRIES,
     formatDate,
+    formatNumber,
     getAvatarURL,
+    getDaysBetweenDates,
     getOsuProfileURL,
     MAX_CHART_PLAYERS,
     MIN_DATE,
@@ -25,6 +28,11 @@
   let dateFrom = $page.params.dateRange?.split(" ")?.[0];
   let dateTo = $page.params.dateRange?.split(" ")?.[1];
   let comparePlayerName: string;
+  let editingPlayerIndex: number | null = null;
+  let editPlayerDialogElement: HTMLDialogElement;
+
+  $: if (editingPlayerIndex != null) editPlayerDialogElement.show();
+  else if (editPlayerDialogElement) editPlayerDialogElement.close();
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
@@ -117,9 +125,81 @@
           <hr />
         </form>
 
-        <!-- TODO: UI for color picker, removing players, stats -->
         <ul class="players-container ul column">
-          {#each data.players as player (player.id)}
+          <dialog
+            class="edit-player-dialog"
+            style="--index: {data.players.length - 1 - (editingPlayerIndex ?? 0)};"
+            bind:this={editPlayerDialogElement}>
+            {#if editingPlayerIndex != null}
+              <h3>
+                {data.players[editingPlayerIndex].name}
+                <form method="dialog">
+                  <button type="submit" class="btn-icon"><icon class="close" /></button>
+                </form>
+              </h3>
+
+              <span class="color-container">
+                <label>
+                  <input type="color" bind:value={data.players[editingPlayerIndex].color} />
+                  {data.players[editingPlayerIndex].color}
+                </label>
+                <button
+                  class="btn-icon"
+                  use:tooltip={{ content: "Reset color" }}
+                  on:click={() =>
+                    (data.players[editingPlayerIndex].color =
+                      CHART_COLORS[(editingPlayerIndex ?? 0) % CHART_COLORS.length])}
+                  ><icon class="delete" /></button>
+              </span>
+
+              <ul class="player-stats-container ul">
+                <li>
+                  <span class="player-stat-name"> peak scores </span>
+                  <span class="player-stat-value">
+                    {formatNumber(data.players[editingPlayerIndex].stats.maxScores)}
+                  </span>
+                </li>
+                <li>
+                  <span class="player-stat-name"> lowest scores </span>
+                  <span class="player-stat-value">
+                    {formatNumber(data.players[editingPlayerIndex].stats.minScores)}
+                  </span>
+                </li>
+                <li>
+                  <span class="player-stat-name"> change </span>
+                  <span class="player-stat-value">
+                    {formatNumber(
+                      data.players[editingPlayerIndex].stats.endScores -
+                        data.players[editingPlayerIndex].stats.startScores
+                    )}
+                    <small>
+                      ({Math.round(
+                        ((data.players[editingPlayerIndex].stats.endScores -
+                          data.players[editingPlayerIndex].stats.startScores) /
+                          getDaysBetweenDates(
+                            new Date(data.players[editingPlayerIndex].stats.startDate).valueOf(),
+                            new Date(data.players[editingPlayerIndex].stats.endDate).valueOf()
+                          )) *
+                          100
+                      ) / 100}/day)
+                    </small>
+                  </span>
+                </li>
+                <li>
+                  <span class="player-stat-name"> peak rank </span>
+                  <span class="player-stat-value"
+                    >#{formatNumber(data.players[editingPlayerIndex].stats.minRank, ",")}</span>
+                </li>
+                <li>
+                  <span class="player-stat-name"> lowest rank </span>
+                  <span class="player-stat-value"
+                    >#{formatNumber(data.players[editingPlayerIndex].stats.maxRank, ",")}</span>
+                </li>
+              </ul>
+            {/if}
+          </dialog>
+
+          {#each data.players as player, i (player.id)}
             <li style="--color: {player.color};" transition:fly={{ x: -100, duration: 200 }}>
               <div class="player-entry-info-container">
                 <a
@@ -137,13 +217,21 @@
                     alt=""
                     src={getAvatarURL(player.id)} />
                 </a>
-                <span>{player.name}</span>
-                <img
-                  class="osu-flag-smaller unselectable"
-                  height="24"
-                  alt={player.country}
-                  src={`/flags/${player.country}.svg`}
-                  use:tooltip={{ content: COUNTRIES[player.country] || player.country }} />
+                <!-- svelte-ignore a11y-invalid-attribute -->
+                <a
+                  class="a player-name-wrapper"
+                  href=""
+                  on:click={() =>
+                    (editingPlayerIndex =
+                      editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>
+                  <span>{player.name}</span>
+                  <img
+                    class="osu-flag-smaller unselectable"
+                    height="24"
+                    alt={player.country}
+                    src={`/flags/${player.country}.svg`}
+                    use:tooltip={{ content: COUNTRIES[player.country] || player.country }} />
+                </a>
               </div>
               <div class="player-entry-button-container">
                 <button
@@ -233,7 +321,15 @@
   .player-entry-info-container {
     display: flex;
     align-items: center;
+    width: 100%;
     gap: 8px;
+  }
+  .player-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    line-height: 2.25;
   }
   .player-entry-button-container {
     display: flex;
@@ -241,7 +337,7 @@
   }
   .player-entry-button-container button {
     color: inherit;
-    opacity: 0.333;
+    opacity: 0.45;
     font-weight: 500;
     padding: 6px;
     border-radius: 6px;
@@ -256,6 +352,59 @@
   .overlay {
     --color-base: 0, 0, 0;
     position: absolute;
+  }
+
+  .edit-player-dialog {
+    --index: 0;
+    width: 100%;
+    left: -210%;
+    bottom: calc(var(--index) * 2.5rem);
+    color: var(--color-lighter);
+    background-color: var(--color-dark);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: none;
+    box-shadow: -2px 2px 6px var(--color-darkest);
+    z-index: 1;
+  }
+  .edit-player-dialog h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    margin-bottom: 16px;
+  }
+  .edit-player-dialog h3 > form {
+    line-height: 0;
+  }
+  .player-stats-container {
+    margin-top: 4px;
+  }
+  .player-stats-container > li {
+    padding: 2px;
+    border-radius: 0;
+  }
+  .player-stats-container small {
+    font-size: 60%;
+  }
+  .color-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .color-container input[type="color"] {
+    padding: 0;
+    padding-block: 0;
+    padding-inline: 0;
+    border: none;
+    background-color: var(--color-darkish);
+    cursor: pointer;
+  }
+  .color-container > label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
   }
 
   /* @media screen and (max-width: 40rem) {

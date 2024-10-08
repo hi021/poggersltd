@@ -168,7 +168,7 @@ export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
 ];
 
 export const CHART_COLORS = [
-  "var(--color-active)",
+  "#B39DDB",
   "#CE93D8",
   "#F48FB1",
   "#EF9A9A",
@@ -180,7 +180,7 @@ export const CHART_COLORS = [
   "#C5E1A5"
 ];
 export const CHART_RANK_COLORS = [
-  "var(--color-pink)",
+  "#D3548D",
   "#C51162",
   "#AA00FF",
   "#6200EA",
