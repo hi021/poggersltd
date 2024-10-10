@@ -43,14 +43,34 @@
 
   const refreshUrl = (
     idsOrNames = $page.params.idsOrNames,
-    newCategory = category,
+    newCategory: string = category,
     newDateFrom = dateFrom,
-    newDateTo = dateTo
+    newDateTo = dateTo,
+    replaceState = false
   ) => {
     loading = true;
+    if (!idsOrNames) goto("/osu/players", { replaceState });
+
     const rangeString = newDateFrom || newDateTo ? `/${newDateFrom ?? ""} ${newDateTo ?? ""}` : "";
-    goto(`/osu/players/${idsOrNames}/${newCategory ?? ""}${rangeString}`);
+    const categoryString = rangeString || newCategory ? `/${newCategory ?? ""}` : "";
+    goto(`/osu/players/${idsOrNames}${categoryString}${rangeString}`, { replaceState });
   };
+
+  const removePlayer = (id: string) => {
+    data.players = data.players.filter((player) => player.id != id);
+    if (!data.players.length) return clearPlayers();
+
+    for (const i in data.ranks) delete data.ranks[i][id];
+
+    const idsOrNames: string = data.players.reduce(
+      (idsOrNames, player) => idsOrNames + player.id + ",",
+      ""
+    );
+    refreshUrl(idsOrNames.slice(0, idsOrNames.length - 1), undefined, undefined, undefined, true);
+    editingPlayerIndex = null;
+  };
+
+  const clearPlayers = () => refreshUrl("", "", "", "");
 
   afterNavigate(() => (loading = false));
 </script>
@@ -123,6 +143,11 @@
           </select>
 
           <hr />
+
+          {#if data.players?.length}
+            <button type="button" class="btn-none clear-players-button" on:click={clearPlayers}
+              >Clear all players</button>
+          {/if}
         </form>
 
         <ul class="players-container ul column">
@@ -149,7 +174,7 @@
                   on:click={() =>
                     (data.players[editingPlayerIndex].color =
                       CHART_COLORS[(editingPlayerIndex ?? 0) % CHART_COLORS.length])}
-                  ><icon class="delete" /></button>
+                  ><icon class="undo" /></button>
               </span>
 
               <ul class="player-stats-container ul">
@@ -196,6 +221,12 @@
                     >#{formatNumber(data.players[editingPlayerIndex].stats.maxRank, ",")}</span>
                 </li>
               </ul>
+
+              <button
+                type="button"
+                class="btn-none remove-player-button"
+                on:click={() => removePlayer(data.players[editingPlayerIndex].id)}
+                >Remove player <icon class="delete" /></button>
             {/if}
           </dialog>
 
@@ -293,7 +324,7 @@
     gap: 10px;
   }
   .aside-inputs-container hr {
-    margin-top: 0;
+    margin: 0 10px;
   }
   .date-inputs-wrapper {
     display: inline-flex;
@@ -303,6 +334,16 @@
   }
   .date-inputs-wrapper input {
     flex-grow: 1;
+  }
+  .clear-players-button {
+    color: inherit;
+    width: fit-content;
+    padding-right: 12px;
+    margin-left: auto;
+    margin-bottom: 8px;
+  }
+  .clear-players-button:hover {
+    color: var(--color-active);
   }
   .players-container {
     margin-top: auto;
@@ -360,12 +401,11 @@
     left: -210%;
     bottom: calc(var(--index) * 2.5rem);
     color: var(--color-lighter);
-    background-color: var(--color-dark);
+    background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
     border-radius: 6px;
     padding: 8px;
     margin-bottom: 12px;
     border: none;
-    box-shadow: -2px 2px 6px var(--color-darkest);
     z-index: 1;
   }
   .edit-player-dialog h3 {
@@ -405,6 +445,18 @@
     align-items: center;
     gap: 4px;
     cursor: pointer;
+  }
+  .remove-player-button {
+    width: 100%;
+    color: inherit;
+    justify-content: center;
+    gap: 0.5ch;
+    line-height: 1;
+    padding: 4px;
+    margin-top: 8px;
+  }
+  .remove-player-button:hover {
+    background-color: brown;
   }
 
   /* @media screen and (max-width: 40rem) {
