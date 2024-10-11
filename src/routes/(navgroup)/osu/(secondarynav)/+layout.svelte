@@ -132,8 +132,14 @@
       <icon class="single-arrow flip-h" />
     </button>
     <div class="group">
-      <input type="date" placeholder="date" max={MAX_DATE} min={MIN_DATE} bind:value={date} />
-      <button class="btn-blue" type="submit">yoink</button>
+      <input
+        class="input-dark normal-size"
+        type="date"
+        placeholder="date"
+        max={MAX_DATE}
+        min={MIN_DATE}
+        bind:value={date} />
+      <button class="yoink-button" type="submit">yoink</button>
     </div>
     <button
       class="arrow-button btn-none"
@@ -162,12 +168,17 @@
     align-items: stretch;
   }
 
+  .yoink-button {
+    background-color: var(--color-active);
+  }
+
   .arrow-button {
     --radius: 10px;
-    background-color: rgba(0, 0, 0, 0.1);
     color: inherit;
+    font-size: 1.25rem;
     border-radius: 0;
     padding: 0 12px;
+    background-color: rgba(0, 0, 0, 0.15);
   }
   .arrow-button:first-child {
     border-bottom-left-radius: var(--radius);
@@ -182,7 +193,7 @@
     opacity: 0.2;
   }
   .arrow-button:not(:disabled):hover {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 1);
   }
 
   @media screen and (max-width: 40rem) {

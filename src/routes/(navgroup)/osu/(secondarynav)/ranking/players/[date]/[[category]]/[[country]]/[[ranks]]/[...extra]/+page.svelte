@@ -5,7 +5,6 @@
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import Pagination from "$lib/components/Pagination.svelte";
-  import Loader from "$lib/components/Loader.svelte";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
   import { formatNumber, addDate, formatDate } from "$lib/util";
@@ -14,12 +13,16 @@
   export let data: PageData;
   let pageData: App.RankingEntry[];
   let maxPage: number;
-  let perPage: number;
   let curPage = 1;
 
-  $: perPage = data.rankingSettings.perPage;
-  $: pageData = data.rankingData.slice(perPage * (curPage - 1), perPage * curPage);
-  $: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
+  $: pageData = data.rankingData.slice(
+    data.rankingSettings.perPage * (curPage - 1),
+    data.rankingSettings.perPage * curPage
+  );
+  $: {
+    maxPage = Math.ceil((data?.rankingData?.length ?? 0) / data.rankingSettings.perPage);
+    if (maxPage && curPage > maxPage) curPage = maxPage;
+  }
 </script>
 
 <svelte:head>
@@ -27,7 +30,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-  {#if perPage > 25 && maxPage > 1}
+  {#if data.rankingSettings.perPage > 25 && maxPage > 1}
     <div class="flex-center" style="margin-top: 21px;">
       <Pagination
         page={curPage}
@@ -84,7 +87,7 @@
 
           {#if data.rankingSettings.scoreDifferences && pageData[i + 1]}
             <tr class="osu-difference-column">
-              <td /><td /><td /><td /><td /><td />
+              <td colspan="6" />
               <td style="width: 25%; padding: 2px;">
                 +{formatNumber(plr.scores - pageData[i + 1].scores)}
               </td>

@@ -18,7 +18,7 @@
   button {
     border-radius: 0;
     font-size: inherit;
-    color: hsl(var(--clr-blue));
+    color: var(--color-active);
   }
   button:hover,
   button:focus,

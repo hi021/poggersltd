@@ -51,7 +51,8 @@
     {formatNumber(localCount)}
   </span>
   <span id="click-text" class="stroke" style="opacity: {localCount ? 0 : 1};"> Click me! </span>
-  <span id="counter-global" class="stroke">{localCount}</span>
+  <span id="counter-global" class="stroke" style="opacity: {sessionCount ? 0.6 : 0};"
+    >{localCount}</span>
 
   <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <img
@@ -109,11 +110,10 @@
     font-size: 3.5rem;
     font-style: italic;
     font-weight: 900;
-    letter-spacing: 15svw;
+    letter-spacing: 10svw;
     color: var(--color-darkish);
-    opacity: 0.7;
     pointer-events: none;
-    transform: translate(calc(-50% + 7.5svw), -50%);
+    transform: translate(calc(-50% + 5svw), -50%);
   }
 
   #senko-clickable {

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { tooltip } from "$lib/util";
+
   export let page: number;
   export let maxPage: number;
   export let entries: number | undefined = undefined;
@@ -9,7 +11,11 @@
 
 <div class="column flex-center" style:gap="2px" {style}>
   <div class="row group page-container">
-    <button type="button" disabled={page <= 1} on:click={() => onPageChange(1)}>
+    <button
+      type="button"
+      disabled={page <= 1}
+      on:click={() => onPageChange(1)}
+      use:tooltip={{ content: "First page" }}>
       <icon class="double-arrow flip-h" />
     </button>
     <button type="button" disabled={page <= 1} on:click={() => onPageChange(page - 1)}>
@@ -19,7 +25,11 @@
     <button type="button" disabled={page >= maxPage} on:click={() => onPageChange(page + 1)}>
       <icon class="single-arrow" />
     </button>
-    <button type="button" disabled={page >= maxPage} on:click={() => onPageChange(maxPage)}>
+    <button
+      type="button"
+      disabled={page >= maxPage}
+      on:click={() => onPageChange(maxPage)}
+      use:tooltip={{ content: "Last page" }}>
       <icon class="double-arrow" />
     </button>
   </div>

@@ -1,11 +1,8 @@
 <script lang="ts">
   import {
-    CHART_COLORS,
     COUNTRIES,
     formatDate,
-    formatNumber,
     getAvatarURL,
-    getDaysBetweenDates,
     getOsuProfileURL,
     MAX_CHART_PLAYERS,
     MIN_DATE,
@@ -20,6 +17,7 @@
   import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
   import { fade, fly, slide } from "svelte/transition";
   import Loader from "$lib/components/Loader.svelte";
+  import PlayerComparisonDialog from "$lib/components/Player/PlayerComparisonDialog.svelte";
 
   export let data: PageData;
   let loading = false;
@@ -29,10 +27,6 @@
   let dateTo = $page.params.dateRange?.split(" ")?.[1];
   let comparePlayerName: string;
   let editingPlayerIndex: number | null = null;
-  let editPlayerDialogElement: HTMLDialogElement;
-
-  $: if (editingPlayerIndex != null) editPlayerDialogElement.show();
-  else if (editPlayerDialogElement) editPlayerDialogElement.close();
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
@@ -57,6 +51,7 @@
   };
 
   const removePlayer = (id: string) => {
+    editingPlayerIndex = null;
     data.players = data.players.filter((player) => player.id != id);
     if (!data.players.length) return clearPlayers();
 
@@ -67,7 +62,6 @@
       ""
     );
     refreshUrl(idsOrNames.slice(0, idsOrNames.length - 1), undefined, undefined, undefined, true);
-    editingPlayerIndex = null;
   };
 
   const clearPlayers = () => refreshUrl("", "", "", "");
@@ -104,7 +98,19 @@
       {/if}
     </span>
     {#if playersPanelVisible}
-      <div class="column" style="height: 100%;" transition:slide={{ axis: "x", duration: 200 }}>
+      <div
+        class="column scrollbar-small"
+        style="height: calc(100% - 1.5rem);"
+        transition:slide={{ axis: "x", duration: 200 }}>
+        {#if editingPlayerIndex != null}
+          <PlayerComparisonDialog
+            bind:player={data.players[editingPlayerIndex]}
+            {editingPlayerIndex}
+            {category}
+            on:remove={(e) => removePlayer(e.detail)}
+            on:close={() => (editingPlayerIndex = null)} />
+        {/if}
+
         <form class="aside-inputs-container">
           <UserSearch
             bind:value={comparePlayerName}
@@ -151,85 +157,6 @@
         </form>
 
         <ul class="players-container ul column">
-          <dialog
-            class="edit-player-dialog"
-            style="--index: {data.players.length - 1 - (editingPlayerIndex ?? 0)};"
-            bind:this={editPlayerDialogElement}>
-            {#if editingPlayerIndex != null}
-              <h3>
-                {data.players[editingPlayerIndex].name}
-                <form method="dialog">
-                  <button type="submit" class="btn-icon"><icon class="close" /></button>
-                </form>
-              </h3>
-
-              <span class="color-container">
-                <label>
-                  <input type="color" bind:value={data.players[editingPlayerIndex].color} />
-                  {data.players[editingPlayerIndex].color}
-                </label>
-                <button
-                  class="btn-icon"
-                  use:tooltip={{ content: "Reset color" }}
-                  on:click={() =>
-                    (data.players[editingPlayerIndex].color =
-                      CHART_COLORS[(editingPlayerIndex ?? 0) % CHART_COLORS.length])}
-                  ><icon class="undo" /></button>
-              </span>
-
-              <ul class="player-stats-container ul">
-                <li>
-                  <span class="player-stat-name"> peak scores </span>
-                  <span class="player-stat-value">
-                    {formatNumber(data.players[editingPlayerIndex].stats.maxScores)}
-                  </span>
-                </li>
-                <li>
-                  <span class="player-stat-name"> lowest scores </span>
-                  <span class="player-stat-value">
-                    {formatNumber(data.players[editingPlayerIndex].stats.minScores)}
-                  </span>
-                </li>
-                <li>
-                  <span class="player-stat-name"> change </span>
-                  <span class="player-stat-value">
-                    {formatNumber(
-                      data.players[editingPlayerIndex].stats.endScores -
-                        data.players[editingPlayerIndex].stats.startScores
-                    )}
-                    <small>
-                      ({Math.round(
-                        ((data.players[editingPlayerIndex].stats.endScores -
-                          data.players[editingPlayerIndex].stats.startScores) /
-                          getDaysBetweenDates(
-                            new Date(data.players[editingPlayerIndex].stats.startDate).valueOf(),
-                            new Date(data.players[editingPlayerIndex].stats.endDate).valueOf()
-                          )) *
-                          100
-                      ) / 100}/day)
-                    </small>
-                  </span>
-                </li>
-                <li>
-                  <span class="player-stat-name"> peak rank </span>
-                  <span class="player-stat-value"
-                    >#{formatNumber(data.players[editingPlayerIndex].stats.minRank, ",")}</span>
-                </li>
-                <li>
-                  <span class="player-stat-name"> lowest rank </span>
-                  <span class="player-stat-value"
-                    >#{formatNumber(data.players[editingPlayerIndex].stats.maxRank, ",")}</span>
-                </li>
-              </ul>
-
-              <button
-                type="button"
-                class="btn-none remove-player-button"
-                on:click={() => removePlayer(data.players[editingPlayerIndex].id)}
-                >Remove player <icon class="delete" /></button>
-            {/if}
-          </dialog>
-
           {#each data.players as player, i (player.id)}
             <li style="--color: {player.color};" transition:fly={{ x: -100, duration: 200 }}>
               <div class="player-entry-info-container">
@@ -251,7 +178,7 @@
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   class="a player-name-wrapper"
-                  href=""
+                  href="#"
                   on:click={() =>
                     (editingPlayerIndex =
                       editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>
@@ -299,7 +226,6 @@
     padding: 12px;
     gap: 12px;
   }
-
   .chart-container {
     position: relative;
     height: 100%;
@@ -309,9 +235,12 @@
     overflow: hidden;
   }
 
-  aside:not(.collapsed) {
+  aside {
     position: relative;
+    max-height: calc(100svh - 9.2rem);
     border-radius: 12px;
+  }
+  aside:not(.collapsed) {
     min-width: 14.5rem;
   }
   aside .btn-icon icon {
@@ -354,6 +283,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: nowrap;
+    text-wrap: nowrap;
     min-width: 2rem;
     padding: 6px;
     border-radius: 6px;
@@ -394,71 +325,4 @@
     --color-base: 0, 0, 0;
     position: absolute;
   }
-
-  .edit-player-dialog {
-    --index: 0;
-    width: 100%;
-    left: -210%;
-    bottom: calc(var(--index) * 2.5rem);
-    color: var(--color-lighter);
-    background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
-    border-radius: 6px;
-    padding: 8px;
-    margin-bottom: 12px;
-    border: none;
-    z-index: 1;
-  }
-  .edit-player-dialog h3 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0;
-    margin-bottom: 16px;
-  }
-  .edit-player-dialog h3 > form {
-    line-height: 0;
-  }
-  .player-stats-container {
-    margin-top: 4px;
-  }
-  .player-stats-container > li {
-    padding: 2px;
-    border-radius: 0;
-  }
-  .player-stats-container small {
-    font-size: 60%;
-  }
-  .color-container {
-    display: flex;
-    justify-content: space-between;
-  }
-  .color-container input[type="color"] {
-    padding: 0;
-    padding-block: 0;
-    padding-inline: 0;
-    border: none;
-    background-color: var(--color-darkish);
-    cursor: pointer;
-  }
-  .color-container > label {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-  }
-  .remove-player-button {
-    width: 100%;
-    color: inherit;
-    justify-content: center;
-    gap: 0.5ch;
-    line-height: 1;
-    padding: 4px;
-    margin-top: 8px;
-  }
-  .remove-player-button:hover {
-    background-color: brown;
-  }
-
-  /* @media screen and (max-width: 40rem) {
-  } */
 </style>

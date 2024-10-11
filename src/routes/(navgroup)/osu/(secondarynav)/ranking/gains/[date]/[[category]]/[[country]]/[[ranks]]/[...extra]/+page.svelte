@@ -5,7 +5,7 @@
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import Pagination from "$lib/components/Pagination.svelte";
-  import { formatNumber, COUNTRIES } from "$lib/util";
+  import { formatNumber } from "$lib/util";
   import Loader from "$lib/components/Loader.svelte";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
@@ -14,11 +14,16 @@
   export let data: PageData;
   let pageData: App.RankingEntry[];
   let maxPage: number;
-  const perPage = 50;
   let curPage = 1;
 
-  $: pageData = data.rankingData.slice(perPage * (curPage - 1), perPage * curPage);
-  $: maxPage = Math.ceil((data?.rankingData?.length ?? 0) / perPage);
+  $: pageData = data.rankingData.slice(
+    data.rankingSettings.perPage * (curPage - 1),
+    data.rankingSettings.perPage * curPage
+  );
+  $: {
+    maxPage = Math.ceil((data?.rankingData?.length ?? 0) / data.rankingSettings.perPage);
+    if (maxPage && curPage > maxPage) curPage = maxPage;
+  }
 </script>
 
 <svelte:head>
@@ -26,7 +31,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-  {#if perPage > 25 && maxPage > 1}
+  {#if data.rankingSettings.perPage > 25 && maxPage > 1}
     <div class="flex-center" style="margin-top: 21px;">
       <Pagination
         page={curPage}
@@ -48,7 +53,7 @@
           {#each pageData as plr, i (plr._id)}
             <tr>
               <td style="width: 5.25ch;">
-                <strong>#{i + 1 + (curPage - 1) * perPage}</strong>
+                <strong>#{i + 1 + (curPage - 1) * data.rankingSettings.perPage}</strong>
               </td>
 
               <RankingGainedRanks gainedRanks={plr.gainedRanks} />

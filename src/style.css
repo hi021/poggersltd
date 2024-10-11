@@ -17,15 +17,9 @@
 
   /* Buttons */
   --clr-blue: 210, 79%, 46%;
-  --clr-green: 123, 43%, 39%;
-  --clr-red: 354, 79%, 46%;
-  --clr-yellow: 53, 84%, 60%;
   --clr-gray: 0, 0%, 58%;
 
   --clr-blue-h: 210, 79%, 56%;
-  --clr-green-h: 123, 43%, 49%;
-  --clr-red-h: 354, 79%, 56%;
-  --clr-yellow-h: 55, 100%, 74%;
   --clr-gray-h: 0, 0%, 68%;
 
   font-family: "Noto Sans", system-ui, sans-serif;
@@ -197,21 +191,6 @@ button:disabled {
   --clr: var(--clr-blue);
   --clr-hover: var(--clr-blue-h);
   color: var(--color-lightest);
-}
-.btn-green {
-  --clr: var(--clr-green);
-  --clr-hover: var(--clr-green-h);
-  color: var(--color-lightest);
-}
-.btn-red {
-  --clr: var(--clr-red);
-  --clr-hover: var(--clr-red-h);
-  color: var(--color-lightest);
-}
-.btn-yellow {
-  --clr: var(--clr-yellow);
-  --clr-hover: var(--clr-yellow-h);
-  color: var(--color-darkest);
 }
 /* BUTTONS */
 /* INPUTS */
