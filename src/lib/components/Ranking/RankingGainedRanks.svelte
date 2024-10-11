@@ -40,21 +40,21 @@
     border-right: 8px solid transparent;
   }
   .arrow {
-    border-bottom: 11px solid hsl(100, 66%, 36%);
+    border-bottom: 11px solid var(--color-green);
   }
   .arrow-down {
     transform: rotate(180deg);
-    border-bottom: 11px solid hsl(0, 66%, 36%);
+    border-bottom: 11px solid var(--color-red);
   }
   .line {
     width: 14px;
     height: 3px;
-    background-color: hsl(0, 0%, 36%);
+    background-color: var(--color-light);
   }
   .circle {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: hsl(215, 66%, 36%);
+    background-color: var(--color-blue);
   }
 </style>

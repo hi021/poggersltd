@@ -5,9 +5,9 @@
   const content = `${categoryStats.daysOutdated} day${categoryStats.daysOutdated == 1 ? "" : "s"} out of date`;
   const warningColor =
     categoryStats.daysOutdated && categoryStats.daysOutdated >= 28
-      ? "hsl(var(--clr-red))"
+      ? "var(--color-red)"
       : categoryStats.daysOutdated && categoryStats.daysOutdated >= 3
-        ? "hsl(var(--clr-yellow))"
+        ? "var(--color-yellow)"
         : "inherit";
 </script>
 

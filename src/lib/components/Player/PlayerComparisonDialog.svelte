@@ -1,23 +1,51 @@
 <script lang="ts">
   import { CHART_COLORS, formatNumber, getDaysBetweenDates, tooltip } from "$lib/util";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
   const dispatch = createEventDispatcher<{ remove: string; close: void }>();
+  let editPlayerDialog: HTMLDialogElement;
 
-  export let player: App.ComparisonChartPlayerCustomizable & {stats: App.PlayerProfileStatsWithDates};
+  export let player: App.ComparisonChartPlayerCustomizable & {
+    stats: App.PlayerProfileStatsWithDates;
+  };
   export let category: App.RankingCategory;
   export let editingPlayerIndex: number;
+  export let verticalIndex = 0;
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape") return dispatch("close");
+  };
+  const onMouseDown = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!editPlayerDialog.contains(target)) return dispatch("close");
+  };
+
+  onMount(() => {
+    addEventListener("keydown", onKeyDown);
+    addEventListener("mousedown", onMouseDown);
+
+    return () => {
+      removeEventListener("keydown", onKeyDown);
+      removeEventListener("mousedown", onMouseDown);
+    };
+  });
 </script>
 
-<dialog open class="edit-player-dialog" style="--index: {Math.min(11, editingPlayerIndex ?? 0)};">
+<dialog
+  open
+  class="edit-player-dialog"
+  bind:this={editPlayerDialog}
+  style="--index: {verticalIndex};">
   <h3>
     <span>
       {player.name}
-      <small style="font-weight: 400;" use:tooltip={{ content: `Current ${category}s` }}
+      <small
+        style="font-weight: 400;"
+        use:tooltip={{ content: `${category}s count on ${player.stats.endDate}` }}
         >({formatNumber(player.stats.endScores)})</small>
     </span>
     <form method="dialog">
-      <button type="submit" class="btn-icon" on:click={() => dispatch("close")}
+      <button type="button" class="btn-icon" on:click={() => dispatch("close")}
         ><icon class="close" /></button>
     </form>
   </h3>
@@ -78,7 +106,9 @@
   <button
     type="button"
     class="btn-none remove-player-button"
-    on:click={() => dispatch("remove", player.id)}>Remove player <icon class="delete" /></button>
+    on:click={() => dispatch("remove", player.id)}>
+    Remove player <icon class="delete" />
+  </button>
 </dialog>
 
 <style>
@@ -86,7 +116,7 @@
     --index: 0;
     width: 100%;
     left: -210%;
-    top: calc(var(--index) * 4%);
+    bottom: calc(var(--index) * 4%);
     color: var(--color-lighter);
     background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
     border-radius: 6px;
@@ -144,7 +174,7 @@
     margin-top: 8px;
   }
   .remove-player-button:hover {
-    background-color: var(--color-claret);
+    background-color: var(--color-red);
   }
 
   .btn-icon {

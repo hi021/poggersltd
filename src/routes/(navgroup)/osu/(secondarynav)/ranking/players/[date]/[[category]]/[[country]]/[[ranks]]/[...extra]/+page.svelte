@@ -87,7 +87,10 @@
 
           {#if data.rankingSettings.scoreDifferences && pageData[i + 1]}
             <tr class="osu-difference-column">
-              <td colspan="6" />
+              <td colspan="5" />
+              {#if data.rankingSettings.avatars}
+                <td class="hide-width-640" />
+              {/if}
               <td style="width: 25%; padding: 2px;">
                 +{formatNumber(plr.scores - pageData[i + 1].scores)}
               </td>

@@ -9,17 +9,17 @@
     SCORE_CATEGORIES,
     tooltip
   } from "$lib/util";
-  import type { PageData } from "../$types";
-  //   import { browser } from "$app/environment";
-  import { page } from "$app/stores";
-  import { afterNavigate, goto } from "$app/navigation";
-  import UserSearch from "$lib/components/UserSearch.svelte";
-  import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
-  import { fade, fly, slide } from "svelte/transition";
-  import Loader from "$lib/components/Loader.svelte";
   import PlayerComparisonDialog from "$lib/components/Player/PlayerComparisonDialog.svelte";
+  import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
+  import UserSearch from "$lib/components/UserSearch.svelte";
+  import Loader from "$lib/components/Loader.svelte";
+  import { afterNavigate, goto } from "$app/navigation";
+  import { fade, fly, slide } from "svelte/transition";
+  import { page } from "$app/stores";
+  import type { PageData } from "../$types";
 
   export let data: PageData;
+  const now = formatDate(new Date(), true);
   let loading = false;
   let playersPanelVisible = true;
   let category = ($page.params.category || "top50") as App.RankingCategory;
@@ -27,6 +27,7 @@
   let dateTo = $page.params.dateRange?.split(" ")?.[1];
   let comparePlayerName: string;
   let editingPlayerIndex: number | null = null;
+  let userSearchComponent: UserSearch;
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
@@ -40,10 +41,10 @@
     newCategory: string = category,
     newDateFrom = dateFrom,
     newDateTo = dateTo,
-    replaceState = false
+    replaceState = true
   ) => {
     loading = true;
-    if (!idsOrNames) goto("/osu/players", { replaceState });
+    if (!idsOrNames) return goto("/osu/players", { replaceState });
 
     const rangeString = newDateFrom || newDateTo ? `/${newDateFrom ?? ""} ${newDateTo ?? ""}` : "";
     const categoryString = rangeString || newCategory ? `/${newCategory ?? ""}` : "";
@@ -56,7 +57,6 @@
     if (!data.players.length) return clearPlayers();
 
     for (const i in data.ranks) delete data.ranks[i][id];
-
     const idsOrNames: string = data.players.reduce(
       (idsOrNames, player) => idsOrNames + player.id + ",",
       ""
@@ -66,7 +66,10 @@
 
   const clearPlayers = () => refreshUrl("", "", "", "");
 
-  afterNavigate(() => (loading = false));
+  afterNavigate(() => {
+    loading = false;
+    userSearchComponent?.focusInput();
+  });
 </script>
 
 <svelte:head>
@@ -107,6 +110,7 @@
             bind:player={data.players[editingPlayerIndex]}
             {editingPlayerIndex}
             {category}
+            verticalIndex={Math.min(11, data.players.length - 1 - (editingPlayerIndex ?? 0))}
             on:remove={(e) => removePlayer(e.detail)}
             on:close={() => (editingPlayerIndex = null)} />
         {/if}
@@ -114,26 +118,29 @@
         <form class="aside-inputs-container">
           <UserSearch
             bind:value={comparePlayerName}
+            bind:this={userSearchComponent}
             gotoPlayer={comparePlayerSearch}
-            disabled={data?.players?.length >= MAX_CHART_PLAYERS}
+            disabled={loading || data?.players?.length >= MAX_CHART_PLAYERS}
             style="margin-top: 4px;" />
 
           <span class="date-inputs-wrapper">
             <input
               class="input-dark normal-size"
               min={MIN_DATE}
-              max={dateTo || formatDate(new Date(), true)}
+              max={dateTo || now}
               title="Beginning of date range"
               type="date"
+              disabled={loading}
               bind:value={dateFrom}
               on:change={() => refreshUrl()} />
             <span>to</span>
             <input
               class="input-dark normal-size"
               min={dateFrom || MIN_DATE}
-              max={formatDate(new Date(), true)}
+              max={now}
               title="End of date range"
               type="date"
+              disabled={loading}
               bind:value={dateTo}
               on:change={() => refreshUrl()} />
           </span>
@@ -141,6 +148,7 @@
           <select
             class="input-dark normal-size"
             title="Score category"
+            disabled={loading}
             bind:value={category}
             on:change={() => refreshUrl()}>
             {#each SCORE_CATEGORIES as cat}
@@ -151,8 +159,13 @@
           <hr />
 
           {#if data.players?.length}
-            <button type="button" class="btn-none clear-players-button" on:click={clearPlayers}
-              >Clear all players</button>
+            <button
+              type="button"
+              class="btn-none clear-players-button"
+              disabled={loading}
+              on:click={clearPlayers}>
+              Clear all players
+            </button>
           {/if}
         </form>
 
@@ -191,11 +204,13 @@
                     use:tooltip={{ content: COUNTRIES[player.country] || player.country }} />
                 </a>
               </div>
+
               <div class="player-entry-button-container">
                 <button
                   type="button"
                   class="btn-icon"
                   class:active={player.rankVisible || player.rankVisible == null}
+                  disabled={loading}
                   use:tooltip={{ content: "Toggle ranks" }}
                   on:click={() =>
                     (player.rankVisible =
@@ -206,6 +221,7 @@
                   type="button"
                   class="btn-icon"
                   class:active={player.scoresVisible || player.scoresVisible == null}
+                  disabled={loading}
                   use:tooltip={{ content: "Toggle scores" }}
                   on:click={() =>
                     (player.scoresVisible =

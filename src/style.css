@@ -14,12 +14,13 @@
   --color-pink: #d3548d;
   --color-purple: #4a148c;
   --color-claret: #880e4f;
+  --color-red: #d32f2f;
+  --color-green: #48981f;
+  --color-blue: #1f5298;
+  --color-yellow: #ffa000;
 
   /* Buttons */
-  --clr-blue: 210, 79%, 46%;
   --clr-gray: 0, 0%, 58%;
-
-  --clr-blue-h: 210, 79%, 56%;
   --clr-gray-h: 0, 0%, 68%;
 
   font-family: "Noto Sans", system-ui, sans-serif;
@@ -106,11 +107,16 @@ hr {
 .input-dark {
   font-size: 1.375rem;
   background-color: var(--color-dark);
-  border: none;
   color: var(--color-lighter);
+  border: none;
   padding: 0.75rem 0.625rem;
   border-radius: 9999px;
   color-scheme: dark;
+}
+.input-dark:disabled {
+  background-color: var(--color-dark);
+  color: var(--color-lighter);
+  opacity: 0.5;
 }
 .input-dark:focus-visible {
   box-shadow: 0 0 2px 0.125rem var(--color-light);
@@ -176,8 +182,7 @@ button:disabled {
   align-items: center;
   opacity: 0.7;
 }
-.btn-icon:not(:disabled):hover,
-.btn-icon:not(:disabled):focus {
+.btn-icon:not(:disabled):is(:hover, :focus) {
   opacity: 1;
 }
 .btn-icon:disabled {
@@ -185,12 +190,6 @@ button:disabled {
 }
 .btn-rect {
   border-radius: 0;
-}
-
-.btn-blue {
-  --clr: var(--clr-blue);
-  --clr-hover: var(--clr-blue-h);
-  color: var(--color-lightest);
 }
 /* BUTTONS */
 /* INPUTS */

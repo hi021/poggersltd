@@ -22,7 +22,7 @@
       </Switch>
       <label>
         Players per page
-        <select class="input-dark" bind:value={settings.perPage}>
+        <select class="input-dark normal-size" bind:value={settings.perPage}>
           <option value={10}>10</option>
           <option value={25}>25</option>
           <option value={50}>50</option>

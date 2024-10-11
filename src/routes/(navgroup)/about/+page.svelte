@@ -16,49 +16,77 @@
 
   <h2>What's different?</h2>
   <p class="para">
-    The site and API were remade from scratch to hopefully be much more performant and nicer to use.
+    The site and its API were remade from scratch to hopefully be much more performant and nicer to
+    use.
     <br />
-    <s>I've also moved away from osu!stats to respektive's newer API.</s> Well that got shut down;
+    <s>I've also moved away from osu!Stats to respektive's newer API.</s> Well that got shut down;
     <!-- The biggest change was the inclusion of tracking for top 25, top 8, and top 1 scores. There are also
     user profiles and woah... the site is in dark mode with a brand new UI... -->
   </p>
 
   <h2>Caveats & inaccuracies</h2>
   <p class="para">
-    poggers.ltd uses data from osu!stats, which isn't too reliable. Here are some of the things to
+    poggers.ltd uses data from osu!Stats, which isn't too reliable. Here are some of the things to
     keep in mind:
   </p>
   <ul>
+    <li>Only players with 1000 or more top 50s are included.</li>
+    <li>
+      Only up to 150 players per country - US is running out of space! It's an osu!Stats limitation
+      that I can't do anything about.
+    </li>
+    <li>
+      For the first 2.5 months or so, only the global top of 150 players was tracked, July 26, 2020
+      marks the switch to 150 per-country tracking mentioned above.
+    </li>
     <li>
       Missing countries - there is a handful of players with enough top 50s to qualify for tracking
-      missing from the database due to osu!stats only keeping track of select 59 countries.
-    </li>
-    <li>Only up to 150 players per country</li>
-    <li>
-      Only osu!standard - maybe I was just lazy but osu!stats is slow and doesn't like me bombarding
-      it with requests
+      missing from the database due to osu!Stats only keeping track of select 59 countries.
     </li>
     <li>
-      Top 25, top 8, and top 1 scores were only collected from oct 2022 to ??? respektive api ahhh
+      Only osu!standard - maybe I was just lazy but osu!Stats is slow and doesn't like me bombarding
+      it with requests...
     </li>
-    <li>Gaps in data due to API downtime (though the site is designed around it)</li>
+    <li>
+      No osu!lazer scores (sorry Maklovitz) - lazer leaderboards are funky and osu!Stats only
+      collects normal rankings.
+    </li>
+    <li>
+      Top 25, top 8, and top 1 scores were only collected from Oct 9, 2022 until ??? respektive api
+      dead ahhh
+    </li>
+    <li>There are gaps in data due to API downtime (though the site is designed around them).</li>
   </ul>
+
+  <h2>osu! score ranking archive</h2>
+  <h4>Why are there no scores at a given date?</h4>
+  <p class="para">
+    Probably because the API was down for the entire day or it never updated with that day's data,
+    making it impossible to retrieve the ranking.
+    <br />
+    Top 25s, 8s, and 1s have been tracked since October 9th, 2022 and there is no data beyond that date.
+    <br />
+    <br />
+    If you're looking for today's ranking, that becomes available around <em>3:30 p.m. UTC</em>.
+    <br />
+  </p>
+  <h4>How does it work?</h4>
+  <p class="para">barely\</p>
 
   <h2>Credits</h2>
   <p class="para">
-    90% of credit goes to respektive and <a
-      class="a"
-      href="https://osustats.respektive.pw"
-      target="_blank"
-      rel="noreferrer">osustats.respektive.pw</a
+    90% of credit goes to respektive and <s
+      ><a class="a" href="https://osustats.respektive.pw" target="_blank" rel="noreferrer"
+        >osustats.respektive.pw</a
+      ></s
     >, the other 10% goes to stack overflow.
     <br />
-    The site also uses images from
+    This site also uses images from
     <a class="a" href="https://osu.ppy.sh" target="_blank" rel="noreferrer">osu.ppy.sh</a>
     and flag icons from
-    <a class="a" href="https://github.com/lipis/flag-icons" target="_blank" rel="noreferrer"
-      >this repository</a
-    >.
+    <a class="a" href="https://github.com/lipis/flag-icons" target="_blank" rel="noreferrer">
+      this repository
+    </a>.
   </p>
 
   <h2>Contact</h2>
@@ -69,25 +97,9 @@
     >.
   </p>
 
-  <h2>osu! score ranking archive</h2>
-  <h4>Why are there no scores at a given date?</h4>
-  <p class="para">
-    Probably because the API was down for the entire day or it never updated with that day's data
-    and it wasn't possible to retrieve the ranking.
-    <br />
-    Top 25s, 8s, and 1s have been tracked since October 9th 2022 and there is no data beyond that date.
-    <br />
-    <br />
-    If you're looking at today's ranking, that becomes available around <em>2 p.m. UTC</em>.
-    <br />
-    <!-- <small>respektive's API is still quite unstable, so the time may drastically vary from day to day.</small> -->
-  </p>
-  <h4>How does it work?</h4>
-  <p class="para">barely\</p>
-
   <h2>poggers API</h2>
   <p class="para">
-    The site's API is not private and possibly usable.<br />
+    There's a little REST-like API, it's not private and possibly usable.<br />
     Basic documentation can be found <a href="/api">here</a>.
   </p>
 

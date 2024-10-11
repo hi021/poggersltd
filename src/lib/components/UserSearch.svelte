@@ -13,6 +13,8 @@
   export let gotoPlayerOnEnter: ({ _id, name }: { _id?: number; name: string }) => void =
     gotoPlayer;
 
+  export const focusInput = () => tick().then(() => searchInputElement.focus());
+
   function handleClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
     if (
@@ -46,7 +48,7 @@
 
   onMount(() => {
     addEventListener("click", handleClick);
-    if (autofocus) tick().then(() => searchInputElement.focus());
+    if (autofocus) focusInput();
 
     return () => removeEventListener("click", handleClick);
   });
@@ -54,6 +56,7 @@
 
 <form
   class="search-input-wrapper input-dark row"
+  class:disabled
   {style}
   on:submit|preventDefault={() => gotoPlayerOnEnter({ name: value })}>
   <div class="autocmp-wrapper">
@@ -99,6 +102,7 @@
       {/each}
     </ul>
   </div>
+
   <button type="submit" class="btn-search btn-none" {disabled}>
     <icon class="search big" />
   </button>
@@ -116,6 +120,9 @@
     padding: 0;
     border-radius: var(--radius);
   }
+  .search-input-wrapper.disabled {
+    opacity: 0.5;
+  }
   .btn-search {
     position: absolute;
     width: 3em;
@@ -127,8 +134,7 @@
     border-top-right-radius: var(--radius);
     border-bottom-right-radius: var(--radius);
   }
-  .btn-search:hover,
-  .btn-search:focus {
+  .btn-search:not(:disabled):is(:hover, :focus) {
     background-color: var(--color-darker);
   }
   .search-input {

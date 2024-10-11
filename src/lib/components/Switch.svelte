@@ -4,13 +4,13 @@
     | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void) = undefined;
   export let checked: boolean;
   export let disabled = false;
-  export let size = "26px";
+  export let size = "1.625rem";
   export let style = "gap: 2px;";
 </script>
 
 <label class="column" {style}>
   <slot name="before" />
-  <div class="switch">
+  <div class="switch" class:disabled>
     <input type="checkbox" {disabled} on:change={onChange} bind:checked />
     <span class="slider" style="--size: {size};" />
   </div>
@@ -21,16 +21,20 @@
   .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 3.875rem;
+    height: 2rem;
+    cursor: pointer;
   }
   .switch input {
     appearance: none;
   }
+  .switch.disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 
-  .slider {
+  .switch .slider {
     position: absolute;
-    cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
@@ -39,13 +43,13 @@
     transition: 0.25s;
     border-radius: 9999px;
   }
-  .slider:before {
+  .switch .slider:before {
     position: absolute;
     content: "";
     height: var(--size);
     width: var(--size);
-    left: 4px;
-    bottom: 4px;
+    left: 0.25rem;
+    bottom: 0.1875rem;
     background-color: var(--color-darker);
     transition: 0.25s;
     border-radius: 50%;

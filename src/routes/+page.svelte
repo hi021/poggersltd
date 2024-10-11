@@ -3,6 +3,7 @@
   import { PUBLIC_SOCKET_URI } from "$env/static/public";
   import { formatNumber, tooltip } from "$lib/util";
   import ioClient from "socket.io-client";
+  import { fade } from "svelte/transition";
 
   const socket = ioClient(PUBLIC_SOCKET_URI);
 
@@ -43,13 +44,15 @@
 <audio src="/poggers.mp3" bind:this={audioElementPoggers} />
 
 <main class="flex-center flex-fill">
-  <span
-    id="counter"
-    class="stroke"
-    style="opacity: {sessionCount ? 1 : 0};"
-    use:tooltip={{ content: "Your total senkos" }}>
-    {formatNumber(localCount)}
-  </span>
+  {#if sessionCount}
+    <span
+      id="counter"
+      class="stroke"
+      use:tooltip={{ content: "Your total senkos" }}
+      transition:fade={{ duration: 1000 }}>
+      {formatNumber(localCount)}
+    </span>
+  {/if}
   <span id="click-text" class="stroke" style="opacity: {localCount ? 0 : 1};"> Click me! </span>
   <span id="counter-global" class="stroke" style="opacity: {sessionCount ? 0.6 : 0};"
     >{localCount}</span>
