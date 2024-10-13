@@ -32,7 +32,7 @@
     gap: 0.333ch;
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     .date-container {
       margin-top: 20px;
     }

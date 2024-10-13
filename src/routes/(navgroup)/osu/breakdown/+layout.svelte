@@ -1,5 +1,4 @@
 <script lang="ts">
-  //   import { goto } from "$app/navigation";
   import Switch from "$lib/components/Switch.svelte";
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { tooltip } from "$lib/util";
@@ -28,6 +27,7 @@
     spellcheck="false"
     on:submit|preventDefault={() => gotoPlayerOnEnter({ name: username })}>
     <UserSearch disabled={true} {gotoPlayer} {gotoPlayerOnEnter} bind:value={username} />
+
     <select
       class="input-dark"
       bind:value={mode}
@@ -38,6 +38,7 @@
       <option value="2">catch</option>
       <option value="3">mania</option>
     </select>
+
     {#if singleRank}
       <input
         transition:fly={{ duration: 200, x: -50 }}
@@ -50,6 +51,7 @@
         bind:value={rank} />
     {/if}
   </form>
+
   <div class="row" style="align-items: center; margin-top: 16px; width: fit-content;">
     <Switch
       disabled={true}
@@ -68,9 +70,14 @@
 </main>
 
 <style>
-  .input-dark {
-    margin-left: 22px;
-    margin-top: 22px;
-    width: 20%;
+  main > form {
+    margin-top: 20px;
+    gap: 20px;
+  }
+
+  @media (width <= 40rem) {
+    main > form {
+      flex-wrap: wrap;
+    }
   }
 </style>

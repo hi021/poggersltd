@@ -5,6 +5,7 @@
   import { formatNumber, getAvatarURL, getOsuProfileURL, tooltip } from "$lib/util";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
+  import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
 
   export let data: PageData;
   let scoreCategory = $page.params.category;
@@ -28,15 +29,7 @@
             </td>
 
             {#if data.rankingSettings.avatars}
-              <td class="hide-width-640" style="width: 64px;">
-                <a
-                  href={getOsuProfileURL(plr._id)}
-                  target="_blank"
-                  rel="noreferrer"
-                  use:tooltip={{ content: "osu! profile" }}>
-                  <img class="osu-avatar-small" alt="" src={getAvatarURL(plr._id)} />
-                </a>
-              </td>
+              <RankingAvatar id={plr._id} />
             {/if}
 
             <RankingCountry country={plr.country} />
@@ -44,10 +37,12 @@
             <RankingName category={$page.params.category} {plr} />
 
             <td style="width: 30%;">
-              +{formatNumber(plr.gained ?? 0, " ")}
+              <span>+{formatNumber(plr.gained ?? 0, " ")}</span>
+
               <small class="hide-width-640" style="margin-left: 8px; white-space: nowrap;">
                 {formatNumber(plr.scores - (plr.gained ?? 0), " ")} → {formatNumber(plr.scores)}
               </small>
+
               <small class="date-text">
                 {plr.date}
               </small>
@@ -66,7 +61,7 @@
     color: #999;
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     .date-text {
       font-size: 57.5%;
     }

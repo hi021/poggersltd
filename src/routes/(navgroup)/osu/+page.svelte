@@ -1,11 +1,22 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import UserSearch from "$lib/components/UserSearch.svelte";
+  import { onMount } from "svelte";
 
   let dialogElement: HTMLDialogElement;
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
     (_id || name) && goto(`osu/player/${_id || name}`);
+
+  const onMouseDown = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target === dialogElement) dialogElement.close();
+  };
+
+  onMount(() => {
+    addEventListener("mousedown", onMouseDown);
+    return () => removeEventListener("mousedown", onMouseDown);
+  });
 </script>
 
 <svelte:head>
@@ -19,20 +30,19 @@
       <button type="submit" class="btn-icon"><icon class="close" /></button>
     </form>
   </h2>
-  <img
-    alt="imagine cute gay women"
-    src="https://cdn.discordapp.com/attachments/1213506859596644382/1215839151354810401/d33df31f96f5a19fa6404a4db2ca3a6d.png?ex=66fbfe32&is=66faacb2&hm=eb34d45e02511456758e6de7047e71c2b0b12cf02b18c5209c7831bbe2b35ec8&" />
+
+  <img alt="imagine cute gay women" src="/women_did_it_again.jpg" />
 </dialog>
 
 <main class="flex-fill column" style="padding: 0 3.5%">
   <span class="search-logo">
-    <div class="logo-letter" style="color: #5cc4ff;">p</div>
-    <div class="logo-letter" style="color: #ff82e3;">o</div>
-    <div class="logo-letter" style="color: #fbfbfb;">g</div>
-    <div class="logo-letter logo-letter-tilted" style="color: #fbfbfb;">g</div>
-    <div class="logo-letter" style="color: #fbfbfb;">e</div>
-    <div class="logo-letter" style="color: #ff82e3;">r</div>
-    <div class="logo-letter" style="color: #5cc4ff;">s</div>
+    <span class="logo-letter" style="color: #5cc4ff;">p</span>
+    <span class="logo-letter" style="color: #ff82e3;">o</span>
+    <span class="logo-letter" style="color: #fbfbfb;">g</span>
+    <span class="logo-letter logo-letter-tilted" style="color: #fbfbfb;">g</span>
+    <span class="logo-letter" style="color: #fbfbfb;">e</span>
+    <span class="logo-letter" style="color: #ff82e3;">r</span>
+    <span class="logo-letter" style="color: #5cc4ff;">s</span>
   </span>
 
   <UserSearch {gotoPlayer} />
@@ -62,7 +72,7 @@
     display: flex;
     justify-content: center;
     cursor: default;
-    margin: 3rem;
+    margin: 3.25rem;
     user-select: none;
   }
   .logo-letter {
@@ -126,9 +136,8 @@
     background: linear-gradient(
       130deg,
       var(--color-dark),
-      #c51162,
-      #aa00ff,
-      #6200ea,
+      var(--color-claret),
+      var(--color-purple),
       var(--color-dark)
     );
   }
@@ -192,7 +201,7 @@
     }
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     .search-logo {
       font-size: 5.25rem;
       margin: 2rem;

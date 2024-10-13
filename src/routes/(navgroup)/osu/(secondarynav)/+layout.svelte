@@ -196,7 +196,7 @@
     background-color: rgba(0, 0, 0, 1);
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     :global(.osu-table) {
       border-spacing: 0 2px;
       margin: 10px 2%;

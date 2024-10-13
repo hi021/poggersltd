@@ -115,7 +115,6 @@
     position: relative;
     width: 100%;
     min-width: 2rem;
-    margin-top: 22px;
     align-items: center;
     padding: 0;
     border-radius: var(--radius);

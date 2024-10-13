@@ -16,7 +16,7 @@
     margin: 1px 0;
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     footer {
       padding: 0.25rem 0.125rem;
     }

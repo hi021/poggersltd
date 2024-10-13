@@ -12,18 +12,20 @@
   <a {href}>
     <div
       class="btn-menu"
-      style="background-color: {backgroundColor}; background-image: {backgroundImage};" />
+      style="background-color: {backgroundColor}; background-image: {backgroundImage};">
+      <slot />
+    </div>
     <div class="btn-menu-label">{label}</div>
   </a>
 </div>
 
 <style>
   .btn-menu-main {
+    position: relative;
     box-shadow: -2px 3px 8px 1px color-mix(in srgb, var(--color-light) 50%, transparent);
     border-radius: 20px;
     background-color: var(--color-lighter);
-    background-position: center;
-    min-width: 240px;
+    min-width: 300px;
     max-width: 600px;
     height: fit-content;
     overflow: hidden;
@@ -52,6 +54,6 @@
     transform: translateY(-9px);
   }
   .btn-menu-main:hover a {
-    color: #777;
+    color: var(--color-dark);
   }
 </style>

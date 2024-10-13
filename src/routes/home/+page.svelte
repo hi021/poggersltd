@@ -17,7 +17,9 @@
     href="/osu"
     label="osu! stats"
     backgroundImage="url(/osu_triangles.svg)"
-    tooltipContent="All leaderboard scores ranking stats in one place" />
+    tooltipContent="All leaderboard scores ranking stats in one place">
+    <div class="osu-circle flex-center"><icon class="chart-bar" /></div>
+  </MenuButton>
   <MenuButton
     backgroundColor="rgb(100,181,246)"
     href="https://ht.poggers.ltd"
@@ -66,5 +68,21 @@
     margin-bottom: 32px;
     align-content: baseline;
     justify-content: space-around;
+  }
+
+  .osu-circle {
+    position: absolute;
+    top: calc(50% - 1.75rem);
+    left: 50%;
+    width: 96px;
+    height: 96px;
+    font-size: 48px;
+    background-color: color-mix(in srgb, var(--color-pink) 80%, transparent);
+    border: 4px solid var(--color-lightest);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .osu-circle > icon {
+    color: var(--color-lightest);
   }
 </style>

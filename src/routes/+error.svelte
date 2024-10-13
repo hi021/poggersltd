@@ -42,7 +42,7 @@
     color: var(--color-lightest);
   }
 
-  @media screen and (max-width: 60rem) {
+  @media (width <= 60rem) {
     .error-status {
       margin-left: 0;
     }

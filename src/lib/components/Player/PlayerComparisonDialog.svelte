@@ -182,7 +182,7 @@
     font-size: 1.25rem;
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     .edit-player-dialog {
       width: 96%;
       top: 1.6rem;

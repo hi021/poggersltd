@@ -294,7 +294,7 @@
     transform: translateY(-2px);
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     main {
       --av-height: 76px;
       --av-height-2: calc(var(--av-height) / 2);

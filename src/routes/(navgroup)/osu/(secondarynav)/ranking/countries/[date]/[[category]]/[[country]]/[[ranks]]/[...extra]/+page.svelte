@@ -179,7 +179,7 @@
     transform: rotate(180deg);
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     .osu-table {
       font-size: 0.875rem;
     }

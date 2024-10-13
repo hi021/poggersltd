@@ -70,9 +70,7 @@ textarea {
   outline-color: transparent;
   box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
 }
-input[disabled],
-select[disabled],
-textarea[disabled] {
+:is(input, select, textarea):disabled {
   background-color: var(--color-light);
 }
 textarea {
@@ -454,9 +452,7 @@ button:disabled {
 .secondary-nav-tab.active {
   color: var(--color-active);
 }
-.secondary-nav-tab:hover,
-.secondary-nav-tab:focus,
-.secondary-nav-tab:focus-visible {
+.secondary-nav-tab:is(:hover, :focus) {
   outline-color: transparent;
   color: var(--color-lightest);
 }
@@ -510,9 +506,7 @@ button:disabled {
   line-height: 1;
   padding: 0 16px;
 }
-.logo-text:hover,
-.logo-text:focus,
-.logo-text:focus-visible {
+.logo-text:is(:hover, :focus) {
   background: linear-gradient(
     125deg,
     #ff2400,
@@ -658,7 +652,7 @@ button:disabled {
 .show-width-640 {
   display: none;
 }
-@media screen and (max-width: 60rem) {
+@media (width <= 60rem) {
   .hide-width-960 {
     display: none;
   }
@@ -669,7 +663,7 @@ button:disabled {
     flex-direction: column;
   }
 }
-@media screen and (max-width: 40rem) {
+@media (width <= 40rem) {
   .hide-width-640 {
     display: none;
   }
@@ -687,10 +681,8 @@ button:disabled {
   .player-stats-container.right-align {
     justify-content: center;
   }
-  .player-stats-container .player-stat-name,
-  .player-stats-container.right-align .player-stat-name,
-  .player-stats-container .player-stat-value,
-  .player-stats-container.right-align .player-stat-value {
+  :is(.player-stats-container, .player-stats-container.right-align)
+    :is(.player-stat-name, .player-stat-value) {
     text-align: center;
   }
 }

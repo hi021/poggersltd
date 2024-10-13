@@ -77,7 +77,7 @@
     margin-left: auto;
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     header {
       flex-direction: column;
     }

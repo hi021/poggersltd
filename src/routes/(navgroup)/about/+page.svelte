@@ -169,7 +169,7 @@
     padding: 4px;
   }
 
-  @media screen and (max-width: 40rem) {
+  @media (width <= 40rem) {
     main {
       padding: 0 2.5%;
     }
