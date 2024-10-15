@@ -16,7 +16,7 @@
   import { afterNavigate, goto } from "$app/navigation";
   import { fade, fly, slide } from "svelte/transition";
   import { page } from "$app/stores";
-  import type { PageData } from "../$types";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
   const now = formatDate(new Date(), true);
@@ -56,7 +56,7 @@
     data.players = data.players.filter((player) => player.id != id);
     if (!data.players.length) return clearPlayers();
 
-    for (const i in data.ranks) delete data.ranks[i][id];
+    for (const i in data.ranks) delete (data.ranks as any)[i][id];
     const idsOrNames: string = data.players.reduce(
       (idsOrNames, player) => idsOrNames + player.id + ",",
       ""
@@ -175,7 +175,7 @@
               <div class="player-entry-info-container">
                 <a
                   class="osu-avatar-small"
-                  href={getOsuProfileURL(player._id)}
+                  href={getOsuProfileURL(player.id)}
                   target="_blank"
                   rel="noreferrer"
                   use:tooltip={{ content: "osu! profile" }}

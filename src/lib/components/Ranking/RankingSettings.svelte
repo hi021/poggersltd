@@ -2,6 +2,7 @@
   import { slide } from "svelte/transition";
   import Switch from "../Switch.svelte";
 
+  export let rankingView = true; // otherwise hide everything besides avatar setting for most gained
   export let settings: App.RankingSettings;
   export let style = "";
   let visible = false;
@@ -17,19 +18,24 @@
       <Switch bind:checked={settings.avatars}>
         <span slot="before">Avatars</span>
       </Switch>
-      <Switch bind:checked={settings.scoreDifferences}>
-        <span slot="before">Score differences</span>
-      </Switch>
-      <label>
-        Players per page
-        <select class="input-dark normal-size" bind:value={settings.perPage}>
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
-          <option value={Infinity}>All</option>
-        </select>
-      </label>
+      {#if rankingView}
+        <Switch bind:checked={settings.scoreDifferences}>
+          <span slot="before">Score differences</span>
+        </Switch>
+        <Switch bind:checked={settings.dateSticky}>
+          <span slot="before">Sticky date bar</span>
+        </Switch>
+        <label>
+          Players per page
+          <select class="input-dark normal-size" bind:value={settings.perPage}>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={Infinity}>All</option>
+          </select>
+        </label>
+      {/if}
     </div>
   {/if}
 </div>

@@ -23,6 +23,8 @@
     socket.on("senko", (msg) => {
       console.log("client", msg);
     });
+
+    return () => socket.disconnect();
   });
 
   function handleClick() {

@@ -1,15 +1,15 @@
 <script lang="ts">
+  import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
+  import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
-  import { formatNumber, getAvatarURL, getOsuProfileURL, tooltip } from "$lib/util";
-  import type { PageData } from "./$types";
+  import { rankingSettings } from "$lib/stores";
+  import { formatNumber } from "$lib/util";
   import { page } from "$app/stores";
-  import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
-  let scoreCategory = $page.params.category;
-  $: scoreCategory = $page.params.category;
 </script>
 
 <svelte:head>
@@ -20,6 +20,8 @@
   {#if !data?.rankingData?.length}
     <RankingEmpty />
   {:else}
+    <RankingSettings bind:settings={$rankingSettings} rankingView={false} />
+
     <table class="osu-table">
       <tbody>
         {#each data.rankingData as plr}
@@ -28,12 +30,13 @@
               <strong>#{plr.rank}</strong>
             </td>
 
-            {#if data.rankingSettings.avatars}
+            {#if $rankingSettings.avatars}
               <RankingAvatar id={plr._id} />
             {/if}
 
             <RankingCountry country={plr.country} />
 
+            <!-- TODO: Add players' current name next to old name -->
             <RankingName category={$page.params.category} {plr} />
 
             <td style="width: 30%;">

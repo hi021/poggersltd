@@ -104,7 +104,7 @@
           rel="noreferrer">
           <div class="chart-icon-wrapper">
             <div />
-            <icon class="chart-outline" />
+            <icon class="chart-line" />
           </div>
         </a>
       </aside>
@@ -208,6 +208,11 @@
     position: relative;
     display: flex;
   }
+  .chart-icon-wrapper {
+    outline: 0.125em solid currentColor;
+    outline-offset: -0.125em;
+    border-radius: 50%;
+  }
   :is(.osu-icon-wrapper, .chart-icon-wrapper) > div {
     top: 2px;
     bottom: 2px;
@@ -221,12 +226,12 @@
     transition: color 0.1s linear;
   }
   .chart-icon-wrapper > icon {
-    font-size: 1.8em;
+    font-size: 1.75em;
   }
   :is(.osu-icon-wrapper, .chart-icon-wrapper):hover > div {
     background-color: var(--color-pink);
   }
-  :is(.osu-icon-wrapper, .chart-icon-wrapper):hover > icon {
+  :is(.osu-icon-wrapper, .chart-icon-wrapper):hover {
     color: var(--color-lightest);
   }
 

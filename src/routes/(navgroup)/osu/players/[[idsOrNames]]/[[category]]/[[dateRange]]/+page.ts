@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit";
-import type { PageLoad } from "./$types";
 import { CHART_COLORS } from "$lib/util";
+import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({
   params,
@@ -31,7 +31,7 @@ export const load: PageLoad = async ({
         id,
         country: plr.country,
         name: plr.name,
-        stats: plr.stats,
+        stats: plr.stats as App.PlayerProfileStatsWithDates,
         color,
         rankVisible
       });

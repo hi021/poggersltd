@@ -15,7 +15,7 @@ function prepareFetchPlayer(
   idOrName: string,
   days: number,
   datesToFetch: string[],
-  resultObj: App.ComparisonChartAPI
+  resultObj: Omit<App.ComparisonChartAPI, "stats">
 ) {
   const promises = new Array<Promise<number | null>>(days);
   const playerId = parseInt(idOrName);

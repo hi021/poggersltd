@@ -2,6 +2,7 @@
   import { formatDate, MIN_DATE, addDate } from "$lib/util";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+  import { rankingSettings } from "$lib/stores";
 
   const MAX_DATE = formatDate();
   let date =
@@ -28,17 +29,19 @@
     setURL();
   }
 
-  const setURL = () => {
+  const setURL = (noScroll = true) => {
     const categoryUrl = "/" + (scoreCategory || "top50");
+    if (rankingMode !== "ranking") return goto(`/osu/gains${categoryUrl}`);
 
-    if (rankingMode === "ranking") {
-      const typeUrl = "/" + (type || "players");
-      const dateUrl = "/" + (date || "latest");
-      const extraUrl = $page.params.extra ? "/" + $page.params.extra : "";
-      const ranksUrl = $page.params.ranks || extraUrl ? "/" + ($page.params.ranks || "") : "";
-      const countryUrl = country || ranksUrl || extraUrl ? "/" + (country || "all") : "";
-      goto(`/osu/ranking${typeUrl}${dateUrl}${categoryUrl}${countryUrl}${ranksUrl}${extraUrl}`);
-    } else goto(`/osu/gains${categoryUrl}`);
+    const typeUrl = "/" + (type || "players");
+    const dateUrl = "/" + (date || "latest");
+    const extraUrl = $page.params.extra ? "/" + $page.params.extra : "";
+    const ranksUrl = $page.params.ranks || extraUrl ? "/" + ($page.params.ranks || "") : "";
+    const countryUrl = country || ranksUrl || extraUrl ? "/" + (country || "all") : "";
+
+    goto(`/osu/ranking${typeUrl}${dateUrl}${categoryUrl}${countryUrl}${ranksUrl}${extraUrl}`, {
+      noScroll
+    });
   };
 </script>
 
@@ -123,7 +126,11 @@
 </nav>
 
 {#if rankingMode === "ranking"}
-  <form id="group-container" class="row" on:submit|preventDefault={setURL}>
+  <form
+    id="group-container"
+    class="row"
+    class:sticky={$rankingSettings.dateSticky}
+    on:submit|preventDefault={() => setURL(true)}>
     <button
       class="arrow-button btn-none"
       type="button"
@@ -162,6 +169,11 @@
     justify-content: space-between;
     margin: 0 2.5%;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+  #group-container.sticky {
+    position: sticky;
+    top: 0;
   }
   .group {
     display: flex;

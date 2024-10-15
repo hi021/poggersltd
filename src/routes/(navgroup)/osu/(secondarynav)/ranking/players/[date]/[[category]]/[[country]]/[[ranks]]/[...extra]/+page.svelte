@@ -1,14 +1,15 @@
 <script lang="ts">
   import RankingGainedRanks from "$lib/components/Ranking/RankingGainedRanks.svelte";
   import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
+  import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
   import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import Pagination from "$lib/components/Pagination.svelte";
-  import type { PageData } from "./$types";
-  import { page } from "$app/stores";
   import { formatNumber, addDate, formatDate } from "$lib/util";
-  import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
+  import { page } from "$app/stores";
+  import type { PageData } from "./$types";
+  import { rankingSettings } from "$lib/stores";
 
   export let data: PageData;
   let pageData: App.RankingEntry[];
@@ -16,11 +17,11 @@
   let curPage = 1;
 
   $: pageData = data.rankingData.slice(
-    data.rankingSettings.perPage * (curPage - 1),
-    data.rankingSettings.perPage * curPage
+    $rankingSettings.perPage * (curPage - 1),
+    $rankingSettings.perPage * curPage
   );
   $: {
-    maxPage = Math.ceil((data?.rankingData?.length ?? 0) / data.rankingSettings.perPage);
+    maxPage = Math.ceil((data?.rankingData?.length ?? 0) / $rankingSettings.perPage);
     if (maxPage && curPage > maxPage) curPage = maxPage;
   }
 </script>
@@ -30,7 +31,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-  {#if data.rankingSettings.perPage > 25 && maxPage > 1}
+  {#if $rankingSettings.perPage > 25 && maxPage > 1}
     <div class="flex-center" style="margin-top: 21px;">
       <Pagination
         page={curPage}
@@ -43,7 +44,7 @@
   {#if !pageData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={data.rankingSettings} />
+    <RankingSettings bind:settings={$rankingSettings} />
 
     {#if pageData[0].gainedDays}
       <p class="gains-notice">
@@ -69,7 +70,7 @@
 
             <RankingGainedRanks gainedRanks={plr.gainedRanks} />
 
-            {#if data.rankingSettings.avatars}
+            {#if $rankingSettings.avatars}
               <RankingAvatar id={plr._id} />
             {/if}
 
@@ -85,10 +86,10 @@
             </td>
           </tr>
 
-          {#if data.rankingSettings.scoreDifferences && pageData[i + 1]}
+          {#if $rankingSettings.scoreDifferences && pageData[i + 1]}
             <tr class="osu-difference-column">
               <td colspan="5" />
-              {#if data.rankingSettings.avatars}
+              {#if $rankingSettings.avatars}
                 <td class="hide-width-640" />
               {/if}
               <td style="width: 25%; padding: 2px;">

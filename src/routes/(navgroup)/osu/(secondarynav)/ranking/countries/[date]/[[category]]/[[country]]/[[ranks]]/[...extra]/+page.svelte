@@ -100,7 +100,7 @@
                 </span>
               </td>
 
-              <td>
+              <td class="emphasis">
                 {formatNumber(Math.round(country.weighted), " ")}
               </td>
 
@@ -151,6 +151,10 @@
     overflow: initial;
   }
 
+  .emphasis {
+    color: var(--color-lightest);
+    font-weight: 500;
+  }
   .sortable {
     cursor: pointer;
   }
@@ -161,19 +165,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: calc(-1.125rem - 4px);
   }
-  span.asc::after,
-  span.desc::after {
+  .sortable span::after {
     content: "";
     display: inline-block;
+    height: 1.125rem;
+    margin-left: 4px;
     aspect-ratio: 1/1;
     background-size: contain;
     background-origin: content-box;
     background-repeat: no-repeat;
     background-position: center;
-    margin-left: 6px;
-    height: 1.125rem;
     background-image: url("/icons/arrow_up.svg");
+    opacity: 0;
+  }
+  :is(span.asc, span.desc)::after {
+    opacity: 1;
   }
   span.desc::after {
     transform: rotate(180deg);

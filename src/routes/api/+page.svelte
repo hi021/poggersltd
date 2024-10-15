@@ -11,9 +11,9 @@
     <br />
     <small>server smol please be gentle;;</small>
   </p>
-  <small>v3.1 (2024-09-06)</small>
+  <small>v3.1 (<a href="#changelog" title="changelog">2024-09-06</a>)</small>
 
-  <h2>Types</h2>
+  <h2 id="types">Types</h2>
   <span class="type-name">PlayerRanking</span>
   <ul>
     <li>
@@ -188,7 +188,7 @@
 
   <hr />
 
-  <h2>Endpoints</h2>
+  <h2 id="endpoints">Endpoints</h2>
   <h4 class="endpoint-url">
     /api/ranking/<span class="emphasis">players</span>/[date]/[category]/[country]/[ranks]
     <span class="method get" />
@@ -291,6 +291,16 @@
   </ul>
   <h5>Returns</h5>
   <code>Array&lt;<code class="type-type">CountryRanking</code>&gt;</code>
+
+  <h2 id="changelog">Changelog</h2>
+  <ul>
+    <li>
+      <span>v3.2 (2024-10-20)</span>
+      <ol>
+        <li>First public release</li>
+      </ol>
+    </li>
+  </ul>
 </main>
 
 <style>

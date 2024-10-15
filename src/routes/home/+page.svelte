@@ -13,12 +13,13 @@
 
 <main class="row flex-fill">
   <MenuButton
-    backgroundColor="#88bbff"
+    backgroundColor="var(--color-active)"
     href="/osu"
     label="osu! stats"
-    backgroundImage="url(/osu_triangles.svg)"
+    backgroundImage="url(/osu_ranking.png)"
+    style="background-size: 80%; background-position: center;"
     tooltipContent="All leaderboard scores ranking stats in one place">
-    <div class="osu-circle flex-center"><icon class="chart-bar" /></div>
+    <div class="osu-circle flex-center"><icon class="chart-line" /></div>
   </MenuButton>
   <MenuButton
     backgroundColor="rgb(100,181,246)"
@@ -76,9 +77,12 @@
     left: 50%;
     width: 96px;
     height: 96px;
-    font-size: 48px;
-    background-color: color-mix(in srgb, var(--color-pink) 80%, transparent);
-    border: 4px solid var(--color-lightest);
+    font-size: 96px;
+    background-color: color-mix(in srgb, var(--color-pink) 70%, transparent);
+    background-image: url("/osu_triangles.svg");
+    background-size: 125%;
+    background-position-y: -15%;
+    border: 6px solid var(--color-lightest);
     border-radius: 50%;
     transform: translate(-50%, -50%);
   }

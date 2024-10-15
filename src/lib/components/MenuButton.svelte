@@ -4,15 +4,16 @@
   export let href: string;
   export let label: string;
   export let backgroundColor: string;
-  export let backgroundImage: string;
+  export let backgroundImage = "";
   export let tooltipContent = "";
+  export let style = "";
 </script>
 
 <div class="btn-menu-main" use:tooltip={{ content: tooltipContent, options: { theme: "large" } }}>
   <a {href}>
     <div
       class="btn-menu"
-      style="background-color: {backgroundColor}; background-image: {backgroundImage};">
+      style="background-color: {backgroundColor}; background-image: {backgroundImage}; {style}">
       <slot />
     </div>
     <div class="btn-menu-label">{label}</div>

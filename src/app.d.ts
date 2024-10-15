@@ -69,7 +69,7 @@ declare namespace App {
     name: string;
     country: string;
     ranks: ComparisonChartEntries;
-    stats?: App.PlayerProfileStats;
+    stats?: App.PlayerProfileStatsWithDates;
   }
   interface ComparisonChartAPI {
     [id: string]: Omit<ComparisonChartPlayer, "id">;
@@ -79,6 +79,7 @@ declare namespace App {
     color?: string;
     rankVisible?: boolean;
     scoresVisible?: boolean;
+    stats: App.PlayerProfileStatsWithDates;
   };
   type ComparisonChartPlayerProcessed = { [id: string]: ComparisonChartEntry };
   type ComparisonChartEntryProcessed = { date: string; players: ComparisonChartPlayerProcessed };
@@ -113,6 +114,7 @@ declare namespace App {
     avatars: boolean; //                                     whether to display osu! avatars (default true)
     scoreDifferences: boolean; //                            (default false)
     perPage: number; //                                      number of players shown on one page (default 50)
+    dateSticky: boolean; //                                  whether top date bar is sticky
   }
 
   interface RankingQuery {
