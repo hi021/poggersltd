@@ -1,5 +1,5 @@
-import { linear } from "svelte/easing";
 import tippy, { type Props } from "tippy.js";
+import { linear } from "svelte/easing";
 import "tippy.js/dist/tippy.css";
 
 export function formatNumber(number: number | string, delimiter = " "): string {
@@ -133,6 +133,19 @@ export function transitionHeight(
     }
   };
 }
+
+export function animate({duration, draw, timing}: {duration: number, draw: (progress: number) => void, timing: (time: number) => number}) {
+    const start = performance.now();
+
+    requestAnimationFrame(function animate(time) {
+      let timeFraction = (time - start) / duration;
+      if (timeFraction > 1) timeFraction = 1;
+      const progress = timing(timeFraction)
+
+      draw(progress);
+      if (timeFraction < 1) requestAnimationFrame(animate);
+    });
+  }
 
 export function tooltip(
   node: Element,

@@ -6,3 +6,4 @@ export const db = dbClient.db(DB_NAME);
 export const dbRankings = db.collection("rankings");
 export const dbPlayers = db.collection("players");
 export const dbMostGained = db.collection("most-gained");
+export const dbMisc = db.collection("misc");
