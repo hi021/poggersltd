@@ -1,6 +1,6 @@
-<script>
-  import Footer from "$lib/components/Footer.svelte";
+<script lang="ts">
   import MenuButton from "$lib/components/MenuButton.svelte";
+  import Footer from "$lib/components/Footer.svelte";
 </script>
 
 <svelte:head>
@@ -26,7 +26,7 @@
     href="https://ht.poggers.ltd"
     label="Hardware Tycoon"
     backgroundImage="url(/ht_thumb.jpg)"
-    tooltipContent="A little browser strategy/management game about running a hardware company" />
+    tooltipContent="Free browser strategy/management game about running a hardware company" />
 </main>
 
 <Footer />

@@ -1,26 +1,30 @@
 <script lang="ts">
-    import { PUBLIC_SOCKET_PORT } from "$env/static/public";
-    import { animate, formatNumber, tooltip } from "$lib/util";
+  import { animate, formatNumber, tooltip } from "$lib/util";
+  import { PUBLIC_SOCKET_PORT } from "$env/static/public";
   import { onDestroy, onMount } from "svelte";
-  import {cubicOut} from "svelte/easing"
+  import { expoInOut } from "svelte/easing";
   import { fade } from "svelte/transition";
-  import {io} from "socket.io-client";
+  import { io } from "socket.io-client";
 
   const socket = io(`http://localhost:${PUBLIC_SOCKET_PORT}`);
   socket.on("senko-count", (senkos) => {
-    console.log(senkos);
     globalInitialized = true;
-    const startGlobalCount = globalCount;
-    const difference = senkos - startGlobalCount;
-    if(!difference) return;
+    globalCount = globalCountAnimated;
+    const difference = senkos - globalCount;
+    if (!difference) return;
 
-    animate({duration: 200, timing: cubicOut, draw: (progress) => globalCount = Math.ceil(startGlobalCount + difference * progress)})
+    animate({
+      duration: 200,
+      timing: expoInOut,
+      draw: (progress) => (globalCountAnimated = Math.ceil(globalCount + difference * progress))
+    });
   });
 
   let sessionCount = 0;
   let localCount = 0;
-    let globalCount = 0;
-    let globalInitialized = false;
+  let globalCount = 0;
+  let globalCountAnimated = 0;
+  let globalInitialized = false;
   let height = 0;
   let shadowColor = "#aaa";
   const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
@@ -34,7 +38,7 @@
     socket.emit("senko-get");
   });
 
-  onDestroy(() => socket.disconnect())
+  onDestroy(() => socket.disconnect());
 
   function handleClick() {
     const audio = audioElementPoggers.cloneNode(false) as HTMLAudioElement;
@@ -42,9 +46,8 @@
     audio.play();
 
     ++sessionCount;
-    ++localCount;
     ++globalCount;
-    localStorage.senko = localCount;
+    localStorage.senko = ++localCount;
     socket.emit("senko-add", 1);
   }
 </script>
@@ -66,8 +69,10 @@
     </span>
   {/if}
   <span id="click-text" class="stroke" style="opacity: {localCount ? 0 : 1};"> Click me! </span>
-  <span id="counter-global" class="stroke" style="opacity: {globalInitialized && sessionCount ? 0.6 : 0};"
-    >{globalCount}</span>
+  <span
+    id="counter-global"
+    class="stroke"
+    style="opacity: {globalInitialized && sessionCount ? 0.6 : 0};">{globalCountAnimated}</span>
 
   <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <img

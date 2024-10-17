@@ -4,10 +4,10 @@
 import { getRankingEntries } from "../shared.js";
 import fs from "fs";
 
-const startDate = "2024-01-01";
-const endDate = "2024-12-31";
+const startDate = "2023-01-01";
+const endDate = "2024-01-01";
 const categories = ["top50"];
-const outputDir = "./results/unique-players.json";
+const outputDir = "results/unique-players.json";
 
 const players = new Map();
 const rankingEntries = await getRankingEntries(startDate, endDate);
