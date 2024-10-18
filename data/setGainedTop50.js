@@ -21,17 +21,15 @@ const outputDir = path.resolve(__dirname, "archive-aftergains");
 
 try {
   const client = await MongoClient.connect(process.env.DB_URI);
-
   const globDirectories = fs.globSync(inputDir + "/*.json");
-  const inputDirLen = inputDir.length + 1; // count the slash
 
   let prevDate = "";
   let prevPlayers;
 
-  for (const i of globDirectories) {
-    const date = i.slice(inputDirLen, inputDirLen + "2022-01-01".length);
+  for (const file of globDirectories) {
+    const date = path.basename(file, ".json");
     console.log(`Converting ${date}...`);
-    const fileJson = JSON.parse(fs.readFileSync(i));
+    const fileJson = JSON.parse(fs.readFileSync(file));
     const fileConverted = new Array(fileJson.length);
 
     const dateDiff = prevDate ? getDaysBetweenDates(new Date(date), new Date(prevDate)) : 0;

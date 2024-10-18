@@ -14,8 +14,8 @@ const fieldOld = "id";
 ////////////////////////////
 
 const client = await MongoClient.connect(process.env.DB_URI);
-const coll = client.db(process.env.DB_NAME).collection("rankings");
-const rankingEntries = await coll.find().toArray();
+const dbRankings = client.db(process.env.DB_NAME).collection("rankings");
+const rankingEntries = await dbRankings.find().toArray();
 const promises = [];
 
 for (const day in rankingEntries) {
@@ -37,9 +37,9 @@ for (const day in rankingEntries) {
         }
       }
 
-      coll
+      dbRankings
         .deleteOne({ _id: date })
-        .then(() => coll.insertOne({ _id: date, ...rankingEntries[day] }))
+        .then(() => dbRankings.insertOne({ _id: date, ...rankingEntries[day] }))
         .then((res) => resolve(res));
     })
   );

@@ -20,9 +20,7 @@
     font-size: inherit;
     color: var(--color-active);
   }
-  button:hover,
-  button:focus,
-  button:focus-visible {
+  button:is(:hover, :focus) {
     box-shadow: none;
     text-decoration: underline;
   }

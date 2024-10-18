@@ -133,7 +133,7 @@
     border-top-right-radius: var(--radius);
     border-bottom-right-radius: var(--radius);
   }
-  .btn-search:not(:disabled):is(:hover, :focus) {
+  .btn-search:not(:disabled):hover {
     background-color: var(--color-darker);
   }
   .search-input {
@@ -142,8 +142,7 @@
     background-color: transparent;
     width: 100%;
   }
-  .search-input:focus,
-  .search-input:focus-visible {
+  .search-input:focus {
     box-shadow: 2px 2px 4px var(--shadow-color);
     outline: none;
     outline-color: transparent;
@@ -184,10 +183,8 @@
     line-height: 1;
     padding: 0.5rem;
   }
-  .autocmp-item:hover,
-  .autocmp-item:focus,
-  .autocmp-item:focus-visible {
-    outline: none;
+  .autocmp-item:is(:hover, :focus) {
+    outline-color: transparent;
     background-color: var(--color-purple);
   }
 

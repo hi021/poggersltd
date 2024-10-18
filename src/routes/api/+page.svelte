@@ -11,7 +11,7 @@
     <br />
     <small>server smol please be gentle;;</small>
   </p>
-  <small>v3.1 (<a href="#changelog" title="changelog">2024-09-06</a>)</small>
+  <small>v3.2 (<a class="a" href="#changelog" title="changelog">2024-10-21</a>)</small>
 
   <h2 id="types">Types</h2>
   <span class="type-name">PlayerRanking</span>

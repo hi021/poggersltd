@@ -132,7 +132,7 @@
     background: var(--color-dark);
     transition: opacity 0.1s linear;
   }
-  .search-button:hover {
+  .search-button:is(:hover, :focus) {
     background: linear-gradient(
       130deg,
       var(--color-dark),
@@ -141,10 +141,10 @@
       var(--color-dark)
     );
   }
-  .search-button:hover > icon {
+  .search-button:is(:hover, :focus) > icon {
     opacity: 0.7;
   }
-  .search-button:hover::after {
+  .search-button:is(:hover, :focus)::after {
     opacity: 0;
   }
 

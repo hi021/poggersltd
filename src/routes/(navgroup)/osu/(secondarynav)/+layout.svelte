@@ -161,6 +161,31 @@
 <slot />
 
 <style>
+  .secondary-nav {
+    background: linear-gradient(
+      var(--color-darker) -12%,
+      var(--color-dark) 20%,
+      var(--color-dark) 80%,
+      var(--color-darker) 112%
+    );
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-bottom: 16px;
+    font-size: 0.825rem;
+  }
+  .secondary-nav-tab {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--color-light);
+  }
+  .secondary-nav-tab:is(:hover, :focus) {
+    outline-color: transparent;
+    color: var(--color-lightest);
+  }
+  .secondary-nav-tab.active {
+    color: var(--color-active);
+  }
+
   #group-container {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 6px;
@@ -182,6 +207,10 @@
 
   .yoink-button {
     background-color: var(--color-active);
+    transition: opacity 0.2s;
+  }
+  .yoink-button:is(:hover, :focus) {
+    opacity: 0.75;
   }
 
   .arrow-button {

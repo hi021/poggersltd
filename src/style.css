@@ -436,28 +436,6 @@ button:disabled {
 /* TABLE */
 /* OSU */
 
-/* SECONDARY NAV */
-.secondary-nav {
-  background: linear-gradient(var(--color-darker) 0%, var(--color-dark) 15%);
-  justify-content: space-between;
-  padding: 0 20px;
-  margin-bottom: 16px;
-  font-size: 0.825rem;
-}
-.secondary-nav-tab {
-  padding: 8px 12px;
-  cursor: pointer;
-  color: var(--color-light);
-}
-.secondary-nav-tab.active {
-  color: var(--color-active);
-}
-.secondary-nav-tab:is(:hover, :focus) {
-  outline-color: transparent;
-  color: var(--color-lightest);
-}
-/* SECONDARY NAV */
-
 /* SCROLLBAR */
 .scrollbar-dark,
 .scrollbar-small {

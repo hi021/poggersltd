@@ -42,7 +42,7 @@
 
   function handleClick() {
     const audio = audioElementPoggers.cloneNode(false) as HTMLAudioElement;
-    audio.volume = 0.6;
+    audio.volume = 0.45;
     audio.play();
 
     ++sessionCount;

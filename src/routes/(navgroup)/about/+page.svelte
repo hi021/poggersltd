@@ -6,7 +6,8 @@
   <h1>hii</h1>
   <p style="margin-bottom: 44px;">
     This is an ongoing rewrite of a rewrite of poggers.ltd/pogowanie - a site that tracks <em
-      >osu! score leaderboards.</em>
+      >osu! score leaderboards</em
+    >.
     <br />
     Feel free to click around!
     <br />
@@ -19,9 +20,8 @@
     The site and its API were remade from scratch to hopefully be much more performant and nicer to
     use.
     <br />
-    <s>I've also moved away from osu!Stats to respektive's newer API.</s> Well that got shut down;
-    <!-- The biggest change was the inclusion of tracking for top 25, top 8, and top 1 scores. There are also
-    user profiles and woah... the site is in dark mode with a brand new UI... -->
+    <s>I've also moved away from osu!Stats to respektive's newer API.</s> Well that got shut down...
+    the plan was to have top 25, top 8, and top 1 tracking too;
   </p>
 
   <h2>Caveats & inaccuracies</h2>
@@ -30,30 +30,35 @@
     keep in mind:
   </p>
   <ul>
-    <li>Only players with 1000 or more top 50s are included.</li>
+    <li>Only players with at least 1000 (or 1020 since October 21, 2024) top 50s are included.</li>
     <li>
-      Only up to 150 players per country - US is running out of space! It's an osu!Stats limitation
-      that I can't do anything about.
+      Only up to 150 players per country - the US is in trouble! It's an osu!Stats limitation that I
+      can't do anything about.
     </li>
     <li>
-      For the first 2.5 months or so, only the global top of 150 players was tracked, July 26, 2020
-      marks the switch to 150 per-country tracking mentioned above.
+      For the first 2.5 months or so, only the global top of 150 players was tracked. July 26, 2020
+      marks a switch to the 150 players per country tracking mentioned above.
     </li>
     <li>
       Missing countries - there is a handful of players with enough top 50s to qualify for tracking
       missing from the database due to osu!Stats only keeping track of select 59 countries.
     </li>
     <li>
-      Only osu!standard - maybe I was just lazy but osu!Stats is slow and doesn't like me bombarding
-      it with requests...
+      The final score count depends on the time at which the osu!Stats API gets to the given player,
+      so there could be minor differences if scores are set while osu!Stats is scraping maps. I
+      don't know the ins and outs however.
+    </li>
+    <li>
+      Only osu!standard - maybe I was just lazy for not adding in support for other modes, but
+      osu!Stats is slow and doesn't like me bombarding it with requests...
     </li>
     <li>
       No osu!lazer scores (sorry Maklovitz) - lazer leaderboards are funky and osu!Stats only
-      collects normal rankings.
+      collects classic rankings.
     </li>
     <li>
-      Top 25, top 8, and top 1 scores were only collected from Oct 9, 2022 until ??? respektive api
-      dead ahhh
+      Top 25, top 8, and top 1 scores were only collected from Oct 9, 2022 until Mar 20, 2023 (they
+      killed respektive's api aaa)
     </li>
     <li>There are gaps in data due to API downtime (though the site is designed around them).</li>
   </ul>
@@ -64,7 +69,8 @@
     Probably because the API was down for the entire day or it never updated with that day's data,
     making it impossible to retrieve the ranking.
     <br />
-    Top 25s, 8s, and 1s have been tracked since October 9th, 2022 and there is no data beyond that date.
+    Top 25s, 8s, and 1s have been tracked between October 9, 2022 and March 20, 2023 - there is no data
+    beyond that period.
     <br />
     <br />
     If you're looking for today's ranking, that becomes available around <em>3:30 p.m. UTC</em>.
@@ -91,10 +97,13 @@
 
   <h2>Contact</h2>
   <p class="para">
-    Scream at <code>hiihailey</code> on Discord in case something breaks;;<br />
-    If you'd like to contribute mandarin translations or something, GitHub repo can be found
-    <a class="a" href="https://github.com/hi021/poggersltd" target="_blank" rel="noreferrer">here</a
-    >.
+    <span class="centered"
+      ><icon class="discord big" /> Scream at <code>hiihailey</code> in case something breaks;;</span>
+    <br />
+    <span class="centered"
+      ><icon class="github big" /> If you'd like to contribute mandarin translations or something,
+      <a class="a" href="https://github.com/hi021/poggersltd" target="_blank" rel="noreferrer"
+        >here</a> is the full repo.</span>
   </p>
 
   <h2>poggers API</h2>
@@ -152,9 +161,17 @@
     color: var(--color-active);
     font-style: normal;
   }
+  ul {
+    line-height: 1.5;
+  }
 
   .para {
     padding-inline-start: 1rem;
+  }
+  .centered {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
   }
 
   a {

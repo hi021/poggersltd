@@ -1,4 +1,4 @@
-// Creates the most-gained ranking based on database entries, inserts it into the database, and saves it to `outputFile`
+// Creates the most-gained ranking based on database entries, upserts it in the database, and saves it to `outputFile`
 
 import { getRankingEntries } from "./shared.js";
 import { fileURLToPath } from "url";
@@ -13,12 +13,14 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 const client = await MongoClient.connect(process.env.DB_URI);
 const db = client.db(process.env.DB_NAME);
 
-const outputFile = "archive-other/mostGained.json";
+////////////////////////////
+const outputFile = "archive-other/most-gained.json";
 const arbitraryMin = { top50: 170, top25: 40, top8: 20, top1: 5 };
-const scoreArrays = { top50: [], top25: [], top8: [], top1: [] };
 // will skip these players at the given dates, used to fix data for MystExiStentia once (because of unban?)
 const ignoredPlayers = { 9413991: ["2022-12-16"], 15787074: ["2023-01-10"] };
+////////////////////////////
 
+const scoreArrays = { top50: [], top25: [], top8: [], top1: [] };
 const rankingEntries = await getRankingEntries();
 for (const entry of rankingEntries) {
   const date = entry._id;
@@ -52,7 +54,9 @@ for (const category in scoreArrays) {
   console.log(
     `Inserting ${scoreArrays[category].length} ${category} entries into 'most-gained' collection...`
   );
-  await db.collection("most-gained").insertOne({ _id: category, ranking: scoreArrays[category] });
+  await db
+    .collection("most-gained")
+    .updateOne({ _id: category }, { $set: { ranking: scoreArrays[category] } }, { upsert: true });
 }
 
 client.close();

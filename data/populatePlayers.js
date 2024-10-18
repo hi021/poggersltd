@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 const client = await MongoClient.connect(process.env.DB_URI);
-const collPlayers = client.db(process.env.DB_NAME).collection("players");
+const dbPlayers = client.db(process.env.DB_NAME).collection("players");
 const rankingEntries = await getRankingEntries();
 const players = new Map(); // id => playerObject
 
@@ -106,11 +106,11 @@ for (const entry of rankingEntries) {
 console.log("Finalizing and inserting players...");
 for (const id of players.keys()) {
   const player = finalizePlayer(players.get(id));
-  await collPlayers.updateOne({ _id: id }, { $set: player }, { upsert: true });
+  await dbPlayers.updateOne({ _id: id }, { $set: player }, { upsert: true });
 }
 
 console.log("Creating indexes...");
-await collPlayers.createIndexes([
+await dbPlayers.createIndexes([
   {
     key: { nameKey: "text" },
     defaultLanguage: "english"

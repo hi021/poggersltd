@@ -3,6 +3,8 @@
   import { formatNumber, COUNTRIES } from "$lib/util";
   import type { PageData } from "./$types";
   import { page } from "$app/stores";
+  import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
+  import { rankingSettings } from "$lib/stores";
 
   export let data: PageData;
 
@@ -25,7 +27,8 @@
   {#if !data?.rankingData?.length}
     <RankingEmpty />
   {:else}
-    <!-- TODO: RANKING SETTINGS -->
+    <RankingSettings bind:settings={$rankingSettings} viewMode={false} />
+
     <table class="osu-table">
       <thead>
         <th />

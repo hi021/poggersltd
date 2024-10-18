@@ -5,8 +5,10 @@
 
 <header class="row">
   <a href="/home" class="logo-text flex-center unselectable"> poggers </a>
+
   <div class="vr hide-width-640" />
   <hr class="show-width-640" />
+
   <nav class="row column-width-640">
     <a
       href="/osu/ranking"
@@ -37,7 +39,9 @@
     </a>
   </nav>
 </header>
+
 <slot />
+
 <Footer />
 
 <style>
@@ -64,9 +68,7 @@
     color: inherit;
     text-decoration: none;
   }
-  .nav-tab:hover,
-  .nav-tab:focus,
-  .nav-tab:focus-visible {
+  .nav-tab:is(:hover, :focus) {
     outline-color: transparent;
     background-color: rgba(0, 0, 0, 0.2);
   }

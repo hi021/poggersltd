@@ -11,7 +11,7 @@ import * as fs from "fs";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-////////// change to POSIX paths to use with glob
+////////////////////////////
 const inputDir = path.resolve(__dirname, "archive-old");
 const outputDir = path.resolve(__dirname, "archive-new");
 ////////////////////////////
@@ -29,21 +29,19 @@ try {
   for (const i of playersDatabase) playersMap.set(i._id, i);
 
   const globFiles = fs.globSync(inputDir + "/*.json").sort();
-  const inputDirLen = inputDir.length;
-  const inputFileLen = "/2022-01-01".length;
-  console.log("Found " + globFiles.length + " file(s)");
+  console.log(`Found ${globFiles.length} file(s)`);
 
   let prevDate = ""; // last read date - used to set gains
   let prevPlayers; // last set convertedPlayersMap - used to set gains
   // read all jsons from archive-old
-  for (const i of globFiles) {
-    const date = i.slice(inputDirLen + 1, inputDirLen + inputFileLen);
-    console.log("Converting " + date);
-    const fileJson = JSON.parse(fs.readFileSync(i));
+  for (const file of globFiles) {
+    const date = path.basename(file, ".json");
+    console.log(`Converting ${date}...`);
+    const fileJson = JSON.parse(fs.readFileSync(file));
     const convertedPlayersArr = new Array(fileJson.length);
 
     const dateDiff = prevDate ? getDaysBetweenDates(new Date(date), new Date(prevDate)) : 0;
-    if (dateDiff > 1) console.log("Date difference for gains is " + dateDiff);
+    if (dateDiff > 1) console.log(`${dateDiff} day difference between entries, setting gainedDays`);
     const convertedPlayersMap = new Map();
 
     for (const j in fileJson) {

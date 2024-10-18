@@ -14,14 +14,14 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^5.2.7",
+    "@sveltejs/adapter-node": "^5.2.8",
     "@sveltejs/kit": "^2.7.1",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@types/eslint": "^9.6.1",
     "@types/express": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.10.0",
-    "eslint": "^9.12.0",
+    "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.45.1",
     "globals": "^15.11.0",

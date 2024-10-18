@@ -21,7 +21,7 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 // export const MIN_TOP15 = 300;
 // export const MIN_TOP8 = 150;
 // export const MIN_TOP1 = 15;
-const MAX_PAGE = 10;
+const MAX_PAGE = 100;
 
 const api = "https://osustats.respektive.pw/rankings/";
 const categories = ["top100s", "top50s", "top25s", "top15s", "top8s", "top1s"];

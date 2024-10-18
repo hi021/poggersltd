@@ -44,7 +44,7 @@
   {#if !pageData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} />
+    <RankingSettings bind:settings={$rankingSettings} viewMode="ranking" />
 
     {#if pageData[0].gainedDays}
       <p class="gains-notice">
