@@ -2,19 +2,22 @@
 // needs an up to date players database
 // used for setting mostGained, peak, and lowest fields for all ranking categories
 // saves the player json and attempts to update the db
+// INPUT ./archive-new/ -> OUTPUT ./archive-afterpeaks/
 
-import * as fs from "fs";
-import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
+import * as path from "path";
+import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-const inputDir = path.resolve(__dirname, "archive");
+////////////////////////////
+const inputDir = path.resolve(__dirname, "archive-new");
 const outputDir = path.resolve(__dirname, "archive-afterpeaks");
 const categoriesSkip = ["top100", "top15"]; // categories not in the db
+////////////////////////////
 
 try {
   const client = await MongoClient.connect(process.env.DB_URI);

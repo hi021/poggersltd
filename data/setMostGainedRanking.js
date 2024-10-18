@@ -1,11 +1,11 @@
-// Inserts the most-gained ranking into the database and saves it to 'outputFile'
+// Creates the most-gained ranking based on database entries, inserts it into the database, and saves it to `outputFile`
 
-import * as path from "path";
+import { getRankingEntries } from "./shared.js";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
-import fs from "fs";
-import { getRankingEntries } from "./shared.js";
+import * as path from "path";
+import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
@@ -14,7 +14,7 @@ const client = await MongoClient.connect(process.env.DB_URI);
 const db = client.db(process.env.DB_NAME);
 
 const outputFile = "archive-other/mostGained.json";
-const arbitraryMin = { top50: 150, top25: 36, top8: 19, top1: 5 };
+const arbitraryMin = { top50: 170, top25: 40, top8: 20, top1: 5 };
 const scoreArrays = { top50: [], top25: [], top8: [], top1: [] };
 // will skip these players at the given dates, used to fix data for MystExiStentia once (because of unban?)
 const ignoredPlayers = { 9413991: ["2022-12-16"], 15787074: ["2023-01-10"] };
@@ -34,7 +34,7 @@ for (const entry of rankingEntries) {
           name: player.name,
           country: player.country,
           scores: player.scores,
-          gained: player.gainedScores,
+          gainedScores: player.gainedScores,
           date
         });
       }
@@ -44,16 +44,18 @@ for (const entry of rankingEntries) {
 
 // sort descending and leave only up to `maxScores` elements
 for (const category in scoreArrays) {
-  scoreArrays[category].sort((a, b) => (a.gained < b.gained ? 1 : -1));
+  scoreArrays[category].sort((a, b) => (a.gainedScores < b.gainedScores ? 1 : -1));
   scoreArrays[category] = scoreArrays[category].slice(0, process.env.MAX_MOST_GAINED || 99);
 
   for (const i in scoreArrays[category]) scoreArrays[category][i].rank = Number(i) + 1;
 
-  console.log(`Inserting ${category} ranking into 'most-gained' collection...`);
+  console.log(
+    `Inserting ${scoreArrays[category].length} ${category} entries into 'most-gained' collection...`
+  );
   await db.collection("most-gained").insertOne({ _id: category, ranking: scoreArrays[category] });
 }
 
 client.close();
 
-console.log(`Writing results into ${outputFile}...`);
+console.log(`Writing results to ${outputFile}...`);
 fs.writeFileSync(path.join(__dirname, outputFile), JSON.stringify(scoreArrays));

@@ -1,10 +1,10 @@
-// Recreates and upserts the 'players' collection from scratch based on all existing ranking entries from the database
+// Recreates and upserts the `players` collection from scratch based on all existing ranking entries from the database
 
-import * as path from "path";
+import { categoriesDb, createNGram, getRankingEntries } from "./shared.js";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
-import { categoriesDb, createNGram, getRankingEntries } from "./shared.js";
+import * as path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });

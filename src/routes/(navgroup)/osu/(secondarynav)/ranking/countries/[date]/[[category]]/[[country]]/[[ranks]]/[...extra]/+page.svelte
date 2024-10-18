@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { page } from "$app/stores";
-  import Loader from "$lib/components/Loader.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import { formatNumber, COUNTRIES } from "$lib/util";
   import type { PageData } from "./$types";
+  import { page } from "$app/stores";
 
   export let data: PageData;
 
@@ -23,104 +22,101 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-  {#await data.rankingData}
-    <Loader margin="2rem" sticky={true} />
-  {:then countries}
-    {#if !countries?.length}
-      <RankingEmpty />
-    {:else}
-      <table class="osu-table">
-        <thead>
-          <th />
-          <th> Country </th>
-          <th
-            class="sortable"
-            on:click={() => {
-              if (sortBy === "weighted") sortDescending = !sortDescending;
-              else sortBy = "weighted";
-            }}>
-            <span
-              class:desc={sortBy === "weighted" && sortDescending}
-              class:asc={sortBy === "weighted" && !sortDescending}>
-              Weighted
-            </span>
-          </th>
-          <th
-            class="sortable"
-            on:click={() => {
-              if (sortBy === "total") sortDescending = !sortDescending;
-              else sortBy = "total";
-            }}>
-            <span
-              class:desc={sortBy === "total" && sortDescending}
-              class:asc={sortBy === "total" && !sortDescending}>
-              Total
-            </span>
-          </th>
-          <th
-            class="sortable"
-            on:click={() => {
-              if (sortBy === "players") sortDescending = !sortDescending;
-              else sortBy = "players";
-            }}>
-            <span
-              class:desc={sortBy === "players" && sortDescending}
-              class:asc={sortBy === "players" && !sortDescending}>
-              Players
-            </span>
-          </th>
-          <th
-            class="sortable"
-            on:click={() => {
-              if (sortBy === "average") sortDescending = !sortDescending;
-              else sortBy = "average";
-            }}>
-            <span
-              class:desc={sortBy === "average" && sortDescending}
-              class:asc={sortBy === "average" && !sortDescending}>
-              Average
-            </span>
-          </th>
-        </thead>
-        <tbody>
-          {#each countries as country, i (country.country)}
-            <tr>
-              <td style="width: 5.25ch;">
-                <strong>#{sortDescending ? i + 1 : countries.length - i}</strong>
-              </td>
+  {#if !data?.rankingData?.length}
+    <RankingEmpty />
+  {:else}
+    <!-- TODO: RANKING SETTINGS -->
+    <table class="osu-table">
+      <thead>
+        <th />
+        <th> Country </th>
+        <th
+          class="sortable"
+          on:click={() => {
+            if (sortBy === "weighted") sortDescending = !sortDescending;
+            else sortBy = "weighted";
+          }}>
+          <span
+            class:desc={sortBy === "weighted" && sortDescending}
+            class:asc={sortBy === "weighted" && !sortDescending}>
+            Weighted
+          </span>
+        </th>
+        <th
+          class="sortable"
+          on:click={() => {
+            if (sortBy === "total") sortDescending = !sortDescending;
+            else sortBy = "total";
+          }}>
+          <span
+            class:desc={sortBy === "total" && sortDescending}
+            class:asc={sortBy === "total" && !sortDescending}>
+            Total
+          </span>
+        </th>
+        <th
+          class="sortable"
+          on:click={() => {
+            if (sortBy === "players") sortDescending = !sortDescending;
+            else sortBy = "players";
+          }}>
+          <span
+            class:desc={sortBy === "players" && sortDescending}
+            class:asc={sortBy === "players" && !sortDescending}>
+            Players
+          </span>
+        </th>
+        <th
+          class="sortable"
+          on:click={() => {
+            if (sortBy === "average") sortDescending = !sortDescending;
+            else sortBy = "average";
+          }}>
+          <span
+            class:desc={sortBy === "average" && sortDescending}
+            class:asc={sortBy === "average" && !sortDescending}>
+            Average
+          </span>
+        </th>
+      </thead>
+      <tbody>
+        {#each data.rankingData as country, i (country.country)}
+          <tr>
+            <td style="width: 5.25ch; text-align: right;">
+              <strong>#{sortDescending ? i + 1 : data.rankingData.length - i}</strong>
+            </td>
 
-              <td style="display: flex; align-items: center;">
-                <img
-                  class="osu-flag-small"
-                  style="margin-right: 10px;"
-                  alt={country.country}
-                  src="/flags/{country.country}.svg" />
-                <span class="hide-width-640">
-                  {COUNTRIES[country.country] || country.country}
-                </span>
-              </td>
+            <td style="display: flex; align-items: center;">
+              <img
+                class="osu-flag-small"
+                style="margin-right: 10px;"
+                alt={country.country}
+                src="/flags/{country.country}.svg" />
+              <span class="hide-width-640">
+                {COUNTRIES[country.country] || country.country}
+              </span>
+            </td>
 
-              <td class="emphasis">
-                {formatNumber(Math.round(country.weighted), " ")}
-              </td>
+            <td class="emphasis">
+              {formatNumber(Math.round(country.weighted))}
+            </td>
 
-              <td>
-                {formatNumber(Math.round(country.total), " ")}
-              </td>
+            <td>
+              {formatNumber(Math.round(country.total))}
+            </td>
 
-              <td>
-                {country.players}
-              </td>
+            <td>
+              {country.players}
+            </td>
 
-              <td>
-                {formatNumber(Math.round(country.average), " ")}
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    {/if}
-  {/await}
+            <td>
+              {formatNumber(Math.round(country.average))}
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
 </main>
 
 <style>

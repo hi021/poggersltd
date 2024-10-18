@@ -42,11 +42,12 @@
 
   function handleClick() {
     const audio = audioElementPoggers.cloneNode(false) as HTMLAudioElement;
-    audio.volume = 0.675;
+    audio.volume = 0.6;
     audio.play();
 
     ++sessionCount;
     ++globalCount;
+    ++globalCountAnimated;
     localStorage.senko = ++localCount;
     socket.emit("senko-add", 1);
   }

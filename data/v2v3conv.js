@@ -1,19 +1,20 @@
-// CONVERT ALL JSONS IN V2 FORMAT (old poggers.ltd in react, top 50s only) INTO CURRENT V3.1 FORMAT
+// CONVERT ALL JSON FILES IN V2 FORMAT (old poggers.ltd in react, top 50s only) INTO CURRENT V3.2 FORMAT
 // INPUT ./archive-old/ -> OUTPUT ./archive-new/ - overwrites all files and database entries
 
-import * as fs from "fs";
-import * as path from "path";
+import { getDaysBetweenDates } from "./shared.js";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
-import { getDaysBetweenDates } from "./shared.js";
 import * as dotenv from "dotenv";
+import * as path from "path";
+import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-// change to POSIX paths to use with glob
+////////// change to POSIX paths to use with glob
 const inputDir = path.resolve(__dirname, "archive-old");
 const outputDir = path.resolve(__dirname, "archive-new");
+////////////////////////////
 
 try {
   const client = await MongoClient.connect(process.env.DB_URI);

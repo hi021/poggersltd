@@ -2,10 +2,10 @@
 // INPUT ./archive-other/players-old.json & ./archive-other/players-new.json ->
 // OUTPUT ./archive-other/players-merged.json
 
-import * as fs from "fs";
-import * as path from "path";
 import { fileURLToPath } from "url";
 import { createNGram } from "./shared.js";
+import * as path from "path";
+import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dir = path.resolve(__dirname, "archive-other");
@@ -49,7 +49,6 @@ for (const i of oldPlayers) {
   }
 }
 
-fs.writeFileSync(
-  path.join(dir, "players-merged.json"),
-  JSON.stringify(Array.from(mergedPlayers.values()))
-);
+const outputDir = path.join(dir, "players-merged.json");
+fs.writeFileSync(outputDir, JSON.stringify(Array.from(mergedPlayers.values())));
+console.log("Saved output to " + outputDir);

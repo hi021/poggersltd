@@ -1,34 +1,34 @@
-/* eslint-disable no-async-promise-executor */
-// TODO
-import fetch from "node-fetch";
-import * as fs from "fs";
-import * as path from "path";
-import { fileURLToPath } from "url";
-import { MongoClient } from "mongodb";
+// FOR RESPEKTIVE'S INEXISTENT API, use fetch.js instead
+
 import {
   formatDate,
   getRankingCollections,
   getClosestPrevArchiveEntry,
   createNGram
 } from "./shared.js";
+import { fileURLToPath } from "url";
+import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
+import * as path from "path";
+import * as fs from "fs";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-export const MIN_TOP100 = 1500;
-export const MIN_TOP50 = 1000;
-export const MIN_TOP25 = 500;
-export const MIN_TOP15 = 300;
-export const MIN_TOP8 = 150;
-export const MIN_TOP1 = 15;
-const MAX_PAGE = 100;
+// export const MIN_TOP100 = 1500;
+// export const MIN_TOP50 = 1000;
+// export const MIN_TOP25 = 500;
+// export const MIN_TOP15 = 300;
+// export const MIN_TOP8 = 150;
+// export const MIN_TOP1 = 15;
+const MAX_PAGE = 10;
 
 const api = "https://osustats.respektive.pw/rankings/";
 const categories = ["top100s", "top50s", "top25s", "top15s", "top8s", "top1s"];
 const categoriesMin = [MIN_TOP100, MIN_TOP50, MIN_TOP25, MIN_TOP15, MIN_TOP8, MIN_TOP1]; //lol whatever;
-const categoriesSkip = ["top100", "top15"]; //categories not to upload to the db
+const categoriesSkip = ["top100", "top15"]; // categories not to upload to the db
 
-//returns an array of formatted players from the API + country ranks
+// returns an array of formatted players from the API + country ranks
 async function fetchCategory(category, minScores, maxPage = MAX_PAGE) {
   const url = api + category + "?page=";
   let page = 1;
@@ -361,7 +361,7 @@ try {
 }
 
 try {
-  console.log("Creating database indexes");
+  console.log("Creating database indexes...");
   await coll.createIndexes([
     { key: { "ranking._id": -1 } },
     { key: { "ranking.country": -1 } },

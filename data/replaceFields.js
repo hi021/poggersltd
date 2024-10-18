@@ -1,15 +1,17 @@
-// Swaps 'fieldOld' field in all ranking collections with 'fieldNew'
+// Swaps `fieldOld` field in all ranking entries with `fieldNew`
 
-import * as path from "path";
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
+import * as path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
+////////////////////////////
 const fieldNew = "_id"; // to replace fieldOld with
 const fieldOld = "id";
+////////////////////////////
 
 const client = await MongoClient.connect(process.env.DB_URI);
 const coll = client.db(process.env.DB_NAME).collection("rankings");
