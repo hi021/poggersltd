@@ -7,14 +7,14 @@
   <p>
     This API is not private but it sure is a mess
     <br />
-    Yell at <code>hiihailey</code> in case it explodes
+    Yell at <code class="emphasis">hiihailey</code> in case it explodes
     <br />
     <small>server smol please be gentle;;</small>
   </p>
-  <small>v3.2 (<a class="a" href="#changelog" title="changelog">2024-10-21</a>)</small>
+  <small>v3.2 (<a href="#changelog" title="changelog">2024-10-21</a>)</small>
 
   <h2 id="types">Types</h2>
-  <span class="type-name">PlayerRanking</span>
+  <span id="PlayerRanking" class="type-name">PlayerRanking</span>
   <ul>
     <li>
       <span>date</span>
@@ -77,7 +77,7 @@
     </li>
   </ul>
 
-  <span class="type-name">PlayerInfo</span>
+  <span id="PlayerInfo" class="type-name">PlayerInfo</span>
   <ul>
     <li>
       <span>_id</span>
@@ -101,14 +101,14 @@
     </li>
   </ul>
 
-  <span class="type-name">RankingCategory</span>
+  <span id="RankingCategory" class="type-name">RankingCategory</span>
   <ul>
     <li>
       <code class="type-type">'top50' | 'top25' | 'top8' | 'top1'</code>
     </li>
   </ul>
 
-  <span class="type-name">Player</span>
+  <span id="Player" class="type-name">Player</span>
   <ul>
     <li>
       <code class="type-type"
@@ -116,7 +116,7 @@
     </li>
   </ul>
 
-  <span class="type-name">CountryRanking</span>
+  <span id="CountryRanking" class="type-name">CountryRanking</span>
   <p class="description-main">Used for country rankings at /api/ranking/countries</p>
   <ul>
     <li>
@@ -146,7 +146,7 @@
     </li>
   </ul>
 
-  <span class="type-name">MostGainedRanking</span>
+  <span id="MostGainedRanking" class="type-name">MostGainedRanking</span>
   <p class="description-main">Used for most gained rankings at /api/gains</p>
   <ul>
     <li>
@@ -190,7 +190,7 @@
 
   <h2 id="endpoints">Endpoints</h2>
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">players</span>/[date]/[category]/[country]/[ranks]
+    /api/ranking/<span class="emphasis">players</span><span class="endpoint-params">/[date]/[category?]/[country?]/[ranks?]</span>
     <span class="method get" />
   </h4>
   <h5>Route parameters (positional)</h5>
@@ -198,31 +198,38 @@
     <li>
       <span>date</span>
       <code class="type-type">string</code>
-      <span class="description">YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span>
+      <span class="description">
+        Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br/>
+        Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
+    </span>
     </li>
     <li>
       <span>category</span>
-      <code class="type-type">RankingCategory</code>
-      <span class="description">score category</span>
+      <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
+      <span class="description">Score category (defaults to top50), throws a 400 error on invalid category</span>
     </li>
     <li>
       <span>country</span>
-      <code class="type-type">string</code>
-      <span class="description"
-        >2-letter country code to show players only from given country or "all"</span>
+      <code class="type-type">string?</code>
+      <span class="description">
+        2-letter country code to only show players from given country, any other value is treated as showing all<br/>
+        E.g. "CL" for Chile, defaults to showing all players
+      </span>
     </li>
     <li>
       <span>ranks</span>
-      <code class="type-type">string</code>
-      <span class="description"
-        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all players</span>
+      <code class="type-type">string?</code>
+      <span class="description">
+        Min-Max rank (score ranking position), 0 or empty mean range bound<br/>
+        E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
+    </span>
     </li>
   </ul>
   <h5>Returns</h5>
-  <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
+  <code>Array&lt;<a class="a" href="#RankingCategory"><code class="type-type">Player</code></a>&gt;</code>
 
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">gains</span>/[date]/[category]/[country]/[ranks]/[...days]
+    /api/ranking/<span class="emphasis">gains</span><span class="endpoint-params">/[date]/[category]/[country]/[ranks]/[...days]</span>
     <span class="method get" />
   </h4>
   <h5>Route parameters (positional)</h5>
@@ -234,7 +241,7 @@
     </li>
     <li>
       <span>category</span>
-      <code class="type-type">RankingCategory</code>
+      <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory</code></a>
       <span class="description">score category</span>
     </li>
     <li>
@@ -261,7 +268,7 @@
   <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
 
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">countries</span>/[date]/[category]/[country]/[ranks]
+    /api/ranking/<span class="emphasis">countries</span><span class="endpoint-params">/[date]/[category]/[country]/[ranks]</span>
     <span class="method get" />
   </h4>
   <h5>Route parameters (positional)</h5>
@@ -292,6 +299,8 @@
   <h5>Returns</h5>
   <code>Array&lt;<code class="type-type">CountryRanking</code>&gt;</code>
 
+<hr/>
+
   <h2 id="changelog">Changelog</h2>
   <ul>
     <li>
@@ -306,8 +315,12 @@
 <style>
   main {
     padding: 0.5rem 2.5%;
+    color: #ddd;
   }
 
+  .endpoint-params {
+    color: #999;
+  }
   .description-main {
     font-size: 0.9375rem;
     opacity: 0.9;
@@ -324,7 +337,8 @@
     background-color: rgba(0, 0, 0, 0.3);
   }
   .method {
-    padding: 5px;
+    font-size: 80%;
+    padding: 3px;
     border-radius: 999px;
   }
   .method.get {
