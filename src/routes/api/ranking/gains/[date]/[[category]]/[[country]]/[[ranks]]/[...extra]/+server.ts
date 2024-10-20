@@ -1,13 +1,13 @@
-import { dbRankings } from "$lib/db";
 import { addDate, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
+import { dbRankings } from "$lib/db";
 
 const sorting = (a: App.RankingEntry, b: App.RankingEntry) =>
   (a.gainedScores as number) < (b.gainedScores as number) ? 1 : -1;
 
 export const GET: RequestHandler = async ({ params }) => {
-  const scoreCategory = params.category ?? "top50";
+  const scoreCategory = (params.category as App.RankingCategory) ?? "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
   const MAX_DATE = formatDate();
@@ -21,7 +21,7 @@ export const GET: RequestHandler = async ({ params }) => {
     const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
     const rankMin = Number(ranks[0]) ?? 0;
     const rankMax = Number(ranks[1]) || Infinity;
-    const gainsDays = Number(params.extra) || 1;
+    const gainedDays = Number(params.extra) || 1;
 
     const query: App.RankingQuery = { _id: params.date };
 
@@ -35,22 +35,12 @@ export const GET: RequestHandler = async ({ params }) => {
     if (!rankingDataEnd?.length) return json([]);
 
     // use gained field without having to send a request to another date
-    if (gainsDays === 1) {
-      // remove players without gained scores field
-      let removed = 0;
-      for (const i in rankingDataEnd)
-        if (rankingDataEnd[i].gainedScores == null) {
-          delete rankingDataEnd[i];
-          ++removed;
-        }
-
-      rankingDataEnd.sort(sorting);
-      rankingDataEnd.length -= removed;
-
+    if (gainedDays === 1) {
+      rankingDataEnd.filter((plr) => plr.gainedScores != null).sort(sorting);
       return json(rankingDataEnd);
     }
 
-    const dateStart = addDate(new Date(date), -gainsDays);
+    const dateStart = addDate(new Date(date), -gainedDays);
     const rankingDataStart = (
       await dbRankings.findOne(
         { ...query, _id: formatDate(dateStart) as any },
@@ -70,21 +60,12 @@ export const GET: RequestHandler = async ({ params }) => {
         ...i,
         gainedScores: i.scores - player.scores,
         gainedRanks: player.rank - i.rank,
-        gainedDays: gainsDays
+        gainedDays
       });
     }
 
     const playersArray = Array.from(players.values());
-    // remove players that are in start but not end ranking
-    let removed = 0;
-    for (const i in playersArray)
-      if (playersArray[i].gainedScores == null) {
-        delete playersArray[i];
-        ++removed;
-      }
-
-    playersArray.sort(sorting);
-    playersArray.length -= removed;
+    playersArray.filter((plr) => plr.gainedScores != null).sort(sorting);
 
     return json(playersArray);
   } catch (e: any) {

@@ -4,9 +4,8 @@ import { error, json } from "@sveltejs/kit";
 import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params }) => {
-  const scoreCategory = params.category ?? "top50";
-  if (!SCORE_CATEGORIES.includes(scoreCategory as App.RankingCategory))
-    throw error(400, "Invalid ranking score category");
+  const scoreCategory = (params.category as App.RankingCategory) ?? "top50";
+  if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
   const MAX_DATE = formatDate();
   const date = params.date === "latest" || params.date === "last" ? MAX_DATE : params.date;

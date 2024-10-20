@@ -15,18 +15,18 @@ const INPUT_DIR = path.resolve(__dirname, "archive-premerge");
 const OUTPUT_DIR = path.resolve(__dirname, "archive-merged");
 ////////////////////////////
 
-const directories = fs.readdirSync(INPUT_DIR)
-for(const date of directories) {
-    const rankingEntryFull = {};
-    const directory = path.resolve(INPUT_DIR, date);
-    const files = fs.readdirSync(directory)
+const directories = fs.readdirSync(INPUT_DIR);
+for (const date of directories) {
+  const rankingEntryFull = {};
+  const directory = path.resolve(INPUT_DIR, date);
+  const files = fs.readdirSync(directory);
 
-    for(const file of files) {
-        const category = path.basename(file, ".json");
-        rankingEntryFull[category] = JSON.parse(fs.readFileSync(path.resolve(directory, file)));
-    }
+  for (const file of files) {
+    const category = path.basename(file, ".json");
+    rankingEntryFull[category] = JSON.parse(fs.readFileSync(path.resolve(directory, file)));
+  }
 
-    const outputFile = path.resolve(OUTPUT_DIR, date + ".json");
-    fs.writeFileSync(outputFile, JSON.stringify(rankingEntryFull))
-    console.log(`Merged ${date} with categories: ${Object.keys(rankingEntryFull).join(", ")}`)
+  const outputFile = path.resolve(OUTPUT_DIR, date + ".json");
+  fs.writeFileSync(outputFile, JSON.stringify(rankingEntryFull));
+  console.log(`Merged ${date} with categories: ${Object.keys(rankingEntryFull).join(", ")}`);
 }

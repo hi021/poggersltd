@@ -11,9 +11,10 @@
     <br />
     <small>server smol please be gentle;;</small>
   </p>
-  <small>v3.2 (<a href="#changelog" title="changelog">2024-10-21</a>)</small>
+  <small>v3.2 (<a class="a" href="#changelog" title="changelog">2024-10-21</a>)</small>
 
   <h2 id="types">Types</h2>
+  <div><code>?</code> signifies an optional (nullable) type</div>
   <span id="PlayerRanking" class="type-name">PlayerRanking</span>
   <ul>
     <li>
@@ -22,7 +23,7 @@
       <span class="description"> YYYY-MM-DD day from which the data was taken </span>
     </li>
     <li>
-      <span>value</span>
+      <span>scores</span>
       <code class="type-type">number</code>
       <span class="description">amount of scores</span>
     </li>
@@ -36,42 +37,42 @@
       <code class="type-type">number</code>
     </li>
     <li>
-      <span>gained</span>
-      <code class="type-type">number | undefined</code>
+      <span>gainedScores</span>
+      <code class="type-type">number?</code>
       <span class="description"
         >amount of scores gained in the last `gainedDays` days, undefined if not in previous ranking
         archive</span>
     </li>
     <li>
-      <span>gainedRank</span>
-      <code class="type-type">number | undefined</code>
+      <span>gainedRanks</span>
+      <code class="type-type">number?</code>
       <span class="description"
         >amount of ranks gained in the last `gainedDays` days, undefined if not in previous ranking
         archive</span>
     </li>
     <li>
       <span>gainedDays</span>
-      <code class="type-type">number | undefined</code>
+      <code class="type-type">number?</code>
       <span class="description">defaults to 1, only set in case of a gap in archive entries</span>
     </li>
     <li>
       <span>mostGained</span>
       <code
-        >{"{date: "}<code class="type-type">string</code>, value:
+        >{"{date: "}<code class="type-type">string</code>, scores:
         <code class="type-type">number</code>{"}"}</code>
       <span class="description">value is most gained scores in one day, date is YYYY-MM-DD</span>
     </li>
     <li>
       <span>peak</span>
       <code
-        >{"{date: "}<code class="type-type">string</code>, value:
+        >{"{date: "}<code class="type-type">string</code>, scores:
         <code class="type-type">number</code>{"}"}</code>
       <span class="description">highest score count</span>
     </li>
     <li>
       <span>lowest</span>
       <code
-        >{"{date: "}<code class="type-type">string</code>, value:
+        >{"{date: "}<code class="type-type">string</code>, scores:
         <code class="type-type">number</code>{"}"}</code>
       <span class="description">lowest score count</span>
     </li>
@@ -87,17 +88,17 @@
     <li>
       <span>name</span>
       <code class="type-type">string</code>
-      <span class="description">current osu! username</span>
+      <span class="description">last known osu! username</span>
     </li>
     <li>
       <span>country</span>
       <code class="type-type">string</code>
-      <span class="description">uppercase 2-letter country code</span>
+      <span class="description">uppercase 2-letter country code (e.g. "CL")</span>
     </li>
     <li>
-      <span>oldName</span>
-      <code class="type-type">string[]</code>
-      <span class="description">previous osu! usernames (from when the player was tracked)</span>
+      <span>oldNames</span>
+      <code class="type-type">Array&lt;string&gt;?</code>
+      <span class="description">past osu! usernames (from when the player was tracked)</span>
     </li>
   </ul>
 
@@ -150,12 +151,12 @@
   <p class="description-main">Used for most gained rankings at /api/gains</p>
   <ul>
     <li>
-      <span>_id</span>
+      <span>rank</span>
       <code class="type-type">number</code>
       <span class="description">ranking position (1-99)</span>
     </li>
     <li>
-      <span>id</span>
+      <span>_id</span>
       <code class="type-type">number</code>
       <span class="description">player osu! id</span>
     </li>
@@ -170,7 +171,7 @@
       <span class="description">uppercase 2-letter country code</span>
     </li>
     <li>
-      <span>value</span>
+      <span>scores</span>
       <code class="type-type">number</code>
       <span class="description">number of scores total from the day after the gains</span>
     </li>
@@ -190,29 +191,32 @@
 
   <h2 id="endpoints">Endpoints</h2>
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">players</span><span class="endpoint-params">/[date]/[category?]/[country?]/[ranks?]</span>
+    /api/ranking/<span class="emphasis">players</span><span class="endpoint-params"
+      >/[date]/[category?]/[country?]/[ranks?]</span>
     <span class="method get" />
   </h4>
-  <h5>Route parameters (positional)</h5>
+  <h5>Route (positional) parameters</h5>
   <ul>
     <li>
       <span>date</span>
       <code class="type-type">string</code>
       <span class="description">
-        Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br/>
+        Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br />
         Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
-    </span>
+      </span>
     </li>
     <li>
       <span>category</span>
       <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
-      <span class="description">Score category (defaults to top50), throws a 400 error on invalid category</span>
+      <span class="description"
+        >Score category (defaults to top50), throws a 400 error on invalid category</span>
     </li>
     <li>
       <span>country</span>
       <code class="type-type">string?</code>
       <span class="description">
-        2-letter country code to only show players from given country, any other value is treated as showing all<br/>
+        2-letter country code to only show players from given country, any other value is treated as
+        showing all<br />
         E.g. "CL" for Chile, defaults to showing all players
       </span>
     </li>
@@ -220,102 +224,145 @@
       <span>ranks</span>
       <code class="type-type">string?</code>
       <span class="description">
-        Min-Max rank (score ranking position), 0 or empty mean range bound<br/>
+        Min-Max rank (score ranking position), 0 or empty mean range bound<br />
         E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
-    </span>
+      </span>
     </li>
   </ul>
   <h5>Returns</h5>
-  <code>Array&lt;<a class="a" href="#RankingCategory"><code class="type-type">Player</code></a>&gt;</code>
+  <code>Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;</code>
 
   <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">gains</span><span class="endpoint-params">/[date]/[category]/[country]/[ranks]/[...days]</span>
-    <span class="method get" />
+    <h4 class="endpoint-url">
+      /api/ranking/<span class="emphasis">gains</span><span class="endpoint-params"
+        >/[date]/[category?]/[country?]/[ranks?]/[days?]</span>
+      <span class="method get" />
+    </h4>
+    <h5>Route (positional) parameters</h5>
+    <ul>
+      <li>
+        <span>date</span>
+        <code class="type-type">string</code>
+        <span class="description">
+          Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br />
+          Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
+        </span>
+      </li>
+      <li>
+        <span>category</span>
+        <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
+        <span class="description"
+          >Score category (defaults to top50), throws a 400 error on invalid category</span>
+      </li>
+      <li>
+        <span>country</span>
+        <code class="type-type">string?</code>
+        <span class="description">
+          2-letter country code to only show players from given country, any other value is treated
+          as showing all<br />
+          E.g. "CL" for Chile, defaults to showing all players
+        </span>
+      </li>
+      <li>
+        <span>ranks</span>
+        <code class="type-type">string?</code>
+        <span class="description">
+          Min-Max rank (score ranking position), 0 or empty mean range bound<br />
+          E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
+        </span>
+      </li>
+      <li>
+        <span>days</span>
+        <code class="type-type">number?</code>
+        <span class="description">
+          Number of days to go back (defaults to 1)<br />
+          Will return an empty array if there is no archive entry given days ago
+        </span>
+      </li>
+    </ul>
+    <h5>Returns</h5>
+    <code>Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;</code>
+
+    <h4 class="endpoint-url">
+      /api/ranking/<span class="emphasis">countries</span><span class="endpoint-params"
+        >/[date]/[category?]/[country?]/[ranks?]</span>
+      <span class="method get" />
+    </h4>
+    <h5>Route (positional) parameters</h5>
+    <ul>
+      <li>
+        <span>date</span>
+        <code class="type-type">string</code>
+        <span class="description">
+          Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br />
+          Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
+        </span>
+      </li>
+      <li>
+        <span>category</span>
+        <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
+        <span class="description"
+          >Score category (defaults to top50), throws a 400 error on invalid category</span>
+      </li>
+      <li>
+        <span>country</span>
+        <code class="type-type">string?</code>
+        <span class="description">
+          2-letter country code to only show players from given country, any other value is treated
+          as showing all<br />
+          E.g. "CL" for Chile, defaults to showing all players
+        </span>
+      </li>
+      <li>
+        <span>ranks</span>
+        <code class="type-type">string?</code>
+        <span class="description">
+          Min-Max rank (score ranking position), 0 or empty mean range bound<br />
+          E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
+        </span>
+      </li>
+    </ul>
+    <h5>Returns</h5>
+    <code
+      >Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a
+      >&gt;</code>
+
+    <h4 class="endpoint-url">
+      /api/player/<span class="endpoint-params">/[idOrName]</span>
+      <span class="method get" />
+    </h4>
+    <h5>Route (positional) parameters</h5>
+    <ul>
+      <li>
+        <span>idOrName</span>
+        <code class="type-type">string | number</code>
+        <span class="description">
+          Player's osu! id or exact (case sensitive) currently used username
+        </span>
+      </li>
+    </ul>
+
+    <hr />
+
+    <h2 id="changelog">Changelog</h2>
+    <ul>
+      <li>
+        <span>v3.2 (2024-10-20)</span>
+        <ol>
+          <li>First public release</li>
+        </ol>
+      </li>
+    </ul>
   </h4>
-  <h5>Route parameters (positional)</h5>
-  <ul>
-    <li>
-      <span>date</span>
-      <code class="type-type">string</code>
-      <span class="description">YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span>
-    </li>
-    <li>
-      <span>category</span>
-      <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory</code></a>
-      <span class="description">score category</span>
-    </li>
-    <li>
-      <span>country</span>
-      <code class="type-type">string</code>
-      <span class="description"
-        >2-letter country code to show players only from given country or "all"</span>
-    </li>
-    <li>
-      <span>ranks</span>
-      <code class="type-type">string</code>
-      <span class="description"
-        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all players</span>
-    </li>
-    <li>
-      <span>days</span>
-      <code class="type-type">number</code>
-      <span class="description"
-        >number of days to go back (defaults to 1), will return an empty array if there is no
-        archive entry given days ago</span>
-    </li>
-  </ul>
-  <h5>Returns</h5>
-  <code>Array&lt;<code class="type-type">Player</code>&gt;</code>
-
-  <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">countries</span><span class="endpoint-params">/[date]/[category]/[country]/[ranks]</span>
-    <span class="method get" />
-  </h4>
-  <h5>Route parameters (positional)</h5>
-  <ul>
-    <li>
-      <span>date</span>
-      <code class="type-type">string</code>
-      <span class="description">YYYY-MM-DD date or "latest"; minimum date is 2020-05-10</span>
-    </li>
-    <li>
-      <span>category</span>
-      <code class="type-type">RankingCategory</code>
-      <span class="description">score category</span>
-    </li>
-    <li>
-      <span>country</span>
-      <code class="type-type">string</code>
-      <span class="description"
-        >2-letter country code to show players only from given country or "all"</span>
-    </li>
-    <li>
-      <span>ranks</span>
-      <code class="type-type">string</code>
-      <span class="description"
-        >min-max rank/score ranking position (e.g. 1-100) or 0-0 to show all players</span>
-    </li>
-  </ul>
-  <h5>Returns</h5>
-  <code>Array&lt;<code class="type-type">CountryRanking</code>&gt;</code>
-
-<hr/>
-
-  <h2 id="changelog">Changelog</h2>
-  <ul>
-    <li>
-      <span>v3.2 (2024-10-20)</span>
-      <ol>
-        <li>First public release</li>
-      </ol>
-    </li>
-  </ul>
 </main>
 
 <style>
   main {
-    padding: 0.5rem 2.5%;
+    padding: 0.5rem 7.5%;
     color: #ddd;
+  }
+  h5 {
+    margin-bottom: 4px;
   }
 
   .endpoint-params {
@@ -327,6 +374,7 @@
   }
   .description {
     font-size: 0.875rem;
+    display: block;
   }
   .type-name {
     font-weight: 500;
