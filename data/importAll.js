@@ -1,5 +1,5 @@
 // Imports all ranking entry json files from the input directory into the database, upserting existing entries depending on the parameter
-// INPUT ./archive-new/
+// INPUT ./archive-aftergains/
 
 import { fileURLToPath } from "url";
 import { MongoClient } from "mongodb";
@@ -11,7 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 ////////////////////////////
-const inputDir = path.resolve(__dirname, "archive-new");
+const inputDir = path.resolve(__dirname, "archive-aftergains");
 const categoriesSkip = ["top100", "top15"]; // categories not in the db
 const upsert = true;
 ////////////////////////////

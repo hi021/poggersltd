@@ -26,11 +26,11 @@
 
   <h2>Caveats & inaccuracies</h2>
   <p class="para">
-    poggers.ltd uses data from osu!Stats, which isn't too reliable. Here are some of the things to
-    keep in mind:
+    poggers.ltd gets its data from osu!Stats, which isn't too reliable. Here are some of the things
+    to keep in mind:
   </p>
   <ul>
-    <li>Only players with at least 1000 (or 1020 since October 21, 2024) top 50s are included.</li>
+    <li>Only players with at least 1000 (or 1020 since November 1, 2024) top 50s are included.</li>
     <li>
       Only up to 150 players per country - the US is in trouble! It's an osu!Stats limitation that I
       can't do anything about.
@@ -44,16 +44,16 @@
       missing from the database due to osu!Stats only keeping track of select 59 countries.
     </li>
     <li>
-      The final score count depends on the time at which the osu!Stats API gets to the given player,
-      so there could be minor differences if scores are set while osu!Stats is scraping maps. I
-      don't know the ins and outs however.
+      The final score count depends on the time at which osu!Stats API gets to the given player.
+      There could be minor differences if scores are set while osu!Stats is scraping maps, so scores
+      that show up as gained on one day might actually have been set a day earlier.
     </li>
     <li>
       Only osu!standard - maybe I was just lazy for not adding in support for other modes, but
       osu!Stats is slow and doesn't like me bombarding it with requests...
     </li>
     <li>
-      No osu!lazer scores (sorry Maklovitz) - lazer leaderboards are funky and osu!Stats only
+      No osu!lazer scores (sorry Maklovitz) - lazer leaderboards are still funky and osu!Stats only
       collects classic rankings.
     </li>
     <li>

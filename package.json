@@ -14,24 +14,24 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^5.2.8",
-    "@sveltejs/kit": "^2.7.1",
+    "@sveltejs/adapter-node": "^5.2.9",
+    "@sveltejs/kit": "^2.7.3",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@types/eslint": "^9.6.1",
     "@types/express": "^5.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.10.0",
-    "@typescript-eslint/parser": "^8.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.12.0",
+    "@typescript-eslint/parser": "^8.12.0",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-svelte": "^2.45.1",
+    "eslint-plugin-svelte": "^2.46.0",
     "globals": "^15.11.0",
     "prettier": "^3.3.3",
     "prettier-plugin-svelte": "^3.2.7",
     "svelte": "^4.2.19",
     "svelte-check": "^3.8.6",
     "typescript": "^5.6.3",
-    "typescript-eslint": "^8.10.0",
-    "vite": "^5.4.9"
+    "typescript-eslint": "^8.12.0",
+    "vite": "^5.4.10"
   },
   "type": "module",
   "dependencies": {
@@ -39,9 +39,9 @@
     "@unovis/ts": "1.4.3-beta.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "mongodb": "^6.9.0",
-    "socket.io": "^4.8.0",
-    "socket.io-client": "^4.8.0",
+    "mongodb": "^6.10.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "tippy.js": "^6.3.7"
   },
   "packageManager": "pnpm@9.7.1+sha256.46f1bbc8f8020aa9869568c387198f1a813f21fb44c82f400e7d1dbde6c70b40"

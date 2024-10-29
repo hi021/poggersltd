@@ -168,7 +168,6 @@ try {
     { key: { "top50._id": -1 } },
     { key: { "top50.rank": 1 } },
     { key: { "top50.country": -1 } },
-    { key: { "top50.countryRank": -1 } },
     { key: { "top50.gainedScores": -1 } }
   ]);
   console.log(`${rankingEntry.length} players`);

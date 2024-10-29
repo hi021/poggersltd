@@ -79,9 +79,16 @@ function putPlayerIntoMap(player, category, date) {
 
 // set name keys, turn oldNames set into array, and delete blank gainedDays
 function finalizePlayer(player) {
-  const playerObject = { ...player, nameKey: createNGram(player.name) };
+  const playerObject = { ...player };
 
-  if (playerObject.oldNames) playerObject.oldNames = [...playerObject.oldNames];
+  let nameKey = createNGram(player.name);
+  if (playerObject.oldNames) {
+    playerObject.oldNames = [...playerObject.oldNames];
+    for (const name of playerObject.oldNames) nameKey += " " + createNGram(name);
+    nameKey = [...new Set(nameKey.split(" "))].join(" ");
+  }
+  playerObject.nameKey = nameKey;
+
   for (const category of categoriesDb) {
     if (!playerObject[category]) continue;
     if (!playerObject[category].gainedDays || playerObject[category].gainedDays == 1)
