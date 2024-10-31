@@ -6,10 +6,10 @@ export const load: PageLoad = async ({
   fetch
 }): Promise<App.Player & Partial<App.PlayerProfileRanks>> => {
   try {
-    const resPlayer = await fetch(`/api/player/${params.idOrName}`);
+    const category = params.category ?? "top50";
+    const resPlayer = await fetch(`/api/player/${params.idOrName}/${category}`);
     if (!resPlayer.ok) throw error(resPlayer.status, resPlayer.statusText || "Oopsie");
 
-    const category = params.category ?? "top50";
     const resPlayerJson: App.PlayerAPI = await resPlayer.json();
     if (category === "all") return resPlayerJson;
 

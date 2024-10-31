@@ -9,21 +9,20 @@ export const GET: RequestHandler = async ({ params }) => {
 
   const MAX_DATE = formatDate();
   const date = params.date === "latest" || params.date === "last" ? MAX_DATE : params.date;
-  if (date < MIN_DATE) throw error(400, "Invalid date: earliest is " + MIN_DATE);
-  if (date > MAX_DATE) throw error(400, "Invalid date: latest is " + MAX_DATE);
+  if (date < MIN_DATE) throw error(400, `Invalid date - earliest possible is ${MIN_DATE}`);
+  if (date > MAX_DATE) throw error(400, `Invalid date - latest possible is ${MAX_DATE}`);
 
   try {
     console.time("players/" + date);
+    const query: App.RankingQuery = { _id: params.date };
 
     const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
     const rankMin = Number(ranks[0]) ?? 0;
     const rankMax = Number(ranks[1]) || Infinity;
-
-    const query: App.RankingQuery = { _id: params.date };
-
     if (rankMin > 1 || rankMax < Infinity) query.rank = { $lte: rankMax, $gte: rankMin };
-    // all country codes should always be two uppercase letters
-    if (params.country?.length == 2) query.country = { $eq: params.country };
+
+    if (params.country && params.country.toLowerCase() != "all")
+      query.country = { $in: params.country.toUpperCase().split(",") };
 
     const rankingData = await dbRankings.findOne(query, {
       projection: { [scoreCategory]: 1 }

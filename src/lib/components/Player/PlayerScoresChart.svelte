@@ -24,13 +24,17 @@
 
   function tooltipTemplate(d: App.PlayerChartEntry) {
     const daysAgo = days - d.day - 1;
-    const daysAgoString = "day" + (daysAgo == 1 ? "" : "s") + " ago";
+    const daysAgoString = `day${daysAgo == 1 ? "" : "s"} ago`;
     return (
       d?.scores &&
       d.rank &&
-      `<span><strong><em>rank</em></strong> #${formatNumber(d.rank, ",")}</span><br/>
-    <span><strong><em>scores</em></strong> ${formatNumber(d.scores)}</span><br/>
-    <small style="color: var(--color-active);">${daysAgo ? `${daysAgo} ${daysAgoString}` : "today"}</small>`
+      `<table>
+       <tbody>
+        <tr><td class="tooltip-rank-label">rank</td><td>#${formatNumber(d.rank, ",")}</td></tr>
+        <tr><td class="tooltip-scores-label">scores</td><td>${formatNumber(d.scores)}</td></tr>
+        <tr><td colspan="2" class="tooltip-days-label">${daysAgo ? `${daysAgo} ${daysAgoString}` : "today"}</td></tr>
+       </tbody>
+       </table>`
     );
   }
 </script>
@@ -148,5 +152,17 @@
   }
   .chart-buttons-container li:last-child button {
     border-bottom-right-radius: 6px;
+  }
+
+  :global(.tooltip-rank-label) {
+    color: color-mix(in srgb, var(--color-pink) 50%, var(--color-lighter));
+  }
+  :global(.tooltip-scores-label) {
+    color: color-mix(in srgb, var(--color-active) 50%, var(--color-lighter));
+  }
+  :global(.tooltip-days-label) {
+    color: var(--color-active);
+    font-size: 80%;
+    text-align: center;
   }
 </style>

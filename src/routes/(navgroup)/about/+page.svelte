@@ -4,7 +4,7 @@
 
 <main>
   <h1>hii</h1>
-  <p style="margin-bottom: 44px;">
+  <p style="margin-bottom: 48px;">
     This is an ongoing rewrite of a rewrite of poggers.ltd/pogowanie - a site that tracks <em
       >osu! score leaderboards</em
     >.
@@ -73,7 +73,7 @@
     beyond that period.
     <br />
     <br />
-    If you're looking for today's ranking, that becomes available around <em>3:30 p.m. UTC</em>.
+    If you're looking for today's ranking, it becomes available around <em>3:45 p.m. UTC</em>.
     <br />
   </p>
   <h4>How does it work?</h4>
@@ -81,15 +81,17 @@
 
   <h2>Credits</h2>
   <p class="para">
-    90% of credit goes to respektive and <s
-      ><a class="a" href="https://osustats.respektive.pw" target="_blank" rel="noreferrer"
-        >osustats.respektive.pw</a
+    90% of credit goes to Piotrekol, Ezoda, and <s
+      ><a class="a" href="https://osustats.ppy.sh" target="_blank" rel="noreferrer"
+        >osustats.ppy.sh</a
       ></s
     >, the other 10% goes to stack overflow.
     <br />
-    This site also uses images from
-    <a class="a" href="https://osu.ppy.sh" target="_blank" rel="noreferrer">osu.ppy.sh</a>
-    and flag icons from
+    This site has no affiliation with
+    <a class="a" href="https://osu.ppy.sh" target="_blank" rel="noreferrer">osu.ppy.sh</a>, but uses
+    images from there.
+    <br />
+    Flag icons come from
     <a class="a" href="https://github.com/lipis/flag-icons" target="_blank" rel="noreferrer">
       this repository
     </a>.
@@ -101,23 +103,22 @@
       ><icon class="discord big" /> Scream at <code>hiihailey</code> in case something breaks;;</span>
     <br />
     <span class="centered"
-      ><icon class="github big" /> If you'd like to contribute mandarin translations or something,
+      ><icon class="github big" /> If you'd like to contribute mandarin translations or see where
+      your data is being sold to,
       <a class="a" href="https://github.com/hi021/poggersltd" target="_blank" rel="noreferrer"
         >here</a> is the full repo.</span>
   </p>
 
   <h2>poggers API</h2>
   <p class="para">
-    There's a little REST-like API, it's not private and possibly usable.<br />
+    There's a little REST-like API, it's not private and even possibly usable.<br />
     Basic documentation can be found <a href="/api">here</a>.
   </p>
 
   <h2>Other osu! stat-tracking sites</h2>
   <ul>
     <li>
-      <s
-        ><strong><a href="https://osustats.respektive.pw">respektive's osu!stats</a></strong> - the site
-        where all the data comes from with the full ranking including people below 1000 top 50s</s>
+      <s><strong><a href="https://osustats.respektive.pw">respektive's osu!stats</a></strong></s>
     </li>
     <li>
       <strong><a href="https://osustats.ppy.sh">osu!Stats</a></strong> - the original site for score

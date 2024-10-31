@@ -119,7 +119,7 @@ declare namespace App {
 
   interface RankingQuery {
     _id; //                                                  ranking entry date as YYYY-MM-DD string
-    country?: { $eq: string }; //                            2-uppercase-letter country code or "all"
+    country?: { $in: string[] }; //                            2-uppercase-letter country code or "all"
     rank?: { $lte: number; $gte: number }; //                rankMin - rankMax
   }
 }

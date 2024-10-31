@@ -9,22 +9,30 @@
     SCORE_CATEGORIES,
     tooltip
   } from "$lib/util";
+  import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
   import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
   import PlayerRecordStats from "$lib/components/Player/PlayerRecordStats.svelte";
+  import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
   import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
-  import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
-  import type { PageData } from "./$types";
+  import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
+  import { afterNavigate, goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import { fade } from "svelte/transition";
   import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
-  import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
-  import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
   let loading = false;
   let category = ($page.params.category || "top50") as App.RankingCategory | "all";
-  $: () => browser && goto(`/osu/player/${$page.params.idOrName}/${category}`);
+
+  const updateURL = () => {
+    if (!browser) return;
+    loading = true;
+    goto(`/osu/player/${$page.params.idOrName}/${category}`);
+  };
+
+  $: category, updateURL();
+  afterNavigate(() => (loading = false));
 </script>
 
 <svelte:head>
@@ -37,7 +45,7 @@
       <img id="avatar" class="unselectable" alt={data.name} src={getAvatarURL(data._id)} />
       <div class="column" style="width: 100%;">
         <div id="top-bar-top">
-          <span style="text-shadow: 0 1px 3px var(--color-dark);">{data.name}</span>
+          <span style="text-shadow: 0 1px 3px var(--color-darker);">{data.name}</span>
 
           {#if data.oldNames?.length}
             <icon class="profile-name" use:tooltip={{ content: data.oldNames.join(", ") }} />
@@ -67,7 +75,6 @@
             <button
               class="tab btn-none"
               type="button"
-              disabled={data[cat] == null}
               class:active={category === cat}
               on:click={() => (category = cat)}>
               {cat}
@@ -111,38 +118,38 @@
       <div class="main-container column flex-fill">
         {#if loading}
           <div class="overlay" transition:fade />
-        {:else}
-          <div class="data-container row">
-            {#if category === "all"}
-              {#each SCORE_CATEGORIES as cat}
-                {#if data[cat]}
-                  <PlayerAllCategoryStats
-                    country={data.country}
-                    title="{cat}s"
-                    playerCategory={data[cat]} />
-                {/if}
-              {/each}
-            {:else if data[category]}
-              <PlayerRecordStats playerCategory={data[category]} />
-              <div class="player-chart-stats-wrapper">
-                <PlayerScoresChart
-                  ranks={data.ranks}
-                  stats={data.stats}
-                  {category}
-                  playerId={data._id} />
-                {#if data.stats}
-                  <PlayerChartStats stats={data.stats} />
-                {/if}
-              </div>
-              <PlayerBasicStats playerCategory={data[category]} />
-            {:else}
-              <p class="solo-text">
-                No <em>{category}</em> stats for this player...<br />
-                <small>Check a different tab!</small>
-              </p>
-            {/if}
-          </div>
         {/if}
+        <!-- TODO: FIX FLICKER -->
+        <div class="data-container row">
+          {#if category === "all"}
+            {#each SCORE_CATEGORIES as cat}
+              {#if data[cat]}
+                <PlayerAllCategoryStats
+                  country={data.country}
+                  title="{cat}s"
+                  playerCategory={data[cat]} />
+              {/if}
+            {/each}
+          {:else if data[category]}
+            <PlayerRecordStats playerCategory={data[category]} />
+            <div class="player-chart-stats-wrapper">
+              <PlayerScoresChart
+                ranks={data.ranks}
+                stats={data.stats}
+                {category}
+                playerId={data._id} />
+              {#if data.stats}
+                <PlayerChartStats stats={data.stats} />
+              {/if}
+            </div>
+            <PlayerBasicStats playerCategory={data[category]} />
+          {:else}
+            <p class="solo-text">
+              No <em>{category}</em> stats for this player...<br />
+              <small>Check a different tab!</small>
+            </p>
+          {/if}
+        </div>
         {#if data[category]}
           <PlayerDate categoryStats={data[category]} />
         {/if}
@@ -266,7 +273,7 @@
     cursor: pointer;
     transition: none;
   }
-  .tab:not(:disabled):is(:hover, :focus, :focus-visible) {
+  .tab:not(:disabled):is(:hover, :focus) {
     box-shadow: none;
     outline-color: transparent;
     background-color: rgba(0, 0, 0, 0.4);
