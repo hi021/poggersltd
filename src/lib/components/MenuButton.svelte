@@ -9,7 +9,7 @@
   export let style = "";
 </script>
 
-<div class="btn-menu-main" use:tooltip={{ content: tooltipContent, options: { theme: "large" } }}>
+<div class="btn-menu-main" use:tooltip={{ content: tooltipContent, options: { theme: "large", placement: "bottom" } }}>
   <a {href}>
     <div
       class="btn-menu"

@@ -2,12 +2,14 @@
 // returns {ranks: Array<{rank: number, scores: number, day ([0 - (days - 1)] where 0 is most days ago): number} | null>, stats: {min & max ranks & scores}}
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
+import { DEFAULT_API_HEADERS, getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
 import { dbRankings } from "$lib/db";
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const route = `player/${params.idOrName}/ranks/${params.category}/${params.days}`;
   console.time(route);
+  setHeaders(DEFAULT_API_HEADERS);
+
   const scoreCategory = (params.category as App.RankingCategory) || "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
@@ -85,8 +87,8 @@ export const GET: RequestHandler = async ({ params }) => {
     });
   }
 
-  try {
     await Promise.all(promises);
+    console.timeEnd(route);
     return hasNonNull
       ? json({
           ranks: scoresArray,
@@ -102,9 +104,4 @@ export const GET: RequestHandler = async ({ params }) => {
           }
         })
       : json(null);
-  } catch (e) {
-    throw error(500, "Failed to fetch player ranks");
-  } finally {
-    console.timeEnd(route);
-  }
 };

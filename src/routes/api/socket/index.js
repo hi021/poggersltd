@@ -10,7 +10,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-// @ts-ignore
+// @ts-ignore - it's okay, mongo doesn't mind string ids
 const fetchSenkos = async () => (await dbMisc.findOne({ _id: "senkos" }))?.TOTAL || 0;
 
 /**
@@ -18,8 +18,8 @@ const fetchSenkos = async () => (await dbMisc.findOne({ _id: "senkos" }))?.TOTAL
  */
 async function setSenkos(toAdd) {
   const now = new Date().toISOString().slice(0, 10);
-  // @ts-ignore
   await dbMisc.updateOne(
+      // @ts-ignore - it's okay, mongo doesn't mind string ids
     { _id: "senkos" },
     { $inc: { TOTAL: toAdd, [now]: toAdd } },
     { upsert: true }

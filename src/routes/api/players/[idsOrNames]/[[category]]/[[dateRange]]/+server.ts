@@ -1,4 +1,5 @@
 import {
+    DEFAULT_API_HEADERS,
   getDaysBeforeDate,
   getDaysBetweenDates,
   getServerDate,
@@ -97,9 +98,11 @@ function calculatePlayerStats(
   };
 }
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const route = `players/${params.idsOrNames}/${params.category ?? ""}/${params.dateRange ?? ""}`;
   console.time(route);
+  setHeaders(DEFAULT_API_HEADERS);
+
   const scoreCategory = (params.category as App.RankingCategory) || "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) {
     console.timeEnd(route);
@@ -136,7 +139,7 @@ export const GET: RequestHandler = async ({ params }) => {
       ...prepareFetchPlayer(scoreCategory, tmpId, days, datesToFetch, players)
     );
   }
-  try {
+
     await Promise.all(allPlayerPromises);
     for (const i in players) {
       players[i].ranks = players[i].ranks
@@ -145,11 +148,6 @@ export const GET: RequestHandler = async ({ params }) => {
       players[i].stats = calculatePlayerStats(players[i].ranks);
     }
 
-    return json(players);
-  } catch (e) {
-    console.error(e);
-    throw error(500, "Internal server error");
-  } finally {
     console.timeEnd(route);
-  }
+    return json(players);
 };

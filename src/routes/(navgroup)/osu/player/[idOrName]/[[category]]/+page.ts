@@ -1,15 +1,12 @@
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({
   params,
   fetch
 }): Promise<App.Player & Partial<App.PlayerProfileRanks>> => {
-  try {
-    const category = params.category ?? "top50";
-    const resPlayer = await fetch(`/api/player/${params.idOrName}/${category}`);
-    if (!resPlayer.ok) throw error(resPlayer.status, resPlayer.statusText || "Oopsie");
+    const category = (params.category ?? "top50") as App.RankingCategory | "all";
 
+    const resPlayer = await fetch(`/api/player/${params.idOrName}/${category}`);
     const resPlayerJson: App.PlayerAPI = await resPlayer.json();
     if (category === "all") return resPlayerJson;
 
@@ -17,8 +14,4 @@ export const load: PageLoad = async ({
     const resRanksJson: App.PlayerProfileRanks = await resRanks.json();
 
     return { ...resPlayerJson, ...resRanksJson };
-  } catch (e: any) {
-    console.error(e);
-    throw error(e?.status ?? 500, e?.body?.message ?? "An unknown error has occurred");
-  }
 };

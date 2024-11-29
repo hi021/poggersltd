@@ -29,6 +29,7 @@
   let shadowColor = "#aaa";
   const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
   let audioElementPoggers: HTMLAudioElement;
+  let mainDivElement: HTMLElement;
 
   $: height = 20 + sessionCount * 0.5;
   $: shadowColor = "#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa");
@@ -42,7 +43,7 @@
 
   function handleClick() {
     const audio = audioElementPoggers.cloneNode(false) as HTMLAudioElement;
-    audio.volume = 0.45;
+    audio.volume = 0.42;
     audio.play();
 
     ++sessionCount;
@@ -50,7 +51,27 @@
     ++globalCountAnimated;
     localStorage.senko = ++localCount;
     socket.emit("senko-add", 1);
+
+    if(sessionCount % 5 == 2) spawnBackgroundPog()
   }
+
+function spawnBackgroundPog() {
+    if(!mainDivElement) return;
+
+    const fallDuration = `${Math.random() * 0.55 + 0.75}s`
+    const rotation = `${Math.random() * 90 - 45}deg`
+    const label = Math.random() > 0.5 ? "POG" : "pog"
+    const x = `${Math.random() * 95 + 5}%`
+    const pog = document.createElement('span')
+    pog.style.animationDuration = fallDuration
+    pog.style.rotate = rotation
+    pog.style.left = x
+    pog.onanimationend = () => pog.remove()
+    pog.textContent = label
+    pog.className = "background-pog"
+
+    mainDivElement.appendChild(pog)
+}
 </script>
 
 <svelte:head>
@@ -59,7 +80,7 @@
 
 <audio src="/poggers.mp3" bind:this={audioElementPoggers} />
 
-<main class="flex-center flex-fill">
+<main class="flex-center flex-fill" bind:this={mainDivElement}>
   {#if sessionCount}
     <span
       id="counter"
@@ -93,6 +114,7 @@
 
 <style>
   main {
+    position: relative;
     background-color: var(--color-lightest);
     color: var(--color-dark);
     overflow: hidden;
@@ -144,5 +166,30 @@
       width 0.125s ease,
       box-shadow 0.125s ease;
     z-index: 1;
+  }
+
+  :global(.background-pog) {
+    position: absolute;
+      font-size: 2.75rem;
+      font-weight: 700;
+      background: linear-gradient(75deg, var(--color-dark), var(--color-pink), var(--color-dark));
+      -webkit-background-clip: text;
+      -moz-background-clip: text;
+      background-clip: text;
+      outline-color: transparent;
+      color: transparent;
+      text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.6);
+      opacity: 0.5;
+    animation: pog-gravity 1s ease-in-out;
+    pointer-events: none;
+    z-index: 1;
+  }
+  @keyframes pog-gravity {
+    0% {
+        top: -10%;
+    }
+    100% {
+        top: 110%;
+    }
   }
 </style>

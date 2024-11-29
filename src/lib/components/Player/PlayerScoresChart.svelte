@@ -82,7 +82,7 @@
       </VisXYContainer>
     {/if}
   {:else}
-    <p class="solo-text">No data</p>
+    <p class="solo-text">No recent data</p>
   {/if}
 </div>
 

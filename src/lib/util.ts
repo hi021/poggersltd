@@ -179,6 +179,9 @@ export function tooltip(
 }
 
 // consts
+export const DEFAULT_CACHE_CONTROL = "max-age=300";
+export const DEFAULT_API_HEADERS = {'cache-control': DEFAULT_CACHE_CONTROL};
+
 export const MIN_DATE = "2020-05-10";
 
 export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
@@ -213,7 +216,7 @@ export const CHART_RANK_COLORS = [
   "#FF6D00"
 ];
 
-export const MAX_CHART_PLAYERS = 20;
+export const MAX_CHART_PLAYERS = 30;
 
 export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = {
   "5795337": { img: "/badges/pogu.png", title: "poggers" },

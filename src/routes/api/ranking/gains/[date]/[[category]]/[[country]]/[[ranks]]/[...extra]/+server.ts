@@ -1,4 +1,4 @@
-import { addDate, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
+import { addDate, DEFAULT_API_HEADERS, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
 import { dbRankings } from "$lib/db";
@@ -6,7 +6,7 @@ import { dbRankings } from "$lib/db";
 const sorting = (a: App.RankingEntry, b: App.RankingEntry) =>
   (a.gainedScores as number) < (b.gainedScores as number) ? 1 : -1;
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const scoreCategory = (params.category as App.RankingCategory) ?? "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
@@ -15,8 +15,10 @@ export const GET: RequestHandler = async ({ params }) => {
   if (date < MIN_DATE) throw error(400, `Invalid date - earliest possible is ${MIN_DATE}`);
   if (date > MAX_DATE) throw error(400, `Invalid date - latest possible is ${MAX_DATE}`);
 
-  try {
-    console.time("gains/" + date);
+  const route = `gains/${date}`
+  console.time(route);
+  setHeaders(DEFAULT_API_HEADERS);
+
     const query: App.RankingQuery = { _id: params.date };
 
     const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
@@ -31,11 +33,15 @@ export const GET: RequestHandler = async ({ params }) => {
     const rankingDataEnd = (
       await dbRankings.findOne(query, { projection: { [scoreCategory]: 1 } })
     )?.[scoreCategory] as unknown as App.RankingEntry[];
-    if (!rankingDataEnd?.length) return json([]);
+    if (!rankingDataEnd?.length) {
+        console.timeEnd(route);
+        return json([]);
+    }
 
     // use gained field without having to send a request to another date
     if (gainedDays === 1) {
       rankingDataEnd.filter((plr) => plr.gainedScores != null).sort(sorting);
+      console.timeEnd(route);
       return json(rankingDataEnd);
     }
 
@@ -46,7 +52,10 @@ export const GET: RequestHandler = async ({ params }) => {
         { projection: { [scoreCategory]: 1 } }
       )
     )?.[scoreCategory] as unknown as App.RankingEntry[];
-    if (!rankingDataStart?.length) return json([]);
+    if (!rankingDataStart?.length) {
+        console.timeEnd(route);
+        return json([]);
+    }
 
     const players = new Map();
     for (const i of rankingDataStart) players.set(i._id, { scores: i.scores, rank: i.rank });
@@ -66,11 +75,6 @@ export const GET: RequestHandler = async ({ params }) => {
     const playersArray = Array.from(players.values());
     playersArray.filter((plr) => plr.gainedScores != null).sort(sorting);
 
+    console.timeEnd(route);
     return json(playersArray);
-  } catch (e: any) {
-    console.error(e);
-    throw error(500, e?.message || "Internal server error");
-  } finally {
-    console.timeEnd("gains/" + date);
-  }
 };

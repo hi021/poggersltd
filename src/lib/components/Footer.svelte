@@ -1,6 +1,6 @@
 <footer>
-  <p>poggers limited 2024</p>
-  <small> v2024-10-21 </small>
+  <p>poggers limited ☻2024</p>
+  <small> v2024-12-21 </small>
 </footer>
 
 <style>
@@ -9,11 +9,14 @@
     background-color: var(--color-darkest);
     padding: 1rem 0.25rem;
     text-align: center;
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
   }
   p {
     margin: 1px 0;
+  }
+  small {
+    opacity: 0.8;
   }
 
   @media (width <= 40rem) {

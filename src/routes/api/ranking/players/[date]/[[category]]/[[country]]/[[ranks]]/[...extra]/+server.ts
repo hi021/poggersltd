@@ -1,9 +1,9 @@
-import { formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
+import { DEFAULT_API_HEADERS, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
 import { dbRankings } from "$lib/db";
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const scoreCategory = (params.category as App.RankingCategory) ?? "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
@@ -12,8 +12,10 @@ export const GET: RequestHandler = async ({ params }) => {
   if (date < MIN_DATE) throw error(400, `Invalid date - earliest possible is ${MIN_DATE}`);
   if (date > MAX_DATE) throw error(400, `Invalid date - latest possible is ${MAX_DATE}`);
 
-  try {
-    console.time("players/" + date);
+  const route = `players/${date}`
+    console.time(route);
+    setHeaders({...DEFAULT_API_HEADERS, "cache-control": "max-age=60"})
+
     const query: App.RankingQuery = { _id: params.date };
 
     const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
@@ -27,11 +29,7 @@ export const GET: RequestHandler = async ({ params }) => {
     const rankingData = await dbRankings.findOne(query, {
       projection: { [scoreCategory]: 1 }
     });
+
+    console.timeEnd(route);
     return json(rankingData?.[scoreCategory] ?? []);
-  } catch (e: any) {
-    console.error(e);
-    throw error(500, e?.message || "Internal server error");
-  } finally {
-    console.timeEnd("players/" + date);
-  }
 };

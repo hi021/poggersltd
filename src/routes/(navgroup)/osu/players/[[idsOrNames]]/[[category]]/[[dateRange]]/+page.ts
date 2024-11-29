@@ -1,4 +1,3 @@
-import { error } from "@sveltejs/kit";
 import { CHART_COLORS } from "$lib/util";
 import type { PageLoad } from "./$types";
 
@@ -9,13 +8,11 @@ export const load: PageLoad = async ({
   players: App.ComparisonChartPlayerCustomizable[];
   ranks: App.ComparisonChartEntryProcessed[];
 }> => {
-  try {
     const dateRangeString = params.dateRange ? `/${params.dateRange}` : "";
     const categoryString = params.category || dateRangeString ? `/${params.category}` : "";
     const resPlayers = await fetch(
       `/api/players/${params.idsOrNames}${categoryString}${dateRangeString}`
     );
-    if (!resPlayers.ok) throw error(resPlayers.status, resPlayers.statusText || "Oopsie");
 
     const resPlayersJson: App.ComparisonChartAPI = await resPlayers.json();
     const players: App.ComparisonChartPlayerCustomizable[] = [];
@@ -53,8 +50,4 @@ export const load: PageLoad = async ({
     }
 
     return { players, ranks: ranksArray.sort((a, b) => (a.date < b.date ? -1 : 1)) };
-  } catch (e: any) {
-    console.error(e);
-    throw error(e?.status ?? 500, e?.body?.message ?? "An unknown error has occurred");
-  }
 };

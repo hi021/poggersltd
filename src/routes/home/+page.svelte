@@ -26,7 +26,7 @@
     href="https://ht.poggers.ltd"
     label="Hardware Tycoon"
     backgroundImage="url(/ht_thumb.jpg)"
-    tooltipContent="Free browser strategy/management game about running a hardware company" />
+    tooltipContent="Free lil browser strategy/management game about running a hardware company" />
 </main>
 
 <Footer />
@@ -44,8 +44,9 @@
     background-position: 0 45%;
     background-repeat: no-repeat;
     box-shadow: 0 3px 2px var(--color-darkest);
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow: hidden;
   }
   header::before {
     content: "";

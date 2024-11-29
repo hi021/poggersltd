@@ -621,6 +621,7 @@ button:disabled {
   opacity: 0.8;
 }
 .solo-text em {
+    font-style: normal;
   color: var(--color-active);
 }
 /* MISC */

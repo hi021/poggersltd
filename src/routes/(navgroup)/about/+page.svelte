@@ -12,7 +12,7 @@
     Feel free to click around!
     <br />
     Most of the functionality is already implemented, but some of it lacks polish. I'll be working on
-    that!
+    that...
   </p>
 
   <h2>What's different?</h2>
@@ -26,11 +26,12 @@
 
   <h2>Caveats & inaccuracies</h2>
   <p class="para">
-    poggers.ltd gets its data from osu!Stats, which isn't too reliable. Here are some of the things
-    to keep in mind:
+    poggers.ltd gets its data from osu!Stats, which isn't too reliable.
+    <br />
+    Here are some of the things to keep in mind:
   </p>
   <ul>
-    <li>Only players with at least 1000 (or 1020 since November 1, 2024) top 50s are included.</li>
+    <li>Only players with at least 1000 (or 1020 since December 1?, 2024) top 50s are included.</li>
     <li>
       Only up to 150 players per country - the US is in trouble! It's an osu!Stats limitation that I
       can't do anything about.
@@ -89,7 +90,7 @@
     <br />
     This site has no affiliation with
     <a class="a" href="https://osu.ppy.sh" target="_blank" rel="noreferrer">osu.ppy.sh</a>, but uses
-    images from there.
+    some of its visual elements.
     <br />
     Flag icons come from
     <a class="a" href="https://github.com/lipis/flag-icons" target="_blank" rel="noreferrer">
@@ -111,8 +112,8 @@
 
   <h2>poggers API</h2>
   <p class="para">
-    There's a little REST-like API, it's not private and even possibly usable.<br />
-    Basic documentation can be found <a href="/api">here</a>.
+    There's a little REST-like API, it's probably usable if you'd like to use the site's data.<br />
+    Basic documentation can be found <a class="a" href="/api">here</a>.
   </p>
 
   <h2>Other osu! stat-tracking sites</h2>
@@ -133,8 +134,14 @@
       satisfying charts
     </li>
     <li>
+        <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great stats & clans ☻
+    </li>
+    <li>
       <strong><a href="https://osudaily.net">osu!daily</a></strong> - lots of rankings like playcount,
       SS count, etc. & automatic daily profile stats tracking similar to osu!track
+    </li>
+    <li>
+        <strong><a href="https://inex.osekai.net">Osekai</a></strong> - everything about medals and more interesting stats
     </li>
     <li>
       <strong><a href="https://osuskills.com">osu!Skills</a></strong> - pp ranking but even more broken
@@ -151,23 +158,27 @@
     font-weight: 700;
   }
   h2 {
-    margin-top: 22px;
+      font-weight: 400;
+      background-color: rgba(0, 0, 0, 0.3);
+    margin-top: 30px;
     margin-bottom: -6px;
-    font-weight: 400;
-    background-color: rgba(0, 0, 0, 0.3);
     padding: 8px;
     border-radius: 8px;
+    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.3);
+  }
+  h4 {
+    margin-bottom: 1px;
   }
   em {
     color: var(--color-active);
     font-style: normal;
   }
   ul {
-    line-height: 1.5;
+    line-height: 1.75;
   }
 
   .para {
-    padding-inline-start: 1rem;
+    padding-inline-start: 1.25rem;
   }
   .centered {
     display: inline-flex;
