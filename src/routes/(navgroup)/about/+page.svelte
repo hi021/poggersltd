@@ -134,14 +134,16 @@
       satisfying charts
     </li>
     <li>
-        <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great stats & clans ☻
+      <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great stats
+      & clans ☻
     </li>
     <li>
       <strong><a href="https://osudaily.net">osu!daily</a></strong> - lots of rankings like playcount,
       SS count, etc. & automatic daily profile stats tracking similar to osu!track
     </li>
     <li>
-        <strong><a href="https://inex.osekai.net">Osekai</a></strong> - everything about medals and more interesting stats
+      <strong><a href="https://inex.osekai.net">Osekai</a></strong> - everything about medals and more
+      interesting stats
     </li>
     <li>
       <strong><a href="https://osuskills.com">osu!Skills</a></strong> - pp ranking but even more broken
@@ -158,13 +160,13 @@
     font-weight: 700;
   }
   h2 {
-      font-weight: 400;
-      background-color: rgba(0, 0, 0, 0.3);
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0.3);
     margin-top: 30px;
     margin-bottom: -6px;
     padding: 8px;
     border-radius: 8px;
-    box-shadow: 0 2px 3px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.3);
   }
   h4 {
     margin-bottom: 1px;

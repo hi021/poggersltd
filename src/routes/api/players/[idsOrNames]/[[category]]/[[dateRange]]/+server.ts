@@ -1,5 +1,5 @@
 import {
-    DEFAULT_API_HEADERS,
+  DEFAULT_API_HEADERS,
   getDaysBeforeDate,
   getDaysBetweenDates,
   getServerDate,
@@ -140,14 +140,14 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
     );
   }
 
-    await Promise.all(allPlayerPromises);
-    for (const i in players) {
-      players[i].ranks = players[i].ranks
-        .filter((a) => a)
-        .sort((a, b) => ((a?.date ?? "0") < (b?.date ?? "0") ? 1 : -1));
-      players[i].stats = calculatePlayerStats(players[i].ranks);
-    }
+  await Promise.all(allPlayerPromises);
+  for (const i in players) {
+    players[i].ranks = players[i].ranks
+      .filter((a) => a)
+      .sort((a, b) => ((a?.date ?? "0") < (b?.date ?? "0") ? 1 : -1));
+    players[i].stats = calculatePlayerStats(players[i].ranks);
+  }
 
-    console.timeEnd(route);
-    return json(players);
+  console.timeEnd(route);
+  return json(players);
 };

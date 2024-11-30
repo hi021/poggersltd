@@ -52,26 +52,26 @@
     localStorage.senko = ++localCount;
     socket.emit("senko-add", 1);
 
-    if(sessionCount % 5 == 2) spawnBackgroundPog()
+    if (sessionCount % 5 == 2) spawnBackgroundPog();
   }
 
-function spawnBackgroundPog() {
-    if(!mainDivElement) return;
+  function spawnBackgroundPog() {
+    if (!mainDivElement) return;
 
-    const fallDuration = `${Math.random() * 0.55 + 0.75}s`
-    const rotation = `${Math.random() * 90 - 45}deg`
-    const label = Math.random() > 0.5 ? "POG" : "pog"
-    const x = `${Math.random() * 95 + 5}%`
-    const pog = document.createElement('span')
-    pog.style.animationDuration = fallDuration
-    pog.style.rotate = rotation
-    pog.style.left = x
-    pog.onanimationend = () => pog.remove()
-    pog.textContent = label
-    pog.className = "background-pog"
+    const fallDuration = `${Math.random() * 0.55 + 0.75}s`;
+    const rotation = `${Math.random() * 90 - 45}deg`;
+    const label = Math.random() > 0.5 ? "POG" : "pog";
+    const x = `${Math.random() * 95 + 5}%`;
+    const pog = document.createElement("span");
+    pog.style.animationDuration = fallDuration;
+    pog.style.rotate = rotation;
+    pog.style.left = x;
+    pog.onanimationend = () => pog.remove();
+    pog.textContent = label;
+    pog.className = "background-pog";
 
-    mainDivElement.appendChild(pog)
-}
+    mainDivElement.appendChild(pog);
+  }
 </script>
 
 <svelte:head>
@@ -170,26 +170,26 @@ function spawnBackgroundPog() {
 
   :global(.background-pog) {
     position: absolute;
-      font-size: 2.75rem;
-      font-weight: 700;
-      background: linear-gradient(75deg, var(--color-dark), var(--color-pink), var(--color-dark));
-      -webkit-background-clip: text;
-      -moz-background-clip: text;
-      background-clip: text;
-      outline-color: transparent;
-      color: transparent;
-      text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.6);
-      opacity: 0.5;
+    font-size: 2.75rem;
+    font-weight: 700;
+    background: linear-gradient(75deg, var(--color-dark), var(--color-pink), var(--color-dark));
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    outline-color: transparent;
+    color: transparent;
+    text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.6);
+    opacity: 0.5;
     animation: pog-gravity 1s ease-in-out;
     pointer-events: none;
     z-index: 1;
   }
   @keyframes pog-gravity {
     0% {
-        top: -10%;
+      top: -10%;
     }
     100% {
-        top: 110%;
+      top: 110%;
     }
   }
 </style>

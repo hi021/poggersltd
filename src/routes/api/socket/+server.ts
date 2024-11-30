@@ -2,8 +2,8 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 import { dbMisc } from "$lib/db";
 
 export const GET: RequestHandler = async () => {
-    const route = "socket/"
-    console.time(route);
+  const route = "socket/";
+  console.time(route);
 
   try {
     const senkos = (await dbMisc.findOne({ _id: "senkos" as any })) as Record<string, number>;

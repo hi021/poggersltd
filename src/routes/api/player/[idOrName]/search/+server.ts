@@ -6,7 +6,7 @@ import { dbPlayers } from "$lib/db";
 import { DEFAULT_API_HEADERS } from "$lib/util";
 
 export const GET: RequestHandler = async ({ params, url, setHeaders }) => {
-    setHeaders(DEFAULT_API_HEADERS);
+  setHeaders(DEFAULT_API_HEADERS);
   const nameQuery = params.idOrName;
   if (nameQuery?.length < 3) throw error(400, "Name query must be at least 3 characters long");
 
@@ -18,6 +18,6 @@ export const GET: RequestHandler = async ({ params, url, setHeaders }) => {
       ? { name: { $eq: nameQuery } }
       : { $text: { $search: nameQuery } };
 
-    const players = await dbPlayers.find(query, { projection }).limit(limit).toArray();
-    return players?.length ? json(players) : json([]);
+  const players = await dbPlayers.find(query, { projection }).limit(limit).toArray();
+  return players?.length ? json(players) : json([]);
 };

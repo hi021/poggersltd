@@ -87,21 +87,21 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
     });
   }
 
-    await Promise.all(promises);
-    console.timeEnd(route);
-    return hasNonNull
-      ? json({
-          ranks: scoresArray,
-          stats: {
-            minRank,
-            maxRank,
-            minScores,
-            maxScores,
-            startRank,
-            endRank,
-            startScores,
-            endScores
-          }
-        })
-      : json(null);
+  await Promise.all(promises);
+  console.timeEnd(route);
+  return hasNonNull
+    ? json({
+        ranks: scoresArray,
+        stats: {
+          minRank,
+          maxRank,
+          minScores,
+          maxScores,
+          startRank,
+          endRank,
+          startScores,
+          endScores
+        }
+      })
+    : json(null);
 };

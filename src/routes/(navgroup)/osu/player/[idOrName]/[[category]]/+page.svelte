@@ -16,6 +16,7 @@
   import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
   import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
   import { afterNavigate, goto } from "$app/navigation";
+  import { quintOut } from "svelte/easing";
   import { browser } from "$app/environment";
   import { fade } from "svelte/transition";
   import { page } from "$app/stores";
@@ -117,39 +118,39 @@
       </aside>
       <div class="main-container column flex-fill">
         {#if loading}
-          <div class="overlay" transition:fade />
+          <div class="overlay" transition:fade={{ easing: quintOut, duration: 100 }} />
+        {:else}
+          <div class="data-container row">
+            {#if category === "all"}
+              {#each SCORE_CATEGORIES as cat}
+                {#if data[cat]}
+                  <PlayerAllCategoryStats
+                    country={data.country}
+                    title="{cat}s"
+                    playerCategory={data[cat]} />
+                {/if}
+              {/each}
+            {:else if data[category]}
+              <PlayerRecordStats playerCategory={data[category]} />
+              <div class="player-chart-stats-wrapper">
+                <PlayerScoresChart
+                  ranks={data.ranks}
+                  stats={data.stats}
+                  {category}
+                  playerId={data._id} />
+                {#if data.stats}
+                  <PlayerChartStats stats={data.stats} />
+                {/if}
+              </div>
+              <PlayerBasicStats playerCategory={data[category]} />
+            {:else if !loading}
+              <p class="solo-text">
+                No <em>{category}</em> stats for this player...<br />
+                <small>Check a different tab!</small>
+              </p>
+            {/if}
+          </div>
         {/if}
-        <!-- TODO: FIX FLICKER -->
-        <div class="data-container row">
-          {#if category === "all"}
-            {#each SCORE_CATEGORIES as cat}
-              {#if data[cat]}
-                <PlayerAllCategoryStats
-                  country={data.country}
-                  title="{cat}s"
-                  playerCategory={data[cat]} />
-              {/if}
-            {/each}
-          {:else if data[category]}
-            <PlayerRecordStats playerCategory={data[category]} />
-            <div class="player-chart-stats-wrapper">
-              <PlayerScoresChart
-                ranks={data.ranks}
-                stats={data.stats}
-                {category}
-                playerId={data._id} />
-              {#if data.stats}
-                <PlayerChartStats stats={data.stats} />
-              {/if}
-            </div>
-            <PlayerBasicStats playerCategory={data[category]} />
-          {:else}
-            <p class="solo-text">
-              No <em>{category}</em> stats for this player...<br />
-              <small>Check a different tab!</small>
-            </p>
-          {/if}
-        </div>
         {#if data[category]}
           <PlayerDate categoryStats={data[category]} />
         {/if}
@@ -255,6 +256,7 @@
   }
   .overlay {
     --color-base: 0, 0, 0;
+    position: absolute;
     backdrop-filter: blur(5px);
     margin-left: calc(-1 * var(--pad));
   }

@@ -180,7 +180,7 @@ export function tooltip(
 
 // consts
 export const DEFAULT_CACHE_CONTROL = "max-age=300";
-export const DEFAULT_API_HEADERS = {'cache-control': DEFAULT_CACHE_CONTROL};
+export const DEFAULT_API_HEADERS = { "cache-control": DEFAULT_CACHE_CONTROL };
 
 export const MIN_DATE = "2020-05-10";
 
