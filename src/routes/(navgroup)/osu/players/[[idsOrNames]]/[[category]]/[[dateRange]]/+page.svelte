@@ -13,42 +13,76 @@
   import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
   import UserSearch from "$lib/components/UserSearch.svelte";
   import Loader from "$lib/components/Loader.svelte";
-  import { afterNavigate, goto } from "$app/navigation";
+  import { afterNavigate, goto, replaceState, pushState } from "$app/navigation";
+  import {
+    _mergePlayerRanksIntoExistingArray,
+    _processResult,
+    _setExistingPlayerColors
+  } from "./+page";
   import { fade, fly, slide } from "svelte/transition";
+  import { quartOut } from "svelte/easing";
   import { page } from "$app/stores";
   import type { PageData } from "./$types";
 
   export let data: PageData;
   const now = formatDate(new Date(), true);
+
   let loading = false;
   let playersPanelVisible = true;
   let category = ($page.params.category || "top50") as App.RankingCategory;
-  let dateFrom = $page.params.dateRange?.split(" ")?.[0];
-  let dateTo = $page.params.dateRange?.split(" ")?.[1];
+  let currentRange: App.DateRange = {
+    start: $page.params.dateRange?.split(" ")?.[0],
+    end: $page.params.dateRange?.split(" ")?.[1]
+  };
+  let previousRange = { ...currentRange };
   let comparePlayerName: string;
   let editingPlayerIndex: number | null = null;
   let userSearchComponent: UserSearch;
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
-    const idsOrNames = $page.params.idsOrNames ? $page.params.idsOrNames + "," : "";
-    refreshUrl(idsOrNames + _id);
+    addPlayers([_id.toString()]);
     comparePlayerName = "";
   };
 
-  const refreshUrl = (
-    idsOrNames = $page.params.idsOrNames,
-    newCategory: string = category,
-    newDateFrom = dateFrom,
-    newDateTo = dateTo,
-    replaceState = true
-  ) => {
-    loading = true;
-    if (!idsOrNames) return goto("/osu/players", { replaceState });
+  const getCurrentPlayerIdsString = (addIds?: Array<number | string>) => {
+    const currentIds = new Set<string | number>(addIds?.length ? addIds : null);
+    for (const player of data.players) currentIds.add(player.id);
 
-    const rangeString = newDateFrom || newDateTo ? `/${newDateFrom ?? ""} ${newDateTo ?? ""}` : "";
+    return [...currentIds].join(",");
+  };
+
+  const updateUrl = (
+    args: Partial<{
+      idsOrNames: string;
+      category: string;
+      dateFrom: string;
+      dateTo: string;
+      replaceState: boolean;
+      reloadData: boolean;
+    }>
+  ) => {
+    const idsOrNames = args.idsOrNames == null ? getCurrentPlayerIdsString() : args.idsOrNames;
+    const newCategory = args.category == null ? category : args.category;
+    const dateFrom = args.dateFrom == null ? currentRange.start : args.dateFrom;
+    const dateTo = args.dateTo == null ? currentRange.end : args.dateTo;
+    const toReplaceState = args.replaceState == null ? true : args.replaceState;
+    const reloadData = args.reloadData == null ? false : args.reloadData;
+
+    loading = true;
+    if (!idsOrNames) return goto("/osu/players", { replaceState: toReplaceState });
+
+    const rangeString = dateFrom || dateTo ? `/${dateFrom ?? ""} ${dateTo ?? ""}` : "";
     const categoryString = rangeString || newCategory ? `/${newCategory ?? ""}` : "";
-    goto(`/osu/players/${idsOrNames}${categoryString}${rangeString}`, { replaceState });
+    const newUrl = `/osu/players/${idsOrNames}${categoryString}${rangeString}`;
+
+    if (reloadData) {
+      goto(newUrl, { replaceState: toReplaceState, keepFocus: true });
+      return;
+    } else if (toReplaceState) replaceState(newUrl, $page.params);
+    else pushState(newUrl, $page.params);
+
+    loading = false;
   };
 
   const removePlayer = (id: string) => {
@@ -61,10 +95,42 @@
       (idsOrNames, player) => idsOrNames + player.id + ",",
       ""
     );
-    refreshUrl(idsOrNames.slice(0, idsOrNames.length - 1), undefined, undefined, undefined, true);
+    updateUrl({ idsOrNames: idsOrNames.slice(0, idsOrNames.length - 1) });
   };
 
-  const clearPlayers = () => refreshUrl("", "", "", "");
+  const clearPlayers = () => updateUrl({ idsOrNames: "" });
+
+  const addPlayers = async (ids: string[]) => {
+    loading = true;
+    const rangeString =
+      currentRange.start || currentRange.end
+        ? `/${currentRange.start ?? ""} ${currentRange.end ?? ""}`
+        : "";
+
+    const res = await fetch(`/api/players/${ids.join(",")}/${category}${rangeString}`);
+    const resJson: App.ComparisonChartAPI = await res.json();
+    const resJsonProcessed = _processResult(resJson);
+    if (resJsonProcessed?.players?.length) {
+      updateUrl({ idsOrNames: getCurrentPlayerIdsString(ids), reloadData: false });
+      data = {
+        players: [...data.players, ...resJsonProcessed.players],
+        ranks: _mergePlayerRanksIntoExistingArray(resJsonProcessed.ranks, data.ranks)
+      };
+      _setExistingPlayerColors(data.players);
+    }
+
+    loading = false;
+  };
+
+  const isRangeContainedWithin = (subRange: App.DateRange, masterRange: App.DateRange) =>
+    (!masterRange.start || (subRange.start || MIN_DATE) >= masterRange.start) &&
+    (!masterRange.end || (subRange.end || now) <= masterRange.end);
+
+  const onDateChange = () => {
+    const reloadData = !isRangeContainedWithin(currentRange, previousRange);
+    previousRange = { ...currentRange };
+    updateUrl({ dateFrom: currentRange.start, dateTo: currentRange.end, reloadData });
+  };
 
   afterNavigate(() => {
     loading = false;
@@ -83,7 +149,7 @@
 
   <aside class="column" class:collapsed={!playersPanelVisible}>
     {#if loading}
-      <div class="overlay" transition:fade>
+      <div class="overlay" transition:fade={{ easing: quartOut, duration: 150 }}>
         <Loader />
       </div>
     {/if}
@@ -114,6 +180,9 @@
             on:remove={(e) => removePlayer(e.detail)}
             on:close={() => (editingPlayerIndex = null)} />
         {/if}
+        <!-- on:compareNeighbors={() => compareNeighbors()} -->
+        <!-- TODO: either fetch rank for compareNeighbors too, or do it from the db earlier -->
+        <!-- also add a progressive load instead of refreshing all -->
 
         <form class="aside-inputs-container">
           <UserSearch
@@ -127,22 +196,22 @@
             <input
               class="input-dark normal-size"
               min={MIN_DATE}
-              max={dateTo || now}
+              max={currentRange.end || now}
               title="Beginning of date range"
               type="date"
               disabled={loading}
-              bind:value={dateFrom}
-              on:change={() => refreshUrl()} />
+              bind:value={currentRange.start}
+              on:change={onDateChange} />
             <span>to</span>
             <input
               class="input-dark normal-size"
-              min={dateFrom || MIN_DATE}
+              min={currentRange.start || MIN_DATE}
               max={now}
               title="End of date range"
               type="date"
               disabled={loading}
-              bind:value={dateTo}
-              on:change={() => refreshUrl()} />
+              on:change={onDateChange}
+              bind:value={currentRange.end} />
           </span>
 
           <select
@@ -150,7 +219,7 @@
             title="Score category"
             disabled={loading}
             bind:value={category}
-            on:change={() => refreshUrl()}>
+            on:change={() => updateUrl({})}>
             {#each SCORE_CATEGORIES as cat}
               <option>{cat}</option>
             {/each}

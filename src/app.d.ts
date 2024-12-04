@@ -9,7 +9,8 @@ declare namespace App {
   //      DOCUMENT every ranking category: {_id: category, ranking: MostGainedRanking[]}
 
   type RankingCategory = "top50" | "top25" | "top8" | "top1";
-  type AllRankingCategory = RankingCategory | "top100" | "top15"; // only saved in .jsons, not in database
+  type AllRankingCategory = RankingCategory | "top100" | "top15"; // only locally saved to .jsons, not in database
+  type DateRange = Partial<{ start: string; end: string }>;
 
   interface PlayerInfoCommon {
     _id: number; //                                          osu! id

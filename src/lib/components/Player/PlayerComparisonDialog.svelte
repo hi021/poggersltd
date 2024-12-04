@@ -2,7 +2,7 @@
   import { CHART_COLORS, formatNumber, getDaysBetweenDates, tooltip } from "$lib/util";
   import { createEventDispatcher, onMount } from "svelte";
 
-  const dispatch = createEventDispatcher<{ remove: string; close: void }>();
+  const dispatch = createEventDispatcher<{ remove: string; close: void; compareNeighbors: void }>();
   let editPlayerDialog: HTMLDialogElement;
 
   export let player: App.ComparisonChartPlayerCustomizable & {
@@ -102,6 +102,13 @@
       <span class="player-stat-value">#{formatNumber(player.stats.maxRank, ",")}</span>
     </li>
   </ul>
+
+  <button
+    type="button"
+    use:tooltip={{ content: "Compare against neighbors" }}
+    on:click={() => dispatch("compareNeighbors")}>
+    <icon class="" />
+  </button>
 
   <button
     type="button"

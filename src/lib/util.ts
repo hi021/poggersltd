@@ -15,6 +15,42 @@ export function isObjEmpty(obj: Record<any, unknown>) {
   return true;
 }
 
+export function mergeObjectArraysOnField<K extends string | number | symbol, V>(
+  arraySrc: Array<Record<K, V>>,
+  arrayDest: Array<Record<K, V>>,
+  field: K,
+  nestedField?: K
+) {
+  const objResult = {} as Record<K, V>;
+  //@ts-ignore - I honestly don't know what I'm trying to do | also this nestedField workaround is so piss
+  for (const objDest of arrayDest)
+    objResult[objDest[field]] = nestedField ? objDest[nestedField] : objDest;
+  //@ts-ignore
+  for (const objSrc of arraySrc)
+    objResult[objSrc[field]] = {
+      ...objResult[objSrc[field]],
+      ...(nestedField ? objSrc[nestedField] : objSrc)
+    };
+
+  return objResult;
+}
+
+// export function mergeNestedObjects<K extends string | number | symbol, V>(objSrc: Record<K, V>, objDest: Record<K, V>) {
+// const objResult = {} as Record<K, V>
+// for(const field in objSrc) {
+//     const valSrc = objSrc[field]
+//     const valDest = objDest[field]
+//     if(Array.isArray(valSrc))
+//         objResult[field] = [...valDest, ...valSrc]
+//     else if(typeof valSrc === 'object' && valSrc !== null )
+//     objResult[field] = mergeNestedObjects(valSrc, valDest)
+// else
+// objResult[field] = valSrc
+// }
+
+// return objResult
+// }
+
 export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, toRemove = null) {
   if (trimEnd) while (arr?.length && arr[arr.length - 1] == toRemove) arr.pop();
   if (trimStart) while (arr?.length && arr[0] == toRemove) arr.shift();
