@@ -4,6 +4,7 @@
     formatDate,
     getAvatarURL,
     getOsuProfileURL,
+    isRangeContainedWithin,
     MAX_CHART_PLAYERS,
     MIN_DATE,
     SCORE_CATEGORIES,
@@ -41,8 +42,10 @@
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
+
     addPlayers([_id.toString()]);
     comparePlayerName = "";
+    return true;
   };
 
   const getCurrentPlayerIdsString = (addIds?: Array<number | string>) => {
@@ -51,6 +54,9 @@
 
     return [...currentIds].join(",");
   };
+
+  const getDateRangeString = (start?: string, end?: string) =>
+    start || end ? `/${start ?? ""} ${end ?? ""}` : "";
 
   const updateUrl = (
     args: Partial<{
@@ -72,7 +78,7 @@
     loading = true;
     if (!idsOrNames) return goto("/osu/players", { replaceState: toReplaceState });
 
-    const rangeString = dateFrom || dateTo ? `/${dateFrom ?? ""} ${dateTo ?? ""}` : "";
+    const rangeString = getDateRangeString(dateFrom, dateTo);
     const categoryString = rangeString || newCategory ? `/${newCategory ?? ""}` : "";
     const newUrl = `/osu/players/${idsOrNames}${categoryString}${rangeString}`;
 
@@ -95,41 +101,54 @@
       (idsOrNames, player) => idsOrNames + player.id + ",",
       ""
     );
+
     updateUrl({ idsOrNames: idsOrNames.slice(0, idsOrNames.length - 1) });
   };
 
   const clearPlayers = () => updateUrl({ idsOrNames: "" });
 
-  const addPlayers = async (ids: string[]) => {
+  const addPlayers = async (ids: Array<number | string>) => {
     loading = true;
-    const rangeString =
-      currentRange.start || currentRange.end
-        ? `/${currentRange.start ?? ""} ${currentRange.end ?? ""}`
-        : "";
+    const rangeString = getDateRangeString(currentRange.start, currentRange.end);
 
-    const res = await fetch(`/api/players/${ids.join(",")}/${category}${rangeString}`);
+    const res = await fetch(
+      `/api/players/${ids.join(",")}/${category}${rangeString}?setColors=false`
+    );
     const resJson: App.ComparisonChartAPI = await res.json();
     const resJsonProcessed = _processResult(resJson);
+
     if (resJsonProcessed?.players?.length) {
       updateUrl({ idsOrNames: getCurrentPlayerIdsString(ids), reloadData: false });
+      const playersMerged = [...data.players, ...resJsonProcessed.players];
+      _setExistingPlayerColors(playersMerged);
+
       data = {
-        players: [...data.players, ...resJsonProcessed.players],
+        players: playersMerged,
         ranks: _mergePlayerRanksIntoExistingArray(resJsonProcessed.ranks, data.ranks)
       };
-      _setExistingPlayerColors(data.players);
     }
 
     loading = false;
   };
 
-  const isRangeContainedWithin = (subRange: App.DateRange, masterRange: App.DateRange) =>
-    (!masterRange.start || (subRange.start || MIN_DATE) >= masterRange.start) &&
-    (!masterRange.end || (subRange.end || now) <= masterRange.end);
-
   const onDateChange = () => {
-    const reloadData = !isRangeContainedWithin(currentRange, previousRange);
+    const reloadData = !isRangeContainedWithin(currentRange, previousRange, now);
     previousRange = { ...currentRange };
     updateUrl({ dateFrom: currentRange.start, dateTo: currentRange.end, reloadData });
+  };
+
+  const compareNeighbors = async (id: string) => {
+    if (loading) return;
+    loading = true;
+
+    const res = await fetch(`/api/player/${id}/neighbors/${category}`);
+    const resJson: number[] = await res.json();
+    if (!resJson?.length) {
+      loading = false;
+      return;
+    }
+
+    addPlayers(resJson);
   };
 
   afterNavigate(() => {
@@ -178,11 +197,10 @@
             {category}
             verticalIndex={Math.min(11, data.players.length - 1 - (editingPlayerIndex ?? 0))}
             on:remove={(e) => removePlayer(e.detail)}
-            on:close={() => (editingPlayerIndex = null)} />
+            on:close={() => (editingPlayerIndex = null)}
+            on:goToProfile={(e) => goto(`/osu/player/${e.detail}`)}
+            on:compareNeighbors={(e) => compareNeighbors(e.detail)} />
         {/if}
-        <!-- on:compareNeighbors={() => compareNeighbors()} -->
-        <!-- TODO: either fetch rank for compareNeighbors too, or do it from the db earlier -->
-        <!-- also add a progressive load instead of refreshing all -->
 
         <form class="aside-inputs-container">
           <UserSearch
@@ -200,8 +218,8 @@
               title="Beginning of date range"
               type="date"
               disabled={loading}
-              bind:value={currentRange.start}
-              on:change={onDateChange} />
+              on:change={onDateChange}
+              bind:value={currentRange.start} />
             <span>to</span>
             <input
               class="input-dark normal-size"

@@ -6,6 +6,17 @@ export function formatNumber(number: number | string, delimiter = " "): string {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
 }
 
+export function isRangeContainedWithin(
+  subRange: App.DateRange,
+  masterRange: App.DateRange,
+  now: string
+) {
+  return (
+    (!masterRange.start || (subRange.start || MIN_DATE) >= masterRange.start) &&
+    (!masterRange.end || (subRange.end || now) <= masterRange.end)
+  );
+}
+
 export function arraysEqual(arr1: unknown[], arr2: unknown[]) {
   return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 }
@@ -28,28 +39,13 @@ export function mergeObjectArraysOnField<K extends string | number | symbol, V>(
   //@ts-ignore
   for (const objSrc of arraySrc)
     objResult[objSrc[field]] = {
+      //@ts-ignore
       ...objResult[objSrc[field]],
       ...(nestedField ? objSrc[nestedField] : objSrc)
     };
 
   return objResult;
 }
-
-// export function mergeNestedObjects<K extends string | number | symbol, V>(objSrc: Record<K, V>, objDest: Record<K, V>) {
-// const objResult = {} as Record<K, V>
-// for(const field in objSrc) {
-//     const valSrc = objSrc[field]
-//     const valDest = objDest[field]
-//     if(Array.isArray(valSrc))
-//         objResult[field] = [...valDest, ...valSrc]
-//     else if(typeof valSrc === 'object' && valSrc !== null )
-//     objResult[field] = mergeNestedObjects(valSrc, valDest)
-// else
-// objResult[field] = valSrc
-// }
-
-// return objResult
-// }
 
 export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, toRemove = null) {
   if (trimEnd) while (arr?.length && arr[arr.length - 1] == toRemove) arr.pop();
