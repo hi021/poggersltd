@@ -1,9 +1,9 @@
 // get scores from `category` from the last `days` days (defaults to 90)
 // returns {ranks: Array<{rank: number, scores: number, day ([0 - (days - 1)] where 0 is most days ago): number} | null>, stats: {min & max ranks & scores}}
+import { DEFAULT_API_HEADERS, getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
+import { dbRankings, prepareAggregationProjectionForIdOrName } from "$lib/db";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { DEFAULT_API_HEADERS, getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
-import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const route = `player/${params.idOrName}/ranks/${params.category}/${params.days}`;
@@ -13,26 +13,13 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const scoreCategory = (params.category as App.RankingCategory) || "top50";
   if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
-  const playerId = parseInt(params.idOrName);
   let days = Number(params.days);
   if (isNaN(days) || days < 1) days = 90;
 
   const datesToFetch = getDaysBeforeDate(days);
   const scoresArray = new Array<App.PlayerChartEntry>(days);
   const promises = new Array<Promise<any>>(days);
-  const project = {
-    $project: {
-      [scoreCategory]: {
-        $filter: {
-          input: "$" + scoreCategory,
-          as: "cat",
-          cond: {
-            $eq: isNaN(playerId) ? ["$$cat.name", params.idOrName] : ["$$cat._id", playerId]
-          }
-        }
-      }
-    }
-  };
+  const project = prepareAggregationProjectionForIdOrName(params.idOrName, scoreCategory);
 
   // this is kind of poop, honestly just iterate over the array after all promises resolve
   let hasNonNull = false; // set on first iteration that finds any stats

@@ -1,7 +1,18 @@
+import {
+  DEFAULT_API_HEADERS,
+  formatDate,
+  LONG_CACHE_CONTROL,
+  MIN_DATE,
+  SCORE_CATEGORIES,
+  SHORT_CACHE_CONTROL
+} from "$lib/util";
+import {
+  dbRankings,
+  prepareQueryObjectForCountryCodes,
+  prepareQueryObjectForRankRange
+} from "$lib/db";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { DEFAULT_API_HEADERS, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
-import { dbRankings } from "$lib/db";
 
 export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const scoreCategory = (params.category as App.RankingCategory) ?? "top50";
@@ -12,19 +23,15 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   if (date < MIN_DATE) throw error(400, `Invalid date - earliest possible is ${MIN_DATE}`);
   if (date > MAX_DATE) throw error(400, `Invalid date - latest possible is ${MAX_DATE}`);
 
-  const route = `countries/${date}`;
+  const route = `countries/${date}/${params.category ?? ""}/${params.country ?? ""}/${params.ranks ?? ""}/${params.extra ?? ""}`;
   console.time(route);
-  setHeaders(DEFAULT_API_HEADERS);
+
+  const maxAge = MAX_DATE == formatDate(new Date()) ? SHORT_CACHE_CONTROL : LONG_CACHE_CONTROL;
+  setHeaders({ ...DEFAULT_API_HEADERS, "cache-control": maxAge });
 
   const query: App.RankingQuery = { _id: params.date };
-
-  const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
-  const rankMin = Number(ranks[0]) ?? 0;
-  const rankMax = Number(ranks[1]) || Infinity;
-  if (rankMin > 1 || rankMax < Infinity) query.rank = { $lte: rankMax, $gte: rankMin };
-
-  if (params.country && params.country.toLowerCase() != "all")
-    query.country = { $in: params.country.toUpperCase().split(",") };
+  query.rank = prepareQueryObjectForRankRange(params.ranks);
+  query.country = prepareQueryObjectForCountryCodes(params.country);
 
   const rankingData = await dbRankings.findOne(query, {
     projection: { [scoreCategory]: 1 }

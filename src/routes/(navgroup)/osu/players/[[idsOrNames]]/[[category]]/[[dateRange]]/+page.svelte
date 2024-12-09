@@ -1,11 +1,14 @@
 <script lang="ts">
   import {
+    addDate,
     COUNTRIES,
     formatDate,
     getAvatarURL,
     getOsuProfileURL,
+    getServerDate,
     isRangeContainedWithin,
     MAX_CHART_PLAYERS,
+    MAX_CHART_TREND_DAYS,
     MIN_DATE,
     SCORE_CATEGORIES,
     tooltip
@@ -26,7 +29,9 @@
   import type { PageData } from "./$types";
 
   export let data: PageData;
-  const now = formatDate(new Date(), true);
+  const nowDate = getServerDate();
+  const nowFormatted = formatDate(nowDate, true);
+  const maxTrendDate = formatDate(addDate(nowDate, MAX_CHART_TREND_DAYS));
 
   let loading = false;
   let playersPanelVisible = true;
@@ -49,10 +54,14 @@
   };
 
   const getCurrentPlayerIdsString = (addIds?: Array<number | string>) => {
+    const currentIds = getCurrentPlayerIds(addIds);
+    return [...currentIds].join(",");
+  };
+
+  const getCurrentPlayerIds = (addIds?: Array<number | string>) => {
     const currentIds = new Set<string | number>(addIds?.length ? addIds : null);
     for (const player of data.players) currentIds.add(player.id);
-
-    return [...currentIds].join(",");
+    return currentIds;
   };
 
   const getDateRangeString = (start?: string, end?: string) =>
@@ -108,9 +117,12 @@
   const clearPlayers = () => updateUrl({ idsOrNames: "" });
 
   const addPlayers = async (ids: Array<number | string>) => {
+    const currentIds = getCurrentPlayerIds();
+    ids = ids.filter((id) => !currentIds.has(id));
+    if (!ids.length) return;
+
     loading = true;
     const rangeString = getDateRangeString(currentRange.start, currentRange.end);
-
     const res = await fetch(
       `/api/players/${ids.join(",")}/${category}${rangeString}?setColors=false`
     );
@@ -132,7 +144,7 @@
   };
 
   const onDateChange = () => {
-    const reloadData = !isRangeContainedWithin(currentRange, previousRange, now);
+    const reloadData = !isRangeContainedWithin(currentRange, previousRange, nowFormatted);
     previousRange = { ...currentRange };
     updateUrl({ dateFrom: currentRange.start, dateTo: currentRange.end, reloadData });
   };
@@ -214,7 +226,7 @@
             <input
               class="input-dark normal-size"
               min={MIN_DATE}
-              max={currentRange.end || now}
+              max={currentRange.end || maxTrendDate}
               title="Beginning of date range"
               type="date"
               disabled={loading}
@@ -224,7 +236,7 @@
             <input
               class="input-dark normal-size"
               min={currentRange.start || MIN_DATE}
-              max={now}
+              max={maxTrendDate}
               title="End of date range"
               type="date"
               disabled={loading}
@@ -427,5 +439,6 @@
   .overlay {
     --color-base: 0, 0, 0;
     position: absolute;
+    filter: blur(3px);
   }
 </style>

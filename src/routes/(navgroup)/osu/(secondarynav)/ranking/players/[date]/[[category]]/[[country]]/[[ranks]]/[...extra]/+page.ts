@@ -4,7 +4,10 @@ export const load: PageLoad = async ({
   params,
   fetch
 }): Promise<{ rankingData: App.RankingEntry[] }> => {
-  const url = `/api/ranking/players/${params.date}/${params.category ?? "top50"}/${params.country ?? "all"}/${params.ranks}/${params.extra}`;
+  const extraString = params.extra ? `/${params.extra}` : "";
+  const ranksString = params.ranks || params.extra ? `/${params.ranks ?? ""}` : "";
+  const url = `/api/ranking/players/${params.date}/${params.category ?? "top50"}/${params.country ?? "all"}${ranksString}${extraString}`;
+
   const res = await fetch(url, { headers: { accept: "application/json" } });
   if (res.status == 400) return { rankingData: [] };
 

@@ -134,6 +134,7 @@
     <button
       class="arrow-button btn-none"
       type="button"
+      title="Previous day"
       disabled={date <= MIN_DATE}
       on:click={() => addDateNav(-1)}>
       <icon class="single-arrow flip-h" />
@@ -151,6 +152,7 @@
     <button
       class="arrow-button btn-none"
       type="button"
+      title="Next day"
       disabled={date >= MAX_DATE}
       on:click={() => addDateNav(1)}>
       <icon class="single-arrow" />

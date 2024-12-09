@@ -1,10 +1,10 @@
 <script lang="ts">
+  import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import { formatNumber, COUNTRIES } from "$lib/util";
-  import type { PageData } from "./$types";
-  import { page } from "$app/stores";
-  import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import { rankingSettings } from "$lib/stores";
+  import { page } from "$app/stores";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
 
@@ -27,12 +27,14 @@
   {#if !data?.rankingData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode={false} />
+    <RankingSettings bind:settings={$rankingSettings} viewMode="countries" />
 
     <table class="osu-table">
       <thead>
         <th />
+
         <th> Country </th>
+
         <th
           class="sortable"
           on:click={() => {
@@ -45,6 +47,7 @@
             Weighted
           </span>
         </th>
+
         <th
           class="sortable"
           on:click={() => {
@@ -57,6 +60,7 @@
             Total
           </span>
         </th>
+
         <th
           class="sortable"
           on:click={() => {
@@ -69,6 +73,7 @@
             Players
           </span>
         </th>
+
         <th
           class="sortable"
           on:click={() => {
@@ -85,14 +90,14 @@
       <tbody>
         {#each data.rankingData as country, i (country.country)}
           <tr>
-            <td style="width: 5.25ch; text-align: right;">
+            <td style="width: 4.5ch; text-align: right;">
               <strong>#{sortDescending ? i + 1 : data.rankingData.length - i}</strong>
             </td>
 
             <td style="display: flex; align-items: center;">
               <img
                 class="osu-flag-small"
-                style="margin-right: 10px;"
+                style="margin: 0 10px;"
                 alt={country.country}
                 src="/flags/{country.country}.svg" />
               <span class="hide-width-640">

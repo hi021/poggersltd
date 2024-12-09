@@ -7,9 +7,9 @@
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import Pagination from "$lib/components/Pagination.svelte";
   import { formatNumber, addDate, formatDate } from "$lib/util";
+  import { rankingSettings } from "$lib/stores";
   import { page } from "$app/stores";
   import type { PageData } from "./$types";
-  import { rankingSettings } from "$lib/stores";
 
   export let data: PageData;
   let pageData: App.RankingEntry[];
@@ -44,7 +44,7 @@
   {#if !pageData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode="ranking" />
+    <RankingSettings bind:settings={$rankingSettings} viewMode="players" />
 
     {#if pageData[0].gainedDays}
       <p class="gains-notice">

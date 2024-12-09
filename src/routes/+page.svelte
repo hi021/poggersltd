@@ -25,13 +25,13 @@
   let globalCount = 0;
   let globalCountAnimated = 0;
   let globalInitialized = false;
-  let height = 0;
+  let senkoDimension = 20;
   let shadowColor = "#aaa";
   const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
   let audioElementPoggers: HTMLAudioElement;
   let mainDivElement: HTMLElement;
 
-  $: height = 20 + sessionCount * 0.5;
+  $: senkoDimension = 20 + sessionCount * 0.5;
   $: shadowColor = "#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa");
 
   onMount(() => {
@@ -68,10 +68,13 @@
     pog.style.left = x;
     pog.onanimationend = () => pog.remove();
     pog.textContent = label;
+    pog.ariaHidden = "true";
     pog.className = "background-pog";
 
     mainDivElement.appendChild(pog);
   }
+
+  const blurOnFocus = (e: FocusEvent) => (e.target as HTMLElement).blur();
 </script>
 
 <svelte:head>
@@ -80,34 +83,41 @@
 
 <audio src="/poggers.mp3" bind:this={audioElementPoggers} />
 
-<main class="flex-center flex-fill" bind:this={mainDivElement}>
+<main class="flex-center flex-fill unselectable" bind:this={mainDivElement}>
   {#if sessionCount}
     <span
       id="counter"
       class="stroke"
+      aria-label="Your total senkos"
       use:tooltip={{ content: "Your total senkos" }}
       transition:fade={{ duration: 1000 }}>
       {formatNumber(localCount)}
     </span>
   {/if}
-  <span id="click-text" class="stroke" style="opacity: {localCount ? 0 : 1};"> Click me! </span>
+  <span
+    id="click-text"
+    class="stroke"
+    style="opacity: {localCount ? 0 : 1};"
+    aria-hidden={localCount ? "true" : "false"}>
+    Click me!
+  </span>
   <span
     id="counter-global"
     class="stroke"
-    style="opacity: {globalInitialized && sessionCount ? 0.6 : 0};">{globalCountAnimated}</span>
+    style="opacity: {globalInitialized && sessionCount ? 0.6 : 0};"
+    aria-hidden="true">{globalCountAnimated}</span>
 
-  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-  <img
+  <button
+    type="button"
+    aria-label="senko"
     id="senko-clickable"
     class="unselectable"
     draggable="false"
-    src="/senko_poggers.png"
-    alt="senko says poggers"
-    height="256"
-    on:keypress={() => false}
+    tabindex="-1"
+    on:focus={blurOnFocus}
     on:click|preventDefault={handleClick}
     on:contextmenu|preventDefault={handleClick}
-    style="height: {height}%; box-shadow: 0 0 2svw 1px {shadowColor};" />
+    style="height: {senkoDimension}%; box-shadow: 0 0 2svw 1px {shadowColor};" />
 
   <a class="a stroke" href="/home" draggable="false">home</a>
 </main>
@@ -118,7 +128,6 @@
     background-color: var(--color-lightest);
     color: var(--color-dark);
     overflow: hidden;
-    user-select: none;
   }
 
   .stroke {
@@ -160,7 +169,13 @@
   }
 
   #senko-clickable {
+    height: 256px;
+    aspect-ratio: 1/1;
     border-radius: 12px;
+    background-image: url("/senko_poggers.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     transition:
       height 0.125s ease,
       width 0.125s ease,
@@ -182,6 +197,7 @@
     opacity: 0.5;
     animation: pog-gravity 1s ease-in-out;
     pointer-events: none;
+    overflow: hidden;
     z-index: 1;
   }
   @keyframes pog-gravity {

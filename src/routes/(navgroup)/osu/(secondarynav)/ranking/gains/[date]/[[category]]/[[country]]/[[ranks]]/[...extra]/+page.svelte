@@ -44,7 +44,7 @@
   {#if !pageData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode="ranking" />
+    <RankingSettings bind:settings={$rankingSettings} viewMode="gains" />
 
     <table class="osu-table">
       <tbody>

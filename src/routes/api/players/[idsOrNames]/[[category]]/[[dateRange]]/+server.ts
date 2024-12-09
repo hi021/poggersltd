@@ -7,8 +7,8 @@ import {
   MIN_DATE,
   SCORE_CATEGORIES
 } from "$lib/util";
+import { dbRankings, prepareAggregationProjectionForIdOrName } from "$lib/db";
 import { error, json } from "@sveltejs/kit";
-import { dbRankings } from "$lib/db";
 import type { RequestHandler } from "./$types";
 
 function prepareFetchPlayer(
@@ -19,20 +19,7 @@ function prepareFetchPlayer(
   resultObj: Omit<App.ComparisonChartAPI, "stats">
 ) {
   const promises = new Array<Promise<number | null>>(days);
-  const playerId = parseInt(idOrName);
-  const project = {
-    $project: {
-      [scoreCategory]: {
-        $filter: {
-          input: "$" + scoreCategory,
-          as: "cat",
-          cond: {
-            $eq: isNaN(playerId) ? ["$$cat.name", idOrName] : ["$$cat._id", playerId]
-          }
-        }
-      }
-    }
-  };
+  const project = prepareAggregationProjectionForIdOrName(idOrName, scoreCategory);
 
   for (let i = 0; i < days; i++) {
     const date = datesToFetch[i];
@@ -77,11 +64,13 @@ function calculatePlayerStats(
 
   for (const i in ranks) {
     if (!i || !ranks[i]) continue;
+    const scores = ranks[i].scores;
+    const rank = ranks[i].rank;
 
-    if (ranks[i].scores > maxScores) maxScores = ranks[i].scores;
-    else if (ranks[i].scores < minScores) minScores = ranks[i].scores;
-    if (ranks[i].rank > maxRank) maxRank = ranks[i].rank;
-    else if (ranks[i].rank < minRank) minRank = ranks[i].rank;
+    if (scores > maxScores) maxScores = scores;
+    else if (scores < minScores) minScores = scores;
+    if (rank > maxRank) maxRank = rank;
+    else if (rank < minRank) minRank = rank;
   }
 
   return {

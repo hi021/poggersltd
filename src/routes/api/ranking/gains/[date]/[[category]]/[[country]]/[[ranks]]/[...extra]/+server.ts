@@ -1,7 +1,19 @@
-import { addDate, DEFAULT_API_HEADERS, formatDate, MIN_DATE, SCORE_CATEGORIES } from "$lib/util";
-import type { RequestHandler } from "./$types";
+import {
+  addDate,
+  DEFAULT_API_HEADERS,
+  formatDate,
+  LONG_CACHE_CONTROL,
+  MIN_DATE,
+  SCORE_CATEGORIES,
+  SHORT_CACHE_CONTROL
+} from "$lib/util";
+import {
+  dbRankings,
+  prepareQueryObjectForCountryCodes,
+  prepareQueryObjectForRankRange
+} from "$lib/db";
 import { error, json } from "@sveltejs/kit";
-import { dbRankings } from "$lib/db";
+import type { RequestHandler } from "./$types";
 
 const sorting = (a: App.RankingEntry, b: App.RankingEntry) =>
   (a.gainedScores as number) < (b.gainedScores as number) ? 1 : -1;
@@ -14,21 +26,17 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const date = params.date === "latest" || params.date === "last" ? MAX_DATE : params.date;
   if (date < MIN_DATE) throw error(400, `Invalid date - earliest possible is ${MIN_DATE}`);
   if (date > MAX_DATE) throw error(400, `Invalid date - latest possible is ${MAX_DATE}`);
+  const gainedDays = Number(params.extra) || 1;
 
-  const route = `gains/${date}`;
+  const route = `gains/${date}/${params.category ?? ""}/${params.country ?? ""}/${params.ranks ?? ""}/${params.extra ?? ""}`;
   console.time(route);
-  setHeaders(DEFAULT_API_HEADERS);
+
+  const maxAge = MAX_DATE == formatDate(new Date()) ? SHORT_CACHE_CONTROL : LONG_CACHE_CONTROL;
+  setHeaders({ ...DEFAULT_API_HEADERS, "cache-control": maxAge });
 
   const query: App.RankingQuery = { _id: params.date };
-
-  const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
-  const rankMin = Number(ranks[0]) ?? 0;
-  const rankMax = Number(ranks[1]) || Infinity;
-  if (rankMin > 1 || rankMax < Infinity) query.rank = { $lte: rankMax, $gte: rankMin };
-
-  if (params.country && params.country.toLowerCase() != "all")
-    query.country = { $in: params.country.toUpperCase().split(",") };
-  const gainedDays = Number(params.extra) || 1;
+  query.rank = prepareQueryObjectForRankRange(params.ranks);
+  query.country = prepareQueryObjectForCountryCodes(params.country);
 
   const rankingDataEnd = (
     await dbRankings.findOne(query, { projection: { [scoreCategory]: 1 } })
@@ -40,9 +48,11 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
 
   // use gained field without having to send a request to another date
   if (gainedDays === 1) {
-    rankingDataEnd.filter((plr) => plr.gainedScores != null).sort(sorting);
+    const rankingDataSorted = rankingDataEnd
+      .filter((plr) => plr.gainedScores != null)
+      .sort(sorting);
     console.timeEnd(route);
-    return json(rankingDataEnd);
+    return json(rankingDataSorted);
   }
 
   const dateStart = addDate(new Date(date), -gainedDays);
@@ -73,8 +83,8 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   }
 
   const playersArray = Array.from(players.values());
-  playersArray.filter((plr) => plr.gainedScores != null).sort(sorting);
+  const rankingDataSorted = playersArray.filter((plr) => plr.gainedScores != null).sort(sorting);
 
   console.timeEnd(route);
-  return json(playersArray);
+  return json(rankingDataSorted);
 };

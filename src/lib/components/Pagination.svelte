@@ -13,26 +13,37 @@
   <div class="row group page-container">
     <button
       type="button"
+      title="First page"
       disabled={page <= 1}
       on:click={() => onPageChange(1)}
       use:tooltip={{ content: "First page" }}>
       <icon class="double-arrow flip-h" />
     </button>
-    <button type="button" disabled={page <= 1} on:click={() => onPageChange(page - 1)}>
+    <button
+      type="button"
+      title="Previous page"
+      disabled={page <= 1}
+      on:click={() => onPageChange(page - 1)}>
       <icon class="single-arrow flip-h" />
     </button>
 
-    <button type="button" disabled={page >= maxPage} on:click={() => onPageChange(page + 1)}>
+    <button
+      type="button"
+      title="Next page"
+      disabled={page >= maxPage}
+      on:click={() => onPageChange(page + 1)}>
       <icon class="single-arrow" />
     </button>
     <button
       type="button"
+      title="Last page"
       disabled={page >= maxPage}
       on:click={() => onPageChange(maxPage)}
       use:tooltip={{ content: "Last page" }}>
       <icon class="double-arrow" />
     </button>
   </div>
+
   {#if showPageNumber || entries}
     <div style="font-weight: 300;">
       {#if showPageNumber}

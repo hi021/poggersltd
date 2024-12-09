@@ -10,15 +10,17 @@
 </script>
 
 <div
+  aria-label={label}
+  role="button"
   class="btn-menu-main"
   use:tooltip={{ content: tooltipContent, options: { theme: "large", placement: "bottom" } }}>
-  <a {href}>
+  <a {href} aria-hidden="true">
     <div
       class="btn-menu"
       style="background-color: {backgroundColor}; background-image: {backgroundImage}; {style}">
       <slot />
     </div>
-    <div class="btn-menu-label">{label}</div>
+    <div class="btn-menu-label" aria-hidden="true">{label}</div>
   </a>
 </div>
 

@@ -2,7 +2,7 @@
 import { DEFAULT_API_HEADERS, getDaysBetweenDates, SCORE_CATEGORIES } from "$lib/util";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
-import { dbPlayers } from "$lib/db";
+import { dbPlayers, prepareQueryObjectForIdOrName } from "$lib/db";
 
 const prepareProjection = (category: string) => {
   const projection: { [field: string]: 0 | 1 } = { nameKey: 0 };
@@ -17,9 +17,8 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   console.time(route);
   setHeaders(DEFAULT_API_HEADERS);
 
-  const idOrNameNumber = parseInt(params.idOrName);
   const category = params.category ?? "top50";
-  const query = isNaN(idOrNameNumber) ? { name: params.idOrName } : { _id: idOrNameNumber as any };
+  const query = prepareQueryObjectForIdOrName(params.idOrName);
 
   const player = await dbPlayers.findOne(query, prepareProjection(category));
   if (!player) {

@@ -22,7 +22,7 @@ export function arraysEqual(arr1: unknown[], arr2: unknown[]) {
 }
 
 export function isObjEmpty(obj: Record<any, unknown>) {
-  for (const i in obj) return false;
+  for (const _ in obj) return false;
   return true;
 }
 
@@ -47,7 +47,12 @@ export function mergeObjectArraysOnField<K extends string | number | symbol, V>(
   return objResult;
 }
 
-export function trimArray<T>(arr: Array<T>, trimStart = true, trimEnd = true, toRemove = null) {
+export function trimArray<T>(
+  arr: Array<T>,
+  trimStart = true,
+  trimEnd = true,
+  toRemove: T | null = null
+) {
   if (trimEnd) while (arr?.length && arr[arr.length - 1] == toRemove) arr.pop();
   if (trimStart) while (arr?.length && arr[0] == toRemove) arr.shift();
   return arr;
@@ -211,10 +216,14 @@ export function tooltip(
 }
 
 // consts
-export const DEFAULT_CACHE_CONTROL = "max-age=300";
+export const SHORT_CACHE_CONTROL = "max-age=50";
+export const DEFAULT_CACHE_CONTROL = "max-age=300"; // 5 minutes
+export const LONG_CACHE_CONTROL = "max-age=172800"; // 48 hours
 export const DEFAULT_API_HEADERS = { "cache-control": DEFAULT_CACHE_CONTROL };
+export const LONG_CACHE_CONTROL_API_HEADERS = { "cache-control": LONG_CACHE_CONTROL };
 
 export const MIN_DATE = "2020-05-10";
+export const MAX_CHART_TREND_DAYS = 180;
 
 export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
   "top50",

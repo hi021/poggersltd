@@ -20,7 +20,7 @@
   {#if !data?.rankingData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode="gains" />
+    <RankingSettings bind:settings={$rankingSettings} viewMode="mostGained" />
 
     <table class="osu-table">
       <tbody>
