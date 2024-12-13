@@ -1,3 +1,49 @@
+<script lang="ts">
+  import ApiEndpointDoc from "$lib/components/ApiEndpointDoc.svelte";
+  import { MIN_DATE } from "$lib/util";
+
+  const paramsCommon: App.ApiParams = {
+    date: {
+      type: "string",
+      optional: false,
+      description: `Date in YYYY-MM-DD format or "latest"/"last" to use today's UTC date<br />
+        Minimum date is ${MIN_DATE}, maximum is today's UTC date - throws a 400 error outside that range`
+    },
+    category: {
+      type: "RankingCategory",
+      optional: true,
+      description: `Score category (defaults to top50), throws a 400 error on invalid category`
+    },
+    country: {
+      type: "string",
+      optional: true,
+      description: `2-letter country codes separated by commas to only show players from given countries, any invalid value is ignored<br />
+        E.g. "CL" for Chile, defaults to showing all players`
+    },
+    ranks: {
+      type: "string",
+      optional: true,
+      description: `Min-Max rank (score ranking position), 0 or empty mean range bound<br />
+        E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players`
+    }
+  };
+
+  const rankingParams: App.ApiParams = {
+    date: paramsCommon.date,
+    category: paramsCommon.category,
+    country: paramsCommon.country,
+    ranks: paramsCommon.ranks
+  };
+  const rankingGainsParams: App.ApiParams = {
+    ...rankingParams,
+    gainedDays: {
+      type: "number",
+      optional: true,
+      description: `Defaults to 1`
+    }
+  };
+</script>
+
 <svelte:head>
   <title>api - poggers</title>
 </svelte:head>
@@ -190,170 +236,37 @@
   <hr />
 
   <h2 id="endpoints">Endpoints</h2>
-  <h4 class="endpoint-url">
-    /api/ranking/<span class="emphasis">players</span><span class="endpoint-params"
-      >/[date]/[category?]/[country?]/[ranks?]</span>
-    <span class="method get" />
-  </h4>
-  <h5>Route (positional) parameters</h5>
+
+  <ApiEndpointDoc
+    urlCategory="ranking/"
+    urlMain="players"
+    urlParams={rankingParams}
+    exampleUrl="/api/ranking/players/2024-01-01/top50/US,GB,AU/20-180"
+    returnValueHtml="Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;" />
+  <ApiEndpointDoc
+    urlCategory="ranking/"
+    urlMain="gains"
+    urlParams={rankingGainsParams}
+    exampleUrl="/api/ranking/gains/2024-01-01/top50/US,GB,AU/0-0/10"
+    returnValueHtml="Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;" />
+  <ApiEndpointDoc
+    urlCategory="ranking/"
+    urlMain="countries"
+    urlParams={rankingParams}
+    exampleUrl="/api/ranking/countries/2024-01-01/top50"
+    returnValueHtml="Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;" />
+
+  <hr />
+
+  <h2 id="changelog">Changelog</h2>
   <ul>
     <li>
-      <span>date</span>
-      <code class="type-type">string</code>
-      <span class="description">
-        Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br />
-        Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
-      </span>
-    </li>
-    <li>
-      <span>category</span>
-      <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
-      <span class="description"
-        >Score category (defaults to top50), throws a 400 error on invalid category</span>
-    </li>
-    <li>
-      <span>country</span>
-      <code class="type-type">string?</code>
-      <span class="description">
-        2-letter country code to only show players from given country, any other value is treated as
-        showing all<br />
-        E.g. "CL" for Chile, defaults to showing all players
-      </span>
-    </li>
-    <li>
-      <span>ranks</span>
-      <code class="type-type">string?</code>
-      <span class="description">
-        Min-Max rank (score ranking position), 0 or empty mean range bound<br />
-        E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
-      </span>
+      <span>v2.0 (2022-10)</span>
+      <ol>
+        <li>First prototype</li>
+      </ol>
     </li>
   </ul>
-  <h5>Returns</h5>
-  <code>Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;</code>
-
-  <h4 class="endpoint-url">
-    <h4 class="endpoint-url">
-      /api/ranking/<span class="emphasis">gains</span><span class="endpoint-params"
-        >/[date]/[category?]/[country?]/[ranks?]/[days?]</span>
-      <span class="method get" />
-    </h4>
-    <h5>Route (positional) parameters</h5>
-    <ul>
-      <li>
-        <span>date</span>
-        <code class="type-type">string</code>
-        <span class="description">
-          Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br />
-          Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
-        </span>
-      </li>
-      <li>
-        <span>category</span>
-        <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
-        <span class="description"
-          >Score category (defaults to top50), throws a 400 error on invalid category</span>
-      </li>
-      <li>
-        <span>country</span>
-        <code class="type-type">string?</code>
-        <span class="description">
-          2-letter country code to only show players from given country, any other value is treated
-          as showing all<br />
-          E.g. "CL" for Chile, defaults to showing all players
-        </span>
-      </li>
-      <li>
-        <span>ranks</span>
-        <code class="type-type">string?</code>
-        <span class="description">
-          Min-Max rank (score ranking position), 0 or empty mean range bound<br />
-          E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
-        </span>
-      </li>
-      <li>
-        <span>days</span>
-        <code class="type-type">number?</code>
-        <span class="description">
-          Number of days to go back (defaults to 1)<br />
-          Will return an empty array if there is no archive entry given days ago
-        </span>
-      </li>
-    </ul>
-    <h5>Returns</h5>
-    <code>Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;</code>
-
-    <h4 class="endpoint-url">
-      /api/ranking/<span class="emphasis">countries</span><span class="endpoint-params"
-        >/[date]/[category?]/[country?]/[ranks?]</span>
-      <span class="method get" />
-    </h4>
-    <h5>Route (positional) parameters</h5>
-    <ul>
-      <li>
-        <span>date</span>
-        <code class="type-type">string</code>
-        <span class="description">
-          Date in YYYY-MM-DD format or "latest"/"last" for using today's UTC date<br />
-          Minimum date is 2020-05-10, maximum is today's UTC date - throws a 400 error outside that range
-        </span>
-      </li>
-      <li>
-        <span>category</span>
-        <a class="a" href="#RankingCategory"><code class="type-type">RankingCategory?</code></a>
-        <span class="description"
-          >Score category (defaults to top50), throws a 400 error on invalid category</span>
-      </li>
-      <li>
-        <span>country</span>
-        <code class="type-type">string?</code>
-        <span class="description">
-          2-letter country code to only show players from given country, any other value is treated
-          as showing all<br />
-          E.g. "CL" for Chile, defaults to showing all players
-        </span>
-      </li>
-      <li>
-        <span>ranks</span>
-        <code class="type-type">string?</code>
-        <span class="description">
-          Min-Max rank (score ranking position), 0 or empty mean range bound<br />
-          E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players
-        </span>
-      </li>
-    </ul>
-    <h5>Returns</h5>
-    <code
-      >Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a
-      >&gt;</code>
-
-    <h4 class="endpoint-url">
-      /api/player/<span class="endpoint-params">/[idOrName]</span>
-      <span class="method get" />
-    </h4>
-    <h5>Route (positional) parameters</h5>
-    <ul>
-      <li>
-        <span>idOrName</span>
-        <code class="type-type">string | number</code>
-        <span class="description">
-          Player's osu! id or exact (case sensitive) currently used username
-        </span>
-      </li>
-    </ul>
-
-    <hr />
-
-    <h2 id="changelog">Changelog</h2>
-    <ul>
-      <li>
-        <span>v3.2 (2024-10-20)</span>
-        <ol>
-          <li>First public release</li>
-        </ol>
-      </li>
-    </ul>
-  </h4>
 </main>
 
 <style>
@@ -361,13 +274,7 @@
     padding: 0.5rem 7.5%;
     color: #ddd;
   }
-  h5 {
-    margin-bottom: 4px;
-  }
 
-  .endpoint-params {
-    color: #999;
-  }
   .description-main {
     font-size: 0.9375rem;
     opacity: 0.9;
@@ -383,17 +290,6 @@
   .type-type {
     padding: 3px;
     background-color: rgba(0, 0, 0, 0.3);
-  }
-  .method {
-    font-size: 80%;
-    padding: 3px;
-    border-radius: 999px;
-  }
-  .method.get {
-    background-color: #558b2f;
-  }
-  .method.get::after {
-    content: "GET";
   }
 
   .emphasis {

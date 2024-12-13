@@ -8,6 +8,7 @@ import {
 } from "$lib/util";
 import {
   dbRankings,
+  prepareAggregationProjection,
   prepareQueryObjectForCountryCodes,
   prepareQueryObjectForRankRange
 } from "$lib/db";
@@ -29,14 +30,15 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const maxAge = MAX_DATE == formatDate(new Date()) ? SHORT_CACHE_CONTROL : LONG_CACHE_CONTROL;
   setHeaders({ ...DEFAULT_API_HEADERS, "cache-control": maxAge });
 
-  const query: App.RankingQuery = { _id: params.date };
-  query.rank = prepareQueryObjectForRankRange(params.ranks);
-  query.country = prepareQueryObjectForCountryCodes(params.country);
+  const projectParameters = [
+    ...prepareQueryObjectForRankRange(params.ranks),
+    prepareQueryObjectForCountryCodes(params.country)
+  ];
+  const project = prepareAggregationProjection(projectParameters, scoreCategory);
+  const aggregate = [{ $match: { _id: params.date } }, project];
 
-  const rankingData = await dbRankings.findOne(query, {
-    projection: { [scoreCategory]: 1 }
-  });
+  const rankingData = await dbRankings.aggregate(aggregate).toArray();
 
   console.timeEnd(route);
-  return json(rankingData?.[scoreCategory] ?? []);
+  return json(rankingData?.[0]?.[scoreCategory] ?? []);
 };

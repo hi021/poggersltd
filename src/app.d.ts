@@ -118,6 +118,10 @@ declare namespace App {
     dateSticky: boolean; //                                  whether top date bar is sticky
   }
 
+  interface ApiParams {
+    [name: string]: { type: string; optional?: boolean; description?: string };
+  }
+
   interface RankingQuery {
     _id; //                                                  ranking entry date as YYYY-MM-DD string
     country?: { $in: string[] }; //                            2-uppercase-letter country code or "all"
