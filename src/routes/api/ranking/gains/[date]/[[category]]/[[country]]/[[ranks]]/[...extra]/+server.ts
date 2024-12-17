@@ -27,7 +27,7 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const date = params.date === "latest" || params.date === "last" ? MAX_DATE : params.date;
   if (date < MIN_DATE) throw error(400, `Invalid date - earliest possible is ${MIN_DATE}`);
   if (date > MAX_DATE) throw error(400, `Invalid date - latest possible is ${MAX_DATE}`);
-  const gainedDays = Number(params.extra) || 1;
+  const gainedDays = Math.max(Number(params.extra) || 1, 1);
 
   const route = `gains/${date}/${params.category ?? ""}/${params.country ?? ""}/${params.ranks ?? ""}/${params.extra ?? ""}`;
   console.time(route);
@@ -42,15 +42,9 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const project = prepareAggregationProjection(projectParameters, scoreCategory);
   const aggregate = [{ $match: { _id: params.date } }, project];
 
-  const rankingData = await dbRankings.aggregate(aggregate).toArray();
+  let aggregatedResult = await dbRankings.aggregate(aggregate).toArray();
+  const rankingDataEnd = aggregatedResult?.[0]?.[scoreCategory] as unknown as App.RankingEntry[];
 
-  // TODO: fix queries D:
-  console.timeEnd(route);
-  //   return json(rankingData?.[0]?.[scoreCategory] ?? []);
-
-  const rankingDataEnd = (
-    await dbRankings.findOne(query, { projection: { [scoreCategory]: 1 } })
-  )?.[scoreCategory] as unknown as App.RankingEntry[];
   if (!rankingDataEnd?.length) {
     console.timeEnd(route);
     return json([]);
@@ -61,33 +55,33 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
     const rankingDataSorted = rankingDataEnd
       .filter((plr) => plr.gainedScores != null)
       .sort(sorting);
+
     console.timeEnd(route);
     return json(rankingDataSorted);
   }
 
-  const dateStart = addDate(new Date(date), -gainedDays);
-  const rankingDataStart = (
-    await dbRankings.findOne(
-      { ...query, _id: formatDate(dateStart) as any },
-      { projection: { [scoreCategory]: 1 } }
-    )
-  )?.[scoreCategory] as unknown as App.RankingEntry[];
+  const dateStart = formatDate(addDate(new Date(date), -gainedDays));
+  aggregate[0] = { $match: { _id: dateStart } };
+  aggregatedResult = await dbRankings.aggregate(aggregate).toArray();
+  const rankingDataStart = aggregatedResult?.[0]?.[scoreCategory] as unknown as App.RankingEntry[];
+
   if (!rankingDataStart?.length) {
     console.timeEnd(route);
     return json([]);
   }
 
-  const players = new Map();
-  for (const i of rankingDataStart) players.set(i._id, { scores: i.scores, rank: i.rank });
+  const players = new Map<number, any>();
+  for (const entry of rankingDataStart)
+    players.set(entry._id, { scores: entry.scores, rank: entry.rank });
 
-  for (const i of rankingDataEnd) {
-    const player = players.get(i._id);
+  for (const entry of rankingDataEnd) {
+    const player = players.get(entry._id);
     if (!player) continue;
 
-    players.set(i._id, {
-      ...i,
-      gainedScores: i.scores - player.scores,
-      gainedRanks: player.rank - i.rank,
+    players.set(entry._id, {
+      ...entry,
+      gainedScores: entry.scores - player.scores,
+      gainedRanks: player.rank - entry.rank,
       gainedDays
     });
   }

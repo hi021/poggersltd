@@ -74,6 +74,7 @@ export function _setExistingPlayerColors(players: App.ComparisonChartPlayerCusto
   for (const i in players) {
     const player = players[i];
     if (!player.color) player.color = CHART_COLORS[Number(i) % CHART_COLORS.length];
+    if (player.rankVisible == null && players.length >= 3) player.rankVisible = false;
   }
 }
 

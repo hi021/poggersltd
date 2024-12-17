@@ -118,7 +118,7 @@
 
   const addPlayers = async (ids: Array<number | string>) => {
     const currentIds = getCurrentPlayerIds();
-    ids = ids.filter((id) => !currentIds.has(id));
+    ids = ids.filter((id) => !currentIds.has(id.toString()));
     if (!ids.length) return;
 
     loading = true;
@@ -290,7 +290,7 @@
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   class="a player-name-wrapper"
-                  href="#"
+                  href=""
                   on:click={() =>
                     (editingPlayerIndex =
                       editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>
@@ -439,6 +439,5 @@
   .overlay {
     --color-base: 0, 0, 0;
     position: absolute;
-    filter: blur(3px);
   }
 </style>

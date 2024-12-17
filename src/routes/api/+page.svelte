@@ -17,13 +17,13 @@
     country: {
       type: "string",
       optional: true,
-      description: `2-letter country codes separated by commas to only show players from given countries, any invalid value is ignored<br />
+      description: `"all" or 2-letter country codes separated by commas to filter players from given countries, any invalid value is ignored<br />
         E.g. "CL" for Chile, defaults to showing all players`
     },
     ranks: {
       type: "string",
       optional: true,
-      description: `Min-Max rank (score ranking position), 0 or empty mean range bound<br />
+      description: `Min-Max rank inclusive (score ranking position), 0 or empty count as range bound<br />
         E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players`
     }
   };
@@ -39,7 +39,7 @@
     gainedDays: {
       type: "number",
       optional: true,
-      description: `Defaults to 1`
+      description: `Number of days to go back, defaults to 1`
     }
   };
 </script>
@@ -242,19 +242,19 @@
     urlMain="players"
     urlParams={rankingParams}
     exampleUrl="/api/ranking/players/2024-01-01/top50/US,GB,AU/20-180"
-    returnValueHtml="Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;" />
+    returnValueHtml={`Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;`} />
   <ApiEndpointDoc
     urlCategory="ranking/"
     urlMain="gains"
     urlParams={rankingGainsParams}
     exampleUrl="/api/ranking/gains/2024-01-01/top50/US,GB,AU/0-0/10"
-    returnValueHtml="Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;" />
+    returnValueHtml={`Array&lt;<a class="a" href="#Player"><code class="type-type">Player</code></a>&gt;`} />
   <ApiEndpointDoc
     urlCategory="ranking/"
     urlMain="countries"
     urlParams={rankingParams}
     exampleUrl="/api/ranking/countries/2024-01-01/top50"
-    returnValueHtml="Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;" />
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
 
   <hr />
 

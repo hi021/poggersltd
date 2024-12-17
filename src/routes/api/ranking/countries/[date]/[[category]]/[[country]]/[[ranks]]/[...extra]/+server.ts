@@ -49,24 +49,24 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const aggregate = [{ $match: { _id: params.date } }, project];
 
   const aggregatedResult = await dbRankings.aggregate(aggregate).toArray();
-  const rankingData = aggregatedResult?.[0]?.[scoreCategory];
+  const rankingData = aggregatedResult?.[0]?.[scoreCategory] as unknown as App.RankingEntry[];
 
-  if (!rankingData) {
+  if (!rankingData?.length) {
     console.timeEnd(route);
     return json([]);
   }
 
   // set total amount of scores and players
   const countries: Map<string, App.CountryRankingAPI> = new Map();
-  for (const i of rankingData as App.RankingEntry[]) {
-    const curCountry = countries.get(i.country);
+  for (const entry of rankingData as App.RankingEntry[]) {
+    const curCountry = countries.get(entry.country);
     const players = (curCountry?.players || 0) + 1;
-    const weighted = calculatePlayerWeightedScores(players, i.scores);
+    const weighted = calculatePlayerWeightedScores(players, entry.scores);
 
-    if (!curCountry) countries.set(i.country, { total: i.scores, players, weighted });
+    if (!curCountry) countries.set(entry.country, { total: entry.scores, players, weighted });
     else
-      countries.set(i.country, {
-        total: curCountry.total + i.scores,
+      countries.set(entry.country, {
+        total: curCountry.total + entry.scores,
         players,
         weighted: curCountry.weighted + weighted
       });

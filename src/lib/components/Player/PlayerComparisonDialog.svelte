@@ -1,6 +1,7 @@
 <script lang="ts">
   import { CHART_COLORS, formatNumber, getDaysBetweenDates, tooltip } from "$lib/util";
   import { createEventDispatcher, onMount } from "svelte";
+  import { fly } from "svelte/transition";
 
   const dispatch = createEventDispatcher<{
     remove: string;
@@ -17,12 +18,22 @@
   export let editingPlayerIndex: number;
   export let verticalIndex = 0;
 
+  const days = getDaysBetweenDates(
+    new Date(player.stats.startDate).valueOf(),
+    new Date(player.stats.endDate).valueOf()
+  );
+
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") return dispatch("close");
   };
   const onMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (!editPlayerDialog.contains(target)) return dispatch("close");
+    if (
+      !editPlayerDialog.contains(target) &&
+      !target?.classList.contains("player-name-wrapper") &&
+      !target?.parentElement?.classList.contains("player-name-wrapper")
+    )
+      return dispatch("close");
   };
 
   onMount(() => {
@@ -37,6 +48,7 @@
 </script>
 
 <dialog
+  transition:fly={{ x: 100, duration: 125 }}
   open
   class="edit-player-dialog"
   bind:this={editPlayerDialog}
@@ -82,19 +94,13 @@
       </span>
     </li>
     <li>
-      <span class="player-stat-name"> change </span>
+      <span class="player-stat-name"> change (over {days} days)</span>
       <span class="player-stat-value">
         {(player.stats.endScores > player.stats.startScores ? "+" : "") +
           formatNumber(player.stats.endScores - player.stats.startScores)}
         <small>
-          ({Math.round(
-            ((player.stats?.endScores - player.stats?.startScores) /
-              getDaysBetweenDates(
-                new Date(player.stats.startDate).valueOf(),
-                new Date(player.stats.endDate).valueOf()
-              )) *
-              100
-          ) / 100}/day)
+          ({Math.round(((player.stats?.endScores - player.stats?.startScores) / days) * 100) /
+            100}/day)
         </small>
       </span>
     </li>
@@ -108,28 +114,25 @@
     </li>
   </ul>
 
-  <button
-    class="btn-icon"
-    type="button"
-    use:tooltip={{ content: "Compare against neighbors" }}
-    on:click={() => dispatch("compareNeighbors", player.id)}>
-    <icon class="" />
-  </button>
+  <div class="row btn-row">
+    <button class="btn-icon" type="button" on:click={() => dispatch("compareNeighbors", player.id)}>
+      <small>Compare neighbors</small>
+      <icon class="group" />
+    </button>
 
-  <button
-    class="btn-icon"
-    type="button"
-    use:tooltip={{ content: "Go to user profile" }}
-    on:click={() => dispatch("goToProfile", player.id)}>
-    <icon class="" />
-  </button>
+    <button class="btn-icon" type="button" on:click={() => dispatch("goToProfile", player.id)}>
+      <small>Go to profile</small>
+      <icon class="user" />
+    </button>
 
-  <button
-    type="button"
-    class="btn-none remove-player-button"
-    on:click={() => dispatch("remove", player.id)}>
-    Remove player <icon class="delete" />
-  </button>
+    <button
+      class="btn-icon remove-player-btn"
+      type="button"
+      on:click={() => dispatch("remove", player.id)}>
+      <small>Remove user</small>
+      <icon class="delete" />
+    </button>
+  </div>
 </dialog>
 
 <style>
@@ -173,8 +176,6 @@
   }
   .color-container input[type="color"] {
     padding: 0;
-    padding-block: 0;
-    padding-inline: 0;
     border: none;
     background-color: var(--color-darkish);
     cursor: pointer;
@@ -182,10 +183,14 @@
   .color-container > label {
     display: inline-flex;
     align-items: center;
+    padding-right: 4px;
     gap: 4px;
     cursor: pointer;
   }
-  .remove-player-button {
+  .color-container > label:hover {
+    background-color: var(--color-dark);
+  }
+  /* .remove-player-button {
     width: 100%;
     color: inherit;
     justify-content: center;
@@ -193,9 +198,42 @@
     line-height: 1;
     padding: 4px;
     margin-top: 8px;
+  }*/
+
+  .btn-row {
+    gap: 2px;
+    margin-top: 4px;
+    flex-wrap: nowrap;
   }
-  .remove-player-button:hover {
-    background-color: var(--color-red);
+
+  .btn-row > button {
+    width: 33%;
+    white-space: nowrap;
+    display: inline flex;
+    gap: 4px;
+    color: var(--color-darker);
+    background-color: var(--color-lighter);
+    transition: width 0.2s;
+  }
+  .btn-row > button > small {
+    display: none;
+    font-size: 0.675em;
+    font-weight: 300;
+    opacity: 0;
+    transition: opacity 0.2s;
+    /* transition-behavior: allow-discrete; */
+  }
+
+  .btn-row > button:hover {
+    background-color: var(--color-light);
+    width: 100%;
+  }
+  .btn-row > button:hover > small {
+    display: inline;
+    opacity: 1;
+  }
+  .btn-row > .remove-player-btn:hover {
+    background-color: color-mix(in srgb, var(--color-red) 70%, var(--color-light));
   }
 
   .btn-icon {
