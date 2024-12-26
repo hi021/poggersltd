@@ -1,11 +1,49 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import Switch from "../Switch.svelte";
+    import { addDays, getDaysBetweenDates, MIN_DATE } from "$lib/util";
+    import { _getGainsRankingUrl } from "../../../routes/(navgroup)/osu/(secondarynav)/ranking/gains/[date]/[[category]]/[[country]]/[[ranks]]/[...extra]/+page";
+    import { goto } from "$app/navigation";
+    import { page } from "$app/stores";
+    import { browser } from "$app/environment";
+    import { onMount } from "svelte";
 
   export let viewMode: "players" | "countries" | "gains" | "mostGained" = "players";
   export let settings: App.RankingSettings;
   export let style = "";
+
   let visible = false;
+  let isGainedDaysCustom: boolean;
+  const maxDays = getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date($page.params.date).valueOf())
+
+  //TODO: make maxDays refresh
+const gainsTimeFrames = {
+    1: "1 Day",
+            7: "1 Week",
+            14:"2 Weeks",
+            30:"1 Month",
+            90:"3 Months",
+            180:"6 Months",
+            364: "1 Year",
+            [maxDays]: "Maximum",
+            "Custom": "Custom"
+}
+
+function checkAndSetIsGainedDaysCustom(days = settings.gainedDays) {
+    return isGainedDaysCustom = (!days || gainsTimeFrames[days] == null)
+}
+
+function handleGainsTimeFrame(e: Event) {
+    const target = e.target as HTMLSelectElement
+    const days = parseInt(target.value)
+    settings.gainedDays = checkAndSetIsGainedDaysCustom(days) ? 1 : days;
+    handleGainsTimeFrameNavigation(settings.gainedDays)
+}
+
+function handleGainsTimeFrameNavigation(days: number)
+ {console.log(days); if(browser) goto(_getGainsRankingUrl($page.params as any, days, "osu"), {invalidateAll: false})}
+
+onMount(() => checkAndSetIsGainedDaysCustom())
 </script>
 
 <div class="wrapper" {style}>
@@ -42,23 +80,25 @@
           </select>
         </label>
       {/if}
-      <!-- TODO -->
       {#if viewMode == "gains"}
         <label>
           Gains time frame
-          <select class="input-dark normal-size" bind:value={settings.perPage}>
-            <option value={1}>1 Day</option>
-            <option value={7}>1 Week</option>
-            <option value={14}>2 Weeks</option>
-            <option value={30}>1 Month</option>
-            <option value={90}>3 Months</option>
-            <option value={180}>6 Months</option>
-            <option value={364}>1 Year</option>
-            <option>Maximum</option>
-            <option>Custom</option>
+          <select class="input-dark normal-size" on:change={(e) => handleGainsTimeFrame(e)}>
+            {#each Object.entries(gainsTimeFrames) as [days, label]}
+                <option value={days}>{label}</option>
+            {/each}
           </select>
+
+          {#if isGainedDaysCustom}
+          <label>
+              <input type="number" min="1" max={maxDays} bind:value={settings.gainedDays}>
+            days
+            </label>
+          {/if}
         </label>
       {/if}
+
+      <!-- TODO: ranks filter and countries filter -->
     </div>
   {/if}
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatDate, MIN_DATE, addDate } from "$lib/util";
+  import { formatDate, MIN_DATE, addDays } from "$lib/util";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { rankingSettings } from "$lib/stores";
@@ -21,7 +21,7 @@
     let curDate = new Date(date);
     if (isNaN(curDate.getTime())) curDate = new Date(MAX_DATE);
 
-    const newDate = addDate(curDate, days);
+    const newDate = addDays(curDate, days);
     const formattedDate = formatDate(newDate);
     if (formattedDate < MIN_DATE) date = MIN_DATE;
     else if (formattedDate > MAX_DATE) date = MAX_DATE;

@@ -1,5 +1,5 @@
 import {
-  addDate,
+  addDays,
   DEFAULT_API_HEADERS,
   formatDate,
   LONG_CACHE_CONTROL,
@@ -60,7 +60,7 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
     return json(rankingDataSorted);
   }
 
-  const dateStart = formatDate(addDate(new Date(date), -gainedDays));
+  const dateStart = formatDate(addDays(new Date(date), -gainedDays));
   aggregate[0] = { $match: { _id: dateStart } };
   aggregatedResult = await dbRankings.aggregate(aggregate).toArray();
   const rankingDataStart = aggregatedResult?.[0]?.[scoreCategory] as unknown as App.RankingEntry[];

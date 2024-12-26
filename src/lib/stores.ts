@@ -9,6 +9,7 @@ const defaultRankingSettings: App.RankingSettings = {
   dateSticky: true,
   perPage: 50,
   scoreDifferences: false,
+  gainedDays: 1,
   ...storedRankingSettings
 };
 export const rankingSettings = writable<App.RankingSettings>(defaultRankingSettings);

@@ -6,7 +6,7 @@
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import Pagination from "$lib/components/Pagination.svelte";
-  import { formatNumber, addDate, formatDate } from "$lib/util";
+  import { formatNumber, addDays, formatDate } from "$lib/util";
   import { rankingSettings } from "$lib/stores";
   import { page } from "$app/stores";
   import type { PageData } from "./$types";
@@ -53,7 +53,7 @@
         <br />
         <small>
           due to a gap between
-          <em>{formatDate(addDate(new Date($page.params.date), -pageData[0].gainedDays))}</em>
+          <em>{formatDate(addDays(new Date($page.params.date), -pageData[0].gainedDays))}</em>
           and
           <em>{$page.params.date}</em>
         </small>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import {
-    addDate,
+    addDays,
     COUNTRIES,
     formatDate,
     getAvatarURL,
@@ -31,7 +31,7 @@
   export let data: PageData;
   const nowDate = getServerDate();
   const nowFormatted = formatDate(nowDate, true);
-  const maxTrendDate = formatDate(addDate(nowDate, MAX_CHART_TREND_DAYS));
+  const maxTrendDate = formatDate(addDays(nowDate, MAX_CHART_TREND_DAYS));
 
   let loading = false;
   let playersPanelVisible = true;

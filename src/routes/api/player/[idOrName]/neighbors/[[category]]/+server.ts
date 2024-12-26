@@ -1,6 +1,6 @@
 import { dbPlayers, prepareQueryObjectForIdOrName } from "$lib/db";
 import {
-  addDate,
+  addDays,
   DEFAULT_API_HEADERS,
   formatDate,
   getServerDate,
@@ -34,7 +34,7 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
   }
 
   const playerDate = player[scoreCategory]?.date as string;
-  const minDate = formatDate(addDate(new Date(playerDate), -3));
+  const minDate = formatDate(addDays(new Date(playerDate), -3));
   const neighborRanks = playerRank == 1 ? [2, 3] : [playerRank - 1, playerRank + 1];
 
   const neighborIdObjects = await dbPlayers

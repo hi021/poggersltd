@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { addDate, formatDate, formatNumber } from "$lib/util";
+  import { addDays, formatDate, formatNumber } from "$lib/util";
   export let playerCategory: App.PlayerRankingFull;
   export let country: string;
   export let title = "";
@@ -43,7 +43,7 @@
         {playerCategory.gainedScores}
         <small class="player-stat-small"
           >since {formatDate(
-            addDate(new Date(playerCategory.date), -((playerCategory.gainedDays ?? 0) + 1))
+            addDays(new Date(playerCategory.date), -((playerCategory.gainedDays ?? 0) + 1))
           )}</small>
       </span>
     </li>

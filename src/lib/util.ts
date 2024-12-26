@@ -33,11 +33,11 @@ export function mergeObjectArraysOnField<K extends string | number | symbol, V>(
   nestedField?: K
 ) {
   const objResult = {} as Record<K, V>;
-  //@ts-ignore - I honestly don't know what I'm trying to do | also this nestedField workaround is so piss
   for (const objDest of arrayDest)
+    //@ts-ignore - I honestly don't know what I'm trying to do | also this nestedField workaround is so piss
     objResult[objDest[field]] = nestedField ? objDest[nestedField] : objDest;
-  //@ts-ignore
-  for (const objSrc of arraySrc)
+    for (const objSrc of arraySrc)
+        //@ts-ignore
     objResult[objSrc[field]] = {
       //@ts-ignore
       ...objResult[objSrc[field]],
@@ -126,7 +126,7 @@ export function getServerDate() {
   return now;
 }
 
-export function addDate(date: Date, days: number) {
+export function addDays(date: Date, days: number) {
   const d = new Date(date);
   d.setDate(d.getUTCDate() + days);
   return d;
@@ -143,7 +143,7 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
   const dates = new Array<string>(days);
 
   for (; daysDone < days; daysDone++) {
-    const curDate = addDate(startDate, -daysDone);
+    const curDate = addDays(startDate, -daysDone);
     dates[daysDone] = formatDate(curDate);
   }
 

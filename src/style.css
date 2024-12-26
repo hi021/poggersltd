@@ -23,6 +23,7 @@
   --clr-gray: 0, 0%, 58%;
   --clr-gray-h: 0, 0%, 68%;
 
+  color-scheme: dark;
   font-family: "Noto Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

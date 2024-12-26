@@ -116,6 +116,7 @@ declare namespace App {
     scoreDifferences: boolean; //                            (default false)
     perPage: number; //                                      number of players shown on one page (default 50)
     dateSticky: boolean; //                                  whether top date bar is sticky
+    gainedDays: number; //                                   number of days to look back for gains ranking (default 1)
   }
 
   interface ApiParams {
