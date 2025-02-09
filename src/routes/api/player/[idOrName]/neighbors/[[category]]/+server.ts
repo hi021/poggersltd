@@ -1,12 +1,5 @@
 import { dbPlayers, prepareQueryObjectForIdOrName } from "$lib/db";
-import {
-  addDays,
-  DEFAULT_API_HEADERS,
-  formatDate,
-  getServerDate,
-  SCORE_CATEGORIES,
-  trimArray
-} from "$lib/util";
+import { addDays, DEFAULT_API_HEADERS, formatDate, SCORE_CATEGORIES, trimArray } from "$lib/util";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 

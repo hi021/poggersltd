@@ -2,7 +2,7 @@
   import ApiEndpointDoc from "$lib/components/ApiEndpointDoc.svelte";
   import { MIN_DATE } from "$lib/util";
 
-  const paramsCommon: App.ApiParams = {
+  const paramsCommon: App.ApiParams = Object.freeze({
     date: {
       type: "string",
       optional: false,
@@ -25,8 +25,26 @@
       optional: true,
       description: `Min-Max rank inclusive (score ranking position), 0 or empty count as range bound<br />
         E.g. 2-100 to show the top 100 excluding the first player, defaults to showing all players`
+    },
+    idsOrNames: {
+      type: "(number | string)[]",
+      optional: false,
+      description: `Comma-separated list of osu! ids or usernames, can be mixed. Max 30 players<br />
+        E.g. 1111,xasuma. No de-duplication is done. Highly recommended to only use ids as player names change over time`
+    },
+    dateRange: {
+      type: "string",
+      optional: true,
+      description: `Space-separated dates in YYYY-MM-DD format, both dates optional<br />
+        E.g. 2023-01-01 2024-12-31, if lower bound is missing, defaults to ${MIN_DATE}, if upper bound is missing, defaults to today's UTC date`
+    },
+    days: {
+      type: "number",
+      optional: true,
+      description: `Amount of days to fetch ranks from, counting from today's UTC date<br />
+        Defaults to 90`
     }
-  };
+  });
 
   const rankingParams: App.ApiParams = {
     date: paramsCommon.date,
@@ -41,6 +59,16 @@
       optional: true,
       description: `Number of days to go back, defaults to 1`
     }
+  };
+
+  const gainsParams: App.ApiParams = {
+    category: paramsCommon.category
+  };
+
+  const playersParams: App.ApiParams = {
+    idsOrNames: paramsCommon.idsOrNames,
+    category: paramsCommon.category,
+    dateRange: paramsCommon.dateRange
   };
 </script>
 
@@ -256,10 +284,55 @@
     exampleUrl="/api/ranking/countries/2024-01-01/top50"
     returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
 
+  <ApiEndpointDoc
+    urlMain="gains"
+    urlParams={gainsParams}
+    exampleUrl="/api/gains"
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
+
+  <ApiEndpointDoc
+    urlMain="players/"
+    urlParams={playersParams}
+    exampleUrl="/api/players/xasuma,Maklovitz,Przegrany/top50/2021-01-01"
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
+
+  <ApiEndpointDoc
+    urlMain="player"
+    urlParams={playersParams}
+    exampleUrl="/api/player/xasuma/top50"
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
+
+  <ApiEndpointDoc
+    urlCategory="player/"
+    urlMain="ranks"
+    urlParams={playersParams}
+    exampleUrl="/api/player/xasuma/ranks/top50/14"
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
+
+  <ApiEndpointDoc
+    urlCategory="player/"
+    urlMain="neighbors"
+    urlParams={playersParams}
+    exampleUrl="/api/player/xasuma/neighbors/top50"
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
+
+  <ApiEndpointDoc
+    urlCategory="player/"
+    urlMain="search"
+    urlParams={playersParams}
+    exampleUrl="/api/player/sha/search"
+    returnValueHtml={`Array&lt;<a class="a" href="#CountryRanking"><code class="type-type">CountryRanking</code></a>&gt;`} />
+
   <hr />
 
   <h2 id="changelog">Changelog</h2>
   <ul>
+    <li>
+      <span>v3.0 (2022-??)</span>
+      <ol>
+        <li>Changes for the sake of changes</li>
+      </ol>
+    </li>
     <li>
       <span>v2.0 (2022-10)</span>
       <ol>

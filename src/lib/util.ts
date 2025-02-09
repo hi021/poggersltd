@@ -37,7 +37,7 @@ export function mergeObjectArraysOnField<K extends string | number | symbol, V>(
     //@ts-ignore - I honestly don't know what I'm trying to do | also this nestedField workaround is so piss
     objResult[objDest[field]] = nestedField ? objDest[nestedField] : objDest;
     for (const objSrc of arraySrc)
-        //@ts-ignore
+    //@ts-ignore
     objResult[objSrc[field]] = {
       //@ts-ignore
       ...objResult[objSrc[field]],
