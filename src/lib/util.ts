@@ -150,12 +150,13 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
   return dates;
 }
 
-export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is the timestamp, should use latest to avoid caching
-
-export const getOsuProfileURL = (idOrName: number | string) =>
-  `https://osu.ppy.sh/users/${idOrName}`;
-
+export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is a timestamp, should use latest to avoid caching
+export const getOsuProfileURL = (idOrName: number | string) =>`https://osu.ppy.sh/users/${idOrName}`;
 export const getOsuStatsURL = (name: string) => `https://osustats.ppy.sh/u/${name}//1/////-/1-50`;
+export const getOsuTrackURL = (name: string) => `https://ameobea.me/osutrack/user/${name}`;
+export const getOsuAltURL = (id: number | string) => `https://score.kirino.sh/user/${id}`;
+export const getOsuDailyURL = (name: number) => `https://osudaily.net/profile.php?u=${name}&s=1&m=0`;
+export const getOsuSnipeURL = (id: number | string, country = "global") => `https://snipe.huismetbenen.nl/player/${country.toLowerCase()}/osu/${id}`;
 
 export function transitionHeight(
   node: Element,

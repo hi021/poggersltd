@@ -3,8 +3,12 @@
   import {
     COUNTRIES,
     getAvatarURL,
+    getOsuAltURL,
+    getOsuDailyURL,
     getOsuProfileURL,
+    getOsuSnipeURL,
     getOsuStatsURL,
+    getOsuTrackURL,
     RANKING_BADGES,
     SCORE_CATEGORIES,
     tooltip
@@ -99,7 +103,7 @@
           href={getOsuProfileURL(data._id)}
           use:tooltip={{ content: "osu! profile" }}
           rel="noreferrer">
-          <div class="osu-icon-wrapper">
+          <div class="icon-wrapper osu-icon-wrapper">
             <div />
             <icon class="osu bigger" />
           </div>
@@ -110,7 +114,7 @@
           href={getOsuStatsURL(data.name)}
           use:tooltip={{ content: "osu!Stats" }}
           rel="noreferrer">
-          <div class="chart-icon-wrapper">
+          <div class="icon-wrapper chart-icon-wrapper">
             <div />
             <icon class="chart-line" />
           </div>
@@ -121,20 +125,20 @@
           href={getOsuTrackURL(data.name)}
           use:tooltip={{ content: "osu!track" }}
           rel="noreferrer">
-          <div class="chart-icon-wrapper">
+          <div class="icon-wrapper">
             <div />
-            <icon class="chart-line" />
+            <icon class="chart-bar" />
           </div>
         </a>
         <a
           class="a"
           target="_blank"
-          href={getOsuAltURL(data.name)}
+          href={getOsuAltURL(data._id)}
           use:tooltip={{ content: "osu! scores inspector" }}
           rel="noreferrer">
-          <div class="chart-icon-wrapper">
+          <div class="icon-wrapper">
             <div />
-            <icon class="chart-line" />
+            <div style="font-weight: 300;">alt</div>
           </div>
         </a>
         <a
@@ -143,21 +147,20 @@
           href={getOsuDailyURL(data.name)}
           use:tooltip={{ content: "osu!daily" }}
           rel="noreferrer">
-          <div class="chart-icon-wrapper">
+          <div class="icon-wrapper">
             <div />
-            <icon class="chart-line" />
+            <div style="font-weight: 500;">S</div>
           </div>
         </a>
-        <!-- TODO ADD PROFILE LINKS -->
         <a
           class="a"
           target="_blank"
-          href={getOsuSnipeURL(data.name)}
+          href={getOsuSnipeURL(data._id, data.country)}
           use:tooltip={{ content: "osu!snipe" }}
           rel="noreferrer">
-          <div class="chart-icon-wrapper">
+          <div class="icon-wrapper">
             <div />
-            <icon class="chart-line" />
+            <icon class="flag" />
           </div>
         </a>
       </aside>
@@ -202,7 +205,7 @@
       </div>
     </div>
   {:else}
-    <p class="solo-text">Player not found</p>
+    <p class="solo-text">Player not found &gt;~&lt;</p>
   {/if}
 </main>
 
@@ -255,36 +258,43 @@
     gap: 8px;
     border-bottom-left-radius: var(--radius);
   }
+  aside a {
+    text-decoration: none;
+  }
 
-  .osu-icon-wrapper,
-  .chart-icon-wrapper {
+  .icon-wrapper {
     position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  .chart-icon-wrapper {
+  .icon-wrapper:not(.osu-icon-wrapper) {
+    width: 1.75rem;
+    height: 1.75rem;
     outline: 0.125em solid currentColor;
     outline-offset: -0.125em;
     border-radius: 50%;
   }
-  :is(.osu-icon-wrapper, .chart-icon-wrapper) > div {
-    top: 2px;
-    bottom: 2px;
-    right: 2px;
-    left: 2px;
+  .icon-wrapper > div:first-child {
+    inset: 2px;
     border-radius: 50%;
     position: absolute;
     transition: background-color 0.1s linear;
   }
-  :is(.osu-icon-wrapper, .chart-icon-wrapper) > icon {
+  .icon-wrapper > div + div {
+    z-index: 1;
+    transition: color 0.1s linear;
+  }
+  .icon-wrapper > icon {
     transition: color 0.1s linear;
   }
   .chart-icon-wrapper > icon {
     font-size: 1.75em;
   }
-  :is(.osu-icon-wrapper, .chart-icon-wrapper):hover > div {
+  .icon-wrapper:hover > div:first-child {
     background-color: var(--color-pink);
   }
-  :is(.osu-icon-wrapper, .chart-icon-wrapper):hover {
+  .icon-wrapper:hover {
     color: var(--color-lightest);
   }
 

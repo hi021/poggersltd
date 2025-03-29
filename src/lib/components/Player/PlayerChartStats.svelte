@@ -13,7 +13,7 @@
 </script>
 
 <div class="player-chart-stats-container column">
-  <span class="day-span">Throughout the past <strong>{days}</strong> days:</span>
+  <span class="day-span">Last <strong>{days}</strong> days:</span>
   <ul class="player-stats-container center-align ul row">
     <li>
       <span class="player-stat-name">Peak</span>
