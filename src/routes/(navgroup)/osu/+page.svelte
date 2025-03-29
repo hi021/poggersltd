@@ -35,7 +35,7 @@
 </dialog>
 
 <main class="flex-fill column" style="padding: 0 3.5%">
-  <span class="search-logo">
+  <div class="search-logo">
     <span class="logo-letter" style="color: #5cc4ff;">p</span>
     <span class="logo-letter" style="color: #ff82e3;">o</span>
     <span class="logo-letter" style="color: #fbfbfb;">g</span>
@@ -43,7 +43,7 @@
     <span class="logo-letter" style="color: #fbfbfb;">e</span>
     <span class="logo-letter" style="color: #ff82e3;">r</span>
     <span class="logo-letter" style="color: #5cc4ff;">s</span>
-  </span>
+  </div>
 
   <UserSearch {gotoPlayer} />
 
@@ -72,10 +72,11 @@
     display: flex;
     justify-content: center;
     cursor: default;
-    margin: 3.25rem;
+    margin: 4rem 1rem;
     user-select: none;
   }
   .logo-letter {
+    line-height: 0.75;
     transition: transform 0.15s ease;
   }
   .logo-letter:hover {

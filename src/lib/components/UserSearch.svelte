@@ -63,10 +63,7 @@
     <input
       class="search-input input-dark"
       style="--shadow-color: {autocompleteEntries.length
-        ? 'transparent'
-        : value.length % 2
-          ? 'var(--color-claret)'
-          : 'var(--color-darkest)'}"
+        ? 'transparent' : 'var(--color-darkest)'}"
       type="text"
       placeholder="osu! username"
       autocomplete="new-password"

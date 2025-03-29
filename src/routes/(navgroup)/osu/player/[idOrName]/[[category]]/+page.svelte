@@ -115,6 +115,51 @@
             <icon class="chart-line" />
           </div>
         </a>
+        <a
+          class="a"
+          target="_blank"
+          href={getOsuTrackURL(data.name)}
+          use:tooltip={{ content: "osu!track" }}
+          rel="noreferrer">
+          <div class="chart-icon-wrapper">
+            <div />
+            <icon class="chart-line" />
+          </div>
+        </a>
+        <a
+          class="a"
+          target="_blank"
+          href={getOsuAltURL(data.name)}
+          use:tooltip={{ content: "osu! scores inspector" }}
+          rel="noreferrer">
+          <div class="chart-icon-wrapper">
+            <div />
+            <icon class="chart-line" />
+          </div>
+        </a>
+        <a
+          class="a"
+          target="_blank"
+          href={getOsuDailyURL(data.name)}
+          use:tooltip={{ content: "osu!daily" }}
+          rel="noreferrer">
+          <div class="chart-icon-wrapper">
+            <div />
+            <icon class="chart-line" />
+          </div>
+        </a>
+        <!-- TODO ADD PROFILE LINKS -->
+        <a
+          class="a"
+          target="_blank"
+          href={getOsuSnipeURL(data.name)}
+          use:tooltip={{ content: "osu!snipe" }}
+          rel="noreferrer">
+          <div class="chart-icon-wrapper">
+            <div />
+            <icon class="chart-line" />
+          </div>
+        </a>
       </aside>
       <div class="main-container column flex-fill">
         {#if loading}

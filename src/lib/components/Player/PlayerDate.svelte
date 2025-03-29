@@ -2,6 +2,8 @@
   import { tooltip } from "$lib/util";
   export let categoryStats: App.PlayerRankingFullAPI;
 
+  // TODO FIXME: when changing tabs this can be undefined before its set to proper value
+ $: console.log(categoryStats.daysOutdated)
   const content = `${categoryStats.daysOutdated} day${categoryStats.daysOutdated == 1 ? "" : "s"} out of date`;
   const warningColor =
     categoryStats.daysOutdated && categoryStats.daysOutdated >= 28

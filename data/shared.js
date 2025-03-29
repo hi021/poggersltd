@@ -22,22 +22,25 @@ export const getDaysBetweenDates = (d1, d2) => Math.floor((d1.getTime() - d2.get
 export function createNGram(str) {
   if (!str || str.length <= 3) return str;
 
+  const trimStr = str.replaceAll(/[^\d\w:]/g, "").trim();
+  const theLessStr = trimStr.replaceAll(/^The/gi, "").trim();
   const minGram = 3;
-  const maxGram = str.length;
+  const maxGram = trimStr.length;
 
-  return str
+  return trimStr
     .split(" ")
     .reduce((ngrams, token) => {
       if (token.length > minGram) {
-        for (let i = minGram; i <= maxGram && i <= token.length; ++i) {
+        for (let i = minGram; i <= maxGram && i <= token.length; ++i)
           ngrams = [...ngrams, token.substr(0, i)];
-        }
       } else {
         ngrams = [...ngrams, token];
       }
+
       return ngrams;
     }, [])
-    .join(" ");
+    .join(" ")
+    .concat(theLessStr == trimStr ? "" : " " + createNGram(theLessStr));
 }
 
 // All ranking entries between start and end dates sorted oldest -> newest

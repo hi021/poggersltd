@@ -37,7 +37,7 @@
     text-align: center;
     font-weight: 600;
     font-size: 2rem;
-    padding: 1.25rem 0.25rem;
+    padding: 0.875rem 0.25rem 1.5rem 0.25rem;
     line-height: 1;
     margin-bottom: 42px;
     background-image: url("/4am_girl.png");

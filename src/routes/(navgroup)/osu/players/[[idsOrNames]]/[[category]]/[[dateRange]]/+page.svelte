@@ -290,7 +290,7 @@
                 <!-- svelte-ignore a11y-invalid-attribute -->
                 <a
                   class="a player-name-wrapper"
-                  href=""
+                  href="#"
                   on:click={() =>
                     (editingPlayerIndex =
                       editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>

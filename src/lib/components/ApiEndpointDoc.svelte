@@ -1,7 +1,7 @@
 <script lang="ts">
   export let method: "GET" | "POST" = "GET";
   export let urlApi = "/api/";
-  export let urlCategory: string | undefined = undefined;
+  export let urlCategory = "";
   export let urlMain: string;
   export let urlParams: App.ApiParams | undefined = undefined;
   export let exampleUrl: string | undefined = undefined;
