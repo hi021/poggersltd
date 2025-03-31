@@ -1,33 +1,39 @@
 // Fetch today's ranking from osu!Stats API and save it as a json and upsert the database entry
 // OUTPUT -> ./archive-fetched/
 
-import { fileURLToPath } from "url";
-import { MongoClient } from "mongodb";
+import { populatePlayers } from "./populatePlayers.js";
 import { formatDate } from "./shared.js";
+import { MongoClient } from "mongodb";
+import { fileURLToPath } from "url";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
-const today = formatDate();
 
 ////////////////////////////
-const OUTPUT_FILE = path.resolve(__dirname, "archive-fetched", today + ".json");
-const MIN_TOP50 = 1020;
+const MIN_TOP50 = 1100;
 const MAX_PAGE = 10;
+const FLAGS = {ONE_PAGE_ONLY: "-onePage", CUSTOM_DATE: "-date="};
 ////////////////////////////
 
-const client = await MongoClient.connect(process.env.DB_URI);
-const dbRankings = client.db(process.env.DB_NAME).collection("rankings");
+function parseCustomDate(flags) {
+    const customDateString = flags.find(a => a.startsWith(FLAGS.CUSTOM_DATE));
+    return customDateString ? customDateString.slice(FLAGS.CUSTOM_DATE.length) : formatDate();
+}
 
-async function fetchCountryPage(country, page = 1) {
+function convertToDatabaseEntry(rankingEntry, date, category) {
+    return {_id: date, [category]: rankingEntry};
+}
+
+async function fetchCountryPage(country, page = 1, category = "50") {
   console.time(`${country} #${page}`);
   let hasNextPage = true;
   let players = [];
 
   try {
-    const body = JSON.stringify({ gamemode: "0", page, rankMin: "1", rankMax: "50", country });
+    const body = JSON.stringify({ gamemode: "0", page, rankMin: "1", rankMax: category, country });
     const response = await fetch("https://osustats.ppy.sh/api/getScoreRanking", {
       method: "POST",
       body,
@@ -58,7 +64,7 @@ async function fetchCountryPage(country, page = 1) {
       }
     });
   } catch (e) {
-    console.log("Failed to fetch country:", e);
+    console.warn("Failed to fetch country:", e);
     hasNextPage = false;
     players = null;
   } finally {
@@ -129,51 +135,64 @@ const countries = [
   "IE"
 ];
 
-console.time(`Fetching ${today} ranking took`);
-const rankingEntry = [];
-for (const country of countries) {
-  let page = 1;
-  let pageData = { players: null, hasNextPage: true };
-  while (pageData.hasNextPage && page <= MAX_PAGE) {
-    pageData = await fetchCountryPage(country, page++);
+async function fetchPlayers(mongoClient, flags, date) {
+    console.time(`Fetching ${date} ranking took`);
+    const dbRankings = mongoClient.db(process.env.DB_NAME).collection("rankings");
+    const rankingEntry = [];
 
-    if (pageData.players == null) {
-      console.log("Returned null, aborting.");
-      client.close();
-      process.exit(2);
+    for (const country of countries) {
+        let page = 1;
+        let pageData = { players: null, hasNextPage: true };
+        while (pageData.hasNextPage && page <= MAX_PAGE) {
+            pageData = await fetchCountryPage(country, page++);
+
+            if (pageData.players == null) {
+                console.log("Returned null - aborting.");
+                mongoClient.close();
+                process.exit(2);
+            }
+            if (!pageData.players.length) break;
+
+            rankingEntry.push(...pageData.players);
+            if(flags.includes(FLAGS.ONE_PAGE_ONLY)) break;
+        }
+
+        if(flags.includes(FLAGS.ONE_PAGE_ONLY)) break;
+        // simplest rate limit to not spam the API
+        await new Promise((resolve) => setTimeout(() => resolve(true), 1000));
     }
-    if (!pageData.players.length) break;
 
-    rankingEntry.push(...pageData.players);
-  }
+    rankingEntry.sort((a, b) => b.scores - a.scores);
+    for (const i in rankingEntry) rankingEntry[i].rank = Number(i) + 1;
 
-  // simplest rate limit to not spam the API
-  await new Promise((resolve) => setTimeout(() => resolve(true), 1000));
+    const OUTPUT_FILE = path.resolve(__dirname, "archive-fetched", date + ".json");
+    if (OUTPUT_FILE) {
+        fs.writeFileSync(OUTPUT_FILE, JSON.stringify(rankingEntry));
+        console.log("Output saved to " + OUTPUT_FILE);
+    }
+
+    try {
+        console.log("Inserting into database and creating indexes...");
+        await dbRankings.updateOne({ _id: date }, { $set: { top50: rankingEntry } }, { upsert: true });
+        await dbRankings.createIndexes([
+            { key: { "top50._id": -1 } },
+            { key: { "top50.rank": 1 } },
+            { key: { "top50.country": -1 } },
+            { key: { "top50.gainedScores": -1 } }
+        ]);
+        console.log(`Fetched ${rankingEntry.length} players ✅`);
+        return rankingEntry;
+    } catch (e) {
+        console.err("Failed to insert into database:", e);
+        mongoClient.close();
+    } finally {
+        console.timeEnd(`Fetching ${date} ranking took`);
+    }
 }
 
-rankingEntry.sort((a, b) => b.scores - a.scores);
-for (const i in rankingEntry) rankingEntry[i].rank = Number(i) + 1;
-
-//TODO: most gained ranking
-
-if (OUTPUT_FILE) {
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(rankingEntry));
-  console.log("Output saved to " + OUTPUT_FILE);
-}
-
-try {
-  console.log("Inserting into database and creating indexes...");
-  await dbRankings.updateOne({ _id: today }, { $set: { top50: rankingEntry } }, { upsert: true });
-  await dbRankings.createIndexes([
-    { key: { "top50._id": -1 } },
-    { key: { "top50.rank": 1 } },
-    { key: { "top50.country": -1 } },
-    { key: { "top50.gainedScores": -1 } }
-  ]);
-  console.log(`${rankingEntry.length} players`);
-} catch (e) {
-  console.err("Failed to insert into database:", e);
-} finally {
-  client.close();
-  console.timeEnd(`Fetching ${today} ranking took`);
-}
+const flags = process.argv.splice(2);
+const date = parseCustomDate(flags);
+const client = await MongoClient.connect(process.env.DB_URI);
+const rankingEntry = await fetchPlayers(client, flags, date);
+await populatePlayers(client, [convertToDatabaseEntry(rankingEntry, date, "top50")]);
+client.close();

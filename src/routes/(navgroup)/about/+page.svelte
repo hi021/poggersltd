@@ -11,8 +11,8 @@
     <br />
     Feel free to click around!
     <br />
-    Most of the functionality is already implemented, but some of it lacks polish. I'll be working on
-    that...
+    Most of the functionality is already implemented, but some of it lacks polish... I'll be working on
+    that.
   </p>
 
   <h2>What's different?</h2>
@@ -134,7 +134,7 @@
       satisfying charts
     </li>
     <li>
-      <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great stats
+      <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great osu!alternative stats
       & clans ☻
     </li>
     <li>

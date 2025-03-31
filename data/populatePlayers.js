@@ -9,20 +9,15 @@ import * as path from "path";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-const client = await MongoClient.connect(process.env.DB_URI);
-const dbPlayers = client.db(process.env.DB_NAME).collection("players");
-const rankingEntries = await getRankingEntries();
-const players = new Map(); // id => playerObject
-
 // make RankingEntry into Player and put it into the big mappy
-function putPlayerIntoMap(player, category, date) {
+function putPlayerIntoMap(players, player, category, date) {
   if (players.has(player._id)) {
     const playerObject = players.get(player._id);
 
     playerObject.country = player.country;
     if (playerObject.name != player.name) {
       playerObject.oldNames = playerObject.oldNames
-        ? playerObject.oldNames.add(playerObject.name)
+        ? new Set(playerObject.oldNames).add(playerObject.name)
         : new Set([playerObject.name]);
       playerObject.name = player.name;
     }
@@ -54,7 +49,7 @@ function putPlayerIntoMap(player, category, date) {
     players.set(player._id, playerObject);
   } else {
     const peak = { date, scores: player.scores };
-    const playerObject /* type Player */ = {
+    const playerObject /* satisfies Player */ = {
       _id: player._id,
       name: player.name,
       country: player.country,
@@ -69,7 +64,8 @@ function putPlayerIntoMap(player, category, date) {
         date
       }
     };
-    if (player.gainedDays) playerObject[category].gainedDays = player.gainedDays;
+    if (player.gainedDays)
+        playerObject[category].gainedDays = player.gainedDays;
     else if (player.gainedScores)
       playerObject[category].mostGained = { date, scores: player.gainedScores };
 
@@ -98,39 +94,62 @@ function finalizePlayer(player) {
   return playerObject;
 }
 
-for (const entry of rankingEntries) {
-  const date = entry._id;
-  for (const category in entry) {
-    if (category == "_id") continue;
-    for (const player of entry[category]) {
-      putPlayerIntoMap(player, category, date);
+async function buildExistingPlayersMap(dbPlayers) {
+    const players = new Map();
+    const existingPlayers = await dbPlayers.find().toArray();
+    for(const player of existingPlayers)
+        players.set(player._id, player)
+
+    return players;
+}
+
+export async function populatePlayers(mongoClient = null, rankingEntries = null) {
+    // whether ran manually from console as opposed to another script that passes in a shared client
+    const ownClient = mongoClient == null;
+    if(ownClient) mongoClient = await MongoClient.connect(process.env.DB_URI);
+    const dbPlayers = mongoClient.db(process.env.DB_NAME).collection("players");
+
+    // player map: id => playerObject, either load from db or create from scratch if script ran manually
+    const players = rankingEntries ? await buildExistingPlayersMap(dbPlayers) : new Map();
+    rankingEntries = rankingEntries ?? await getRankingEntries();
+
+    for (const entry of rankingEntries) {
+        const date = entry._id;
+        for (const category in entry) {
+            if (category == "_id") continue;
+            for (const player of entry[category])
+                putPlayerIntoMap(players, player, category, date);
+        }
+
+        console.log(`${date} - ${players.size} players`);
     }
-  }
 
-  console.log(`${date} - ${players.size} players`);
+    console.log("Finalizing and inserting players...");
+    for (const id of players.keys()) {
+        const player = finalizePlayer(players.get(id));
+        await dbPlayers.updateOne({ _id: id }, { $set: player }, { upsert: true });
+    }
+
+    console.log("Creating indexes...");
+    await dbPlayers.createIndexes([
+    {
+        key: { nameKey: "text" },
+        defaultLanguage: "english"
+    },
+    { key: { country: -1 } },
+    { key: { "top50.rank": 1 } },
+    { key: { "top50.countryRank": 1 } },
+    { key: { "top25.rank": 1 } },
+    { key: { "top25.countryRank": 1 } },
+    { key: { "top8.rank": 1 } },
+    { key: { "top8.countryRank": 1 } },
+    { key: { "top1.rank": 1 } },
+    { key: { "top1.countryRank": 1 } }
+    ]);
+
+    if(ownClient) mongoClient.close();
+    console.log("Player data updated ✅");
 }
 
-console.log("Finalizing and inserting players...");
-for (const id of players.keys()) {
-  const player = finalizePlayer(players.get(id));
-  await dbPlayers.updateOne({ _id: id }, { $set: player }, { upsert: true });
-}
-
-console.log("Creating indexes...");
-await dbPlayers.createIndexes([
-  {
-    key: { nameKey: "text" },
-    defaultLanguage: "english"
-  },
-  { key: { country: -1 } },
-  { key: { "top50.rank": 1 } },
-  { key: { "top50.countryRank": 1 } },
-  { key: { "top25.rank": 1 } },
-  { key: { "top25.countryRank": 1 } },
-  { key: { "top8.rank": 1 } },
-  { key: { "top8.countryRank": 1 } },
-  { key: { "top1.rank": 1 } },
-  { key: { "top1.countryRank": 1 } }
-]);
-
-client.close();
+if(process.argv[1] === import.meta.filename)
+    populatePlayers();
