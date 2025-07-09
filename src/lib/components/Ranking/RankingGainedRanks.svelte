@@ -23,7 +23,7 @@
 </script>
 
 <td style="width: 22px;" use:tooltip={{ content: text }}>
-  <div class={"rank-indicator " + className} />
+  <div class={"rank-indicator " + className}></div>
 </td>
 
 <style>

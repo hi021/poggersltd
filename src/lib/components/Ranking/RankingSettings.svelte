@@ -1,12 +1,14 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import Switch from "../Switch.svelte";
-  import { addDays, getDaysBetweenDates, MIN_DATE } from "$lib/util";
+  import { addDays, getDaysBetweenDates } from "$lib/util";
   import { _getGainsRankingUrl } from "../../../routes/(navgroup)/osu/(secondarynav)/ranking/gains/[date]/[[category]]/[[country]]/[[ranks]]/[...extra]/+page";
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
+  import { COUNTRIES, MIN_DATE } from "$lib/constants";
+  import MultiSelectDropdown from "../MultiSelectDropdown.svelte";
 
   export let viewMode: "players" | "countries" | "gains" | "mostGained" = "players";
   export let settings: App.RankingSettings;
@@ -16,10 +18,10 @@
   let isGainedDaysCustom: boolean;
   const maxDays = getDaysBetweenDates(
     addDays(new Date(MIN_DATE), 1).valueOf(),
-    new Date($page.params.date).valueOf()
+    new Date(page.params.date).valueOf()
   );
 
-  //TODO: make maxDays refresh
+  // TODO: make maxDays refresh
   const gainsTimeFrames = {
     1: "1 Day",
     7: "1 Week",
@@ -46,15 +48,15 @@
   function handleGainsTimeFrameNavigation(days: number) {
     console.log(days);
     if (browser)
-      goto(_getGainsRankingUrl($page.params as any, days, "osu"), { invalidateAll: false });
+      goto(_getGainsRankingUrl(page.params as any, days, "osu"), { invalidateAll: false });
   }
 
   onMount(() => checkAndSetIsGainedDaysCustom());
 </script>
 
 <div class="wrapper" {style}>
-  <button class="btn-icon" type="button" on:click={() => (visible = !visible)}>
-    <icon class="settings" style="transform: rotate({visible ? 45 : 0}deg);" />
+  <button class="btn-icon" type="button" on:click={() => (visible = !visible)} aria-label="Ranking settings">
+    <icon class="settings" style="transform: rotate({visible ? 45 : 0}deg);"></icon>
   </button>
 
   {#if visible}
@@ -85,7 +87,19 @@
             <option value={Infinity}>All</option>
           </select>
         </label>
+
+        <MultiSelectDropdown options={COUNTRIES}>
+          {#snippet optionComponent({value, label})}
+            <label
+              ><input type="checkbox" {value} /><img
+                class="osu-flag-small"
+                alt={value}
+                src="/flags/{value}.svg" />{label}
+            </label>
+          {/snippet}
+        </MultiSelectDropdown>
       {/if}
+      <!-- TODO: ranks filter and countries filter -->
       {#if viewMode == "gains"}
         <label>
           Gains time frame
@@ -103,8 +117,6 @@
           {/if}
         </label>
       {/if}
-
-      <!-- TODO: ranks filter and countries filter -->
     </div>
   {/if}
 </div>

@@ -17,14 +17,14 @@
       disabled={page <= 1}
       on:click={() => onPageChange(1)}
       use:tooltip={{ content: "First page" }}>
-      <icon class="double-arrow flip-h" />
+      <icon class="double-arrow flip-h"></icon>
     </button>
     <button
       type="button"
       title="Previous page"
       disabled={page <= 1}
       on:click={() => onPageChange(page - 1)}>
-      <icon class="single-arrow flip-h" />
+      <icon class="single-arrow flip-h"></icon>
     </button>
 
     <button
@@ -32,7 +32,7 @@
       title="Next page"
       disabled={page >= maxPage}
       on:click={() => onPageChange(page + 1)}>
-      <icon class="single-arrow" />
+      <icon class="single-arrow"></icon>
     </button>
     <button
       type="button"
@@ -40,7 +40,7 @@
       disabled={page >= maxPage}
       on:click={() => onPageChange(maxPage)}
       use:tooltip={{ content: "Last page" }}>
-      <icon class="double-arrow" />
+      <icon class="double-arrow"></icon>
     </button>
   </div>
 

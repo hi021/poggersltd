@@ -1,4 +1,5 @@
-import { CHART_COLORS, mergeObjectArraysOnField } from "$lib/util";
+import { CHART_COLORS } from "$lib/constants";
+import { mergeObjectArraysOnField } from "$lib/util";
 import type { PageLoad } from "./$types";
 
 type ComparisonChartEntriesObject = { [date: number]: App.ComparisonChartPlayerProcessed };

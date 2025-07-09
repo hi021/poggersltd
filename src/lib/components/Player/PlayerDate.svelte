@@ -2,8 +2,8 @@
   import { tooltip } from "$lib/util";
   export let categoryStats: App.PlayerRankingFullAPI;
 
- $: content = `${categoryStats.daysOutdated} day${categoryStats.daysOutdated == 1 ? "" : "s"} out of date`;
- $: warningColor =
+  $: content = `${categoryStats.daysOutdated} day${categoryStats.daysOutdated == 1 ? "" : "s"} out of date`;
+  $: warningColor =
     categoryStats.daysOutdated && categoryStats.daysOutdated >= 28
       ? "var(--color-red)"
       : categoryStats.daysOutdated && categoryStats.daysOutdated >= 3
@@ -16,7 +16,7 @@
   <strong class="flex-center">
     {categoryStats.date}
     {#if categoryStats.daysOutdated}
-      <icon class="warning" style="color: {warningColor};" use:tooltip={{ content }} />
+      <icon class="warning" style="color: {warningColor};" use:tooltip={{ content }}></icon>
     {/if}
   </strong>
 </small>

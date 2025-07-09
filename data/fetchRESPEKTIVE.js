@@ -207,7 +207,7 @@ for (const i in categories) {
           if (plr.gained >= 4) mostGained[cat].push({ ...plr, date });
 
         mostGained[cat].sort((a, b) => (a.gained < b.gained ? 1 : -1));
-        mostGained[cat] = mostGained[cat].slice(0, process.env.MAX_MOST_GAINED);
+        mostGained[cat] = mostGained[cat].slice(0, process.env.MAX_GAINED_RANKING_SIZE);
         //set data
         for (const i in mostGained[cat]) {
           const plr = mostGained[cat][i];

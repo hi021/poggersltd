@@ -6,7 +6,77 @@ import * as path from "path";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
-export const categoriesDb = ["top50", "top25", "top8", "top1"]; // only the ones stored in db
+export const CATEGORY_NAMES = ["top50", "top25", "top8", "top1"]; // only the ones stored in db
+export const RANKING_INDEXES = { _id: -1, rank: 1, country: -1, gainedScores: -1 }; // ranking collection indexes
+export const PLAYER_INDEXES = { rank: 1, countryRank: 1 }; // players collection indexes
+export const COUNTRY_CODES = [
+  "US",
+  "RU",
+  "ID",
+  "TW",
+  "JP",
+  "KR",
+  "CN",
+  "DE",
+  "FR",
+  "PL",
+  "BR",
+  "CL",
+  "PH",
+  "CA",
+  "TH",
+  "MX",
+  "GB",
+  "HK",
+  "AR",
+  "MY",
+  "AU",
+  "IT",
+  "UA",
+  "ES",
+  "VN",
+  "SG",
+  "NL",
+  "FI",
+  "SE",
+  "PE",
+  "CO",
+  "VE",
+  "TR",
+  "CZ",
+  "BY",
+  "BE",
+  "NO",
+  "PT",
+  "AT",
+  "HU",
+  "RO",
+  "DK",
+  "KZ",
+  "NZ",
+  "LT",
+  "CH",
+  "IL",
+  "UY",
+  "EE",
+  "GR",
+  "BG",
+  "EC",
+  "SK",
+  "LV",
+  "MO",
+  "SA",
+  "RS",
+  "CR",
+  "IE"
+];
+
+/**
+ * E.g. 'top50' -> '50'
+ */
+export function parseCategoryNumber(category) {
+  return category.slice(3);
+}
 
 export function formatDate(date) {
   if (!date) date = new Date();
@@ -16,9 +86,16 @@ export function formatDate(date) {
     .padStart(2, "0")}`;
 }
 
-export const getDaysBetweenDates = (d1, d2) => Math.floor((d1.getTime() - d2.getTime()) / 86400000);
+export const getDaysBetweenDates = (d1, d2) =>
+  Math.floor((d1.getTime() - d2.getTime()) / 86400000 /* ms in day */);
 
-// for nameKey field (username search index)
+export function compareByGivenFieldDescendingOrId(a, b, field) {
+  return a[field] == b[field] ? a.id - b.id : b[field] - a[field];
+}
+
+/**
+ * For `nameKey` field (username search index)
+ */
 export function createNGram(str) {
   if (!str || str.length <= 3) return str;
 
@@ -43,7 +120,9 @@ export function createNGram(str) {
     .concat(theLessStr == trimStr ? "" : " " + createNGram(theLessStr));
 }
 
-// All ranking entries between start and end dates sorted oldest -> newest
+/**
+ * All ranking entries between start and end dates sorted oldest -> newest
+ */
 export async function getRankingEntries(start = "", end = "Z") {
   const client = await MongoClient.connect(process.env.DB_URI);
   const allRankingEntries = await client

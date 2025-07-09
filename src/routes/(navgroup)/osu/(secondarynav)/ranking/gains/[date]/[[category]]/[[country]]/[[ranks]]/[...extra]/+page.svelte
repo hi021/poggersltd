@@ -8,7 +8,7 @@
   import Pagination from "$lib/components/Pagination.svelte";
   import { rankingSettings } from "$lib/stores";
   import { formatNumber } from "$lib/util";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-  <title>{$page.params.date || "gains"} - poggers</title>
+  <title>{page.params.date || "gains"} - poggers</title>
 </svelte:head>
 
 <main class="flex-fill column osu-main">
@@ -62,7 +62,7 @@
 
             <RankingCountry country={plr.country} />
 
-            <RankingName category={$page.params.category} {plr} />
+            <RankingName category={page.params.category} {plr} />
 
             <td style="width: 25%;">
               {(plr.gainedScores ?? -1) >= 0 ? "+" : ""}{formatNumber(plr.gainedScores ?? 0, " ")}

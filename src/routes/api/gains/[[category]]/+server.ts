@@ -1,7 +1,7 @@
 import type { RequestHandler } from "./$types";
-import { DEFAULT_API_HEADERS, SCORE_CATEGORIES } from "$lib/util";
 import { dbMostGained } from "$lib/db";
 import { error, json } from "@sveltejs/kit";
+import { DEFAULT_API_HEADERS, SCORE_CATEGORIES } from "$lib/constants";
 
 export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const scoreCategory = (params.category || "top50") as App.RankingCategory;

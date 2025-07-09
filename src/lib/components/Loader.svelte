@@ -17,7 +17,8 @@
   class="loader"
   class:loader-sticky={sticky}
   bind:this={element}
-  style={"margin-top: " + margin} />
+  style={"margin-top: " + margin}>
+</div>
 
 <style>
   .loader {

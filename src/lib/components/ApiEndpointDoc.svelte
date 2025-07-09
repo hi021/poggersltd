@@ -23,7 +23,7 @@
 <h4 class="endpoint-url">
   {urlApi}{urlCategory}<span class="emphasis">{urlMain}</span><span class="endpoint-params"
     >{buildParamsRouteString()}</span>
-  <span class="method {method}" />
+  <span class="method {method}"></span>
   {#if exampleUrl}
     <a class="a btn-anchor" href={exampleUrl} target="_blank">See example</a>
   {/if}

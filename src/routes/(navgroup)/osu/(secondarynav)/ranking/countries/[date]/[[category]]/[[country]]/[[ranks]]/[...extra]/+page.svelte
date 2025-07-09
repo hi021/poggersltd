@@ -1,10 +1,11 @@
 <script lang="ts">
   import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
-  import { formatNumber, COUNTRIES } from "$lib/util";
+  import { formatNumber } from "$lib/util";
   import { rankingSettings } from "$lib/stores";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { PageData } from "./$types";
+  import { COUNTRIES } from "$lib/constants";
 
   export let data: PageData;
 
@@ -20,7 +21,7 @@
 </script>
 
 <svelte:head>
-  <title>{$page.params.date || "ranking"} - poggers</title>
+  <title>{page.params.date || "ranking"} - poggers</title>
 </svelte:head>
 
 <main class="flex-fill column osu-main">
@@ -31,7 +32,7 @@
 
     <table class="osu-table">
       <thead>
-        <th />
+        <th></th>
 
         <th> Country </th>
 

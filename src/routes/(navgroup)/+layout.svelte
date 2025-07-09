@@ -1,40 +1,40 @@
 <script lang="ts">
   import Footer from "$lib/components/Footer.svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
 </script>
 
 <header class="row">
   <a href="/home" class="logo-text flex-center unselectable"> poggers </a>
 
-  <div class="vr hide-width-640" />
+  <div class="vr hide-width-640"></div>
   <hr class="show-width-640" />
 
   <nav class="row column-width-640">
     <a
       href="/osu/ranking"
       class="nav-tab"
-      class:active={$page.url.pathname.startsWith("/osu/ranking")}>
+      class:active={page.url.pathname.startsWith("/osu/ranking")}>
       Ranking
     </a>
     <a
       href="/osu"
       class="nav-tab"
-      class:active={$page.url.pathname === "/osu" || $page.url.pathname.startsWith("/osu/player")}>
+      class:active={page.url.pathname === "/osu" || page.url.pathname.startsWith("/osu/player")}>
       Player
     </a>
     <a
       href="/osu/breakdown"
       class="nav-tab"
-      class:active={$page.url.pathname.startsWith("/osu/breakdown")}>
+      class:active={page.url.pathname.startsWith("/osu/breakdown")}>
       Breakdown
     </a>
     <a
       href="/osu/gains/top50"
       class="nav-tab"
-      class:active={$page.url.pathname.startsWith("/osu/gains")}>
+      class:active={page.url.pathname.startsWith("/osu/gains")}>
       Most Gained
     </a>
-    <a href="/about" class="nav-tab right" class:active={$page.url.pathname.startsWith("/about")}>
+    <a href="/about" class="nav-tab right" class:active={page.url.pathname.startsWith("/about")}>
       About
     </a>
   </nav>

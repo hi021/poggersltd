@@ -1,7 +1,6 @@
 <script lang="ts">
-  //@ts-nocheck it's being really dumb, please don't worry about it
+  //a@ts-nocheck it's being really dumb, please don't worry about it
   import {
-    COUNTRIES,
     getAvatarURL,
     getOsuAltURL,
     getOsuDailyURL,
@@ -9,8 +8,6 @@
     getOsuSnipeURL,
     getOsuStatsURL,
     getOsuTrackURL,
-    RANKING_BADGES,
-    SCORE_CATEGORIES,
     tooltip
   } from "$lib/util";
   import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
@@ -23,17 +20,18 @@
   import { quintOut } from "svelte/easing";
   import { browser } from "$app/environment";
   import { fade } from "svelte/transition";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { PageData } from "./$types";
+  import { COUNTRIES, RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
 
   export let data: PageData;
   let loading = false;
-  let category = ($page.params.category || "top50") as App.RankingCategory | "all";
+  let category = (page.params.category || "top50") as App.RankingCategory | "all";
 
   const updateURL = () => {
     if (!browser) return;
     loading = true;
-    goto(`/osu/player/${$page.params.idOrName}/${category}`);
+    goto(`/osu/player/${page.params.idOrName}/${category}`);
   };
 
   $: category, updateURL();
@@ -53,7 +51,7 @@
           <span style="text-shadow: 0 1px 3px var(--color-darker);">{data.name}</span>
 
           {#if data.oldNames?.length}
-            <icon class="profile-name" use:tooltip={{ content: data.oldNames.join(", ") }} />
+            <icon class="profile-name" use:tooltip={{ content: data.oldNames.join(", ") }}></icon>
           {/if}
 
           {#if RANKING_BADGES[data._id]}
@@ -104,8 +102,8 @@
           use:tooltip={{ content: "osu! profile" }}
           rel="noreferrer">
           <div class="icon-wrapper osu-icon-wrapper">
-            <div />
-            <icon class="osu bigger" />
+            <div></div>
+            <icon class="osu bigger"></icon>
           </div>
         </a>
         <a
@@ -115,8 +113,8 @@
           use:tooltip={{ content: "osu!Stats" }}
           rel="noreferrer">
           <div class="icon-wrapper chart-icon-wrapper">
-            <div />
-            <icon class="chart-line" />
+            <div></div>
+            <icon class="chart-line"></icon>
           </div>
         </a>
         <a
@@ -126,8 +124,8 @@
           use:tooltip={{ content: "osu!track" }}
           rel="noreferrer">
           <div class="icon-wrapper">
-            <div />
-            <icon class="chart-bar" />
+            <div></div>
+            <icon class="chart-bar"></icon>
           </div>
         </a>
         <a
@@ -137,7 +135,7 @@
           use:tooltip={{ content: "osu! scores inspector" }}
           rel="noreferrer">
           <div class="icon-wrapper">
-            <div />
+            <div></div>
             <div style="font-weight: 300;">alt</div>
           </div>
         </a>
@@ -148,7 +146,7 @@
           use:tooltip={{ content: "osu!daily" }}
           rel="noreferrer">
           <div class="icon-wrapper">
-            <div />
+            <div></div>
             <div style="font-weight: 500;">S</div>
           </div>
         </a>
@@ -159,14 +157,14 @@
           use:tooltip={{ content: "osu!snipe" }}
           rel="noreferrer">
           <div class="icon-wrapper">
-            <div />
-            <icon class="flag" />
+            <div></div>
+            <icon class="flag"></icon>
           </div>
         </a>
       </aside>
       <div class="main-container column flex-fill">
         {#if loading}
-          <div class="overlay" transition:fade={{ easing: quintOut, duration: 100 }} />
+          <div class="overlay" transition:fade={{ easing: quintOut, duration: 100 }}></div>
         {:else}
           <div class="data-container row">
             {#if category === "all"}

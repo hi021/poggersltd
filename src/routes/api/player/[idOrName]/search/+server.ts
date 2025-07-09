@@ -1,6 +1,7 @@
-// get players ({_id, name} OR type Player with 'full=true' parameter), limit by limit parameter (8 by default)
-// by non-exact name, unless 'exact=true' parameter is present
-import { DEFAULT_API_HEADERS } from "$lib/util";
+// get players ({_id, name} OR of type Player using the 'full=true' parameter),
+// limit using the 'limit' parameter (8 by default),
+// search by non-exact name, unless the 'exact=true' parameter is present
+import { DEFAULT_API_HEADERS } from "$lib/constants";
 import { error, json } from "@sveltejs/kit";
 import { dbPlayers } from "$lib/db";
 import type { RequestHandler } from "./$types";

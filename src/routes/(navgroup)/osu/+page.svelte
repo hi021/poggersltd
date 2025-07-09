@@ -27,7 +27,7 @@
   <h2>
     <span>Lucky you!</span>
     <form method="dialog">
-      <button type="submit" class="btn-icon"><icon class="close" /></button>
+      <button type="submit" class="btn-icon"><icon class="close"></icon></button>
     </form>
   </h2>
 
@@ -55,11 +55,11 @@
       data-text="I'm feeling lucky"
       on:click={() => dialogElement.showModal()}>
       I'm feeling lucky
-      <icon class="heart" />
+      <icon class="heart"></icon>
     </a>
     <a class="search-button" href="/osu/players" data-text="Player comparison chart">
       Player comparison chart
-      <icon class="chart-bold" />
+      <icon class="chart-bold"></icon>
     </a>
   </span>
 </main>

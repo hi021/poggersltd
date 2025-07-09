@@ -6,7 +6,7 @@
   import RankingName from "$lib/components/Ranking/RankingName.svelte";
   import { rankingSettings } from "$lib/stores";
   import { formatNumber } from "$lib/util";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -37,7 +37,7 @@
             <RankingCountry country={plr.country} />
 
             <!-- TODO: Add players' current name next to old name -->
-            <RankingName category={$page.params.category} {plr} />
+            <RankingName category={page.params.category} {plr} />
 
             <td style="width: 30%;">
               <span>+{formatNumber(plr.gained ?? 0, " ")}</span>

@@ -1,9 +1,10 @@
 // get scores from `category` from the last `days` days (defaults to 90)
 // returns {ranks: Array<{rank: number, scores: number, day ([0 - (days - 1)] where 0 is most days ago): number} | null>, stats: {min & max ranks & scores}}
-import { DEFAULT_API_HEADERS, getDaysBeforeDate, SCORE_CATEGORIES } from "$lib/util";
+import { getDaysBeforeDate } from "$lib/util";
 import { dbRankings, prepareAggregationProjectionForIdOrName } from "$lib/db";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
+import { DEFAULT_API_HEADERS, SCORE_CATEGORIES } from "$lib/constants";
 
 export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const route = `player/${params.idOrName}/ranks/${params.category}/${params.days}`;

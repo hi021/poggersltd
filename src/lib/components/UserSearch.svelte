@@ -62,8 +62,7 @@
   <div class="autocmp-wrapper">
     <input
       class="search-input input-dark"
-      style="--shadow-color: {autocompleteEntries.length
-        ? 'transparent' : 'var(--color-darkest)'}"
+      style="--shadow-color: {autocompleteEntries.length ? 'transparent' : 'var(--color-darkest)'}"
       type="text"
       placeholder="osu! username"
       autocomplete="new-password"
@@ -101,7 +100,7 @@
   </div>
 
   <button type="submit" class="btn-search btn-none" {disabled}>
-    <icon class="search big" />
+    <icon class="search big"></icon>
   </button>
 </form>
 

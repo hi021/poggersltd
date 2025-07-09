@@ -1,6 +1,6 @@
-// works on v3 files with set gains and gainsDays
-// needs an up to date players database
-// used for setting mostGained, peak, and lowest fields for all ranking categories
+// works on v3 files with gains and gainsDays already present
+// needs an up-to-date players database
+// used to set mostGained, peak, and lowest fields for all ranking categories
 // saves the player json and attempts to update the db
 // INPUT ./archive-new/ -> OUTPUT ./archive-other/
 

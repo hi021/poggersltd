@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { CHART_COLORS, CHART_RANK_COLORS, formatDate, formatNumber } from "$lib/util";
+  import { CHART_COLORS, CHART_RANK_COLORS } from "$lib/constants";
+  import { formatDate, formatNumber } from "$lib/util";
   import { VisAxis, VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
   import type { NumericAccessor } from "@unovis/ts";
 

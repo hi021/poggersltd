@@ -1,16 +1,11 @@
 <script lang="ts">
   import {
     addDays,
-    COUNTRIES,
     formatDate,
     getAvatarURL,
     getOsuProfileURL,
     getServerDate,
     isRangeContainedWithin,
-    MAX_CHART_PLAYERS,
-    MAX_CHART_TREND_DAYS,
-    MIN_DATE,
-    SCORE_CATEGORIES,
     tooltip
   } from "$lib/util";
   import PlayerComparisonDialog from "$lib/components/Player/PlayerComparisonDialog.svelte";
@@ -25,8 +20,15 @@
   } from "./+page";
   import { fade, fly, slide } from "svelte/transition";
   import { quartOut } from "svelte/easing";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { PageData } from "./$types";
+  import {
+    COUNTRIES,
+    MAX_CHART_PLAYERS,
+    MAX_CHART_TREND_DAYS,
+    MIN_DATE,
+    SCORE_CATEGORIES
+  } from "$lib/constants";
 
   export let data: PageData;
   const nowDate = getServerDate();
@@ -35,10 +37,10 @@
 
   let loading = false;
   let playersPanelVisible = true;
-  let category = ($page.params.category || "top50") as App.RankingCategory;
+  let category = (page.params.category || "top50") as App.RankingCategory;
   let currentRange: App.DateRange = {
-    start: $page.params.dateRange?.split(" ")?.[0],
-    end: $page.params.dateRange?.split(" ")?.[1]
+    start: page.params.dateRange?.split(" ")?.[0],
+    end: page.params.dateRange?.split(" ")?.[1]
   };
   let previousRange = { ...currentRange };
   let comparePlayerName: string;
@@ -94,8 +96,8 @@
     if (reloadData) {
       goto(newUrl, { replaceState: toReplaceState, keepFocus: true });
       return;
-    } else if (toReplaceState) replaceState(newUrl, $page.params);
-    else pushState(newUrl, $page.params);
+    } else if (toReplaceState) replaceState(newUrl, page.params);
+    else pushState(newUrl, page.params);
 
     loading = false;
   };
@@ -191,7 +193,7 @@
         class="btn-icon"
         use:tooltip={{ content: "Toggle players panel" }}
         on:click={() => (playersPanelVisible = !playersPanelVisible)}>
-        <icon class={playersPanelVisible ? "expand-left" : "expand-right"} />
+        <icon class={playersPanelVisible ? "expand-left" : "expand-right"}></icon>
       </button>
       {#if playersPanelVisible}
         Compare players
@@ -314,7 +316,7 @@
                   on:click={() =>
                     (player.rankVisible =
                       player.rankVisible != null && player.rankVisible == false)}>
-                  <icon class="hash" />
+                  <icon class="hash"></icon>
                 </button>
                 <button
                   type="button"

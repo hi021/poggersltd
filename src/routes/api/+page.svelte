@@ -1,6 +1,6 @@
 <script lang="ts">
   import ApiEndpointDoc from "$lib/components/ApiEndpointDoc.svelte";
-  import { MIN_DATE } from "$lib/util";
+  import { MIN_DATE } from "$lib/constants";
 
   const paramsCommon: App.ApiParams = Object.freeze({
     date: {

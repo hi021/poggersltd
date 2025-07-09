@@ -1,7 +1,8 @@
 import { dbPlayers, prepareQueryObjectForIdOrName } from "$lib/db";
-import { addDays, DEFAULT_API_HEADERS, formatDate, SCORE_CATEGORIES, trimArray } from "$lib/util";
+import { addDays, formatDate, trimArray } from "$lib/util";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
+import { DEFAULT_API_HEADERS, SCORE_CATEGORIES } from "$lib/constants";
 
 export const GET: RequestHandler = async ({ params, setHeaders }) => {
   const route = `player/${params.idOrName}/neighbors/${params.category ?? ""}`;

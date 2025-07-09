@@ -1,8 +1,9 @@
 // get player (type Player) by id or exact (case sensitive) name
-import { DEFAULT_API_HEADERS, getDaysBetweenDates, SCORE_CATEGORIES } from "$lib/util";
+import { getDaysBetweenDates } from "$lib/util";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
 import { dbPlayers, prepareQueryObjectForIdOrName } from "$lib/db";
+import { DEFAULT_API_HEADERS, SCORE_CATEGORIES } from "$lib/constants";
 
 const prepareProjection = (category: string) => {
   const projection: { [field: string]: 0 | 1 } = { nameKey: 0 };

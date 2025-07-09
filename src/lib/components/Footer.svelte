@@ -1,6 +1,6 @@
 <footer>
   <p>poggers limited ☻2025</p>
-  <small> v2025-04-01 </small>
+  <small> v2025-07-11 </small>
 </footer>
 
 <style>

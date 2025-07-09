@@ -1,5 +1,5 @@
 <script>
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
 </script>
 
 <svelte:head>
@@ -12,11 +12,11 @@
     class="flex-center column-width-960"
     style="margin-bottom: 36px; align-items: stretch; line-height: 1;">
     <div class="error-status">
-      {$page.status || ":("}
+      {page.status || ":("}
     </div>
-    <div class="vr hide-width-960" style="margin: 26px 32px;" />
+    <div class="vr hide-width-960" style="margin: 26px 32px;"></div>
     <p class="flex-center" style="font-weight: 300; font-size: 2.25rem;">
-      {$page?.error?.message || "An error has occurred..."}
+      {page?.error?.message || "An error has occurred..."}
     </p>
   </div>
 

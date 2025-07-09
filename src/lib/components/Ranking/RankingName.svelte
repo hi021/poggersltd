@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { RANKING_BADGES, tooltip } from "$lib/util";
+  import { tooltip } from "$lib/util";
   import { goto } from "$app/navigation";
+  import { RANKING_BADGES } from "$lib/constants";
 
   export let plr: App.RankingEntry | App.MostGainedRankingEntry;
   export let category: App.RankingCategory | string | undefined = undefined;

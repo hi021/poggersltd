@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { CHART_COLORS, formatNumber, getDaysBetweenDates, tooltip } from "$lib/util";
+  import { CHART_COLORS } from "$lib/constants";
+  import { formatNumber, getDaysBetweenDates, tooltip } from "$lib/util";
   import { createEventDispatcher, onMount } from "svelte";
   import { fly } from "svelte/transition";
 
@@ -63,7 +64,7 @@
     </span>
     <form method="dialog">
       <button type="button" class="btn-icon" on:click={() => dispatch("close")}
-        ><icon class="close" /></button>
+        ><icon class="close"></icon></button>
     </form>
   </h3>
 
@@ -77,7 +78,7 @@
       use:tooltip={{ content: "Reset color" }}
       on:click={() =>
         (player.color = CHART_COLORS[(editingPlayerIndex ?? 0) % CHART_COLORS.length])}
-      ><icon class="undo" /></button>
+      ><icon class="undo"></icon></button>
   </span>
 
   <ul class="player-stats-container ul">
@@ -117,12 +118,12 @@
   <div class="row btn-row">
     <button class="btn-icon" type="button" on:click={() => dispatch("compareNeighbors", player.id)}>
       <small>Compare neighbors</small>
-      <icon class="group" />
+      <icon class="group"></icon>
     </button>
 
     <button class="btn-icon" type="button" on:click={() => dispatch("goToProfile", player.id)}>
       <small>Go to profile</small>
-      <icon class="user" />
+      <icon class="user"></icon>
     </button>
 
     <button
@@ -130,7 +131,7 @@
       type="button"
       on:click={() => dispatch("remove", player.id)}>
       <small>Remove user</small>
-      <icon class="delete" />
+      <icon class="delete"></icon>
     </button>
   </div>
 </dialog>

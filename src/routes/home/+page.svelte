@@ -19,7 +19,7 @@
     backgroundImage="url(/osu_ranking.png)"
     style="background-size: 80%; background-position: center;"
     tooltipContent="All leaderboard scores ranking stats in one place">
-    <div aria-hidden="true" class="osu-circle flex-center"><icon class="chart-line" /></div>
+    <div aria-hidden="true" class="osu-circle flex-center"><icon class="chart-line"></icon></div>
   </MenuButton>
   <MenuButton
     backgroundColor="rgb(100,181,246)"

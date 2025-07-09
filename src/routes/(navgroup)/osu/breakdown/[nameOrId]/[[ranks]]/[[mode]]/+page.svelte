@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     formatNumber,
-    COUNTRIES,
     getAvatarURL,
     transitionHeight,
     tooltip,
@@ -10,6 +9,7 @@
   import Loader from "$lib/components/Loader.svelte";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
+  import { COUNTRIES } from "$lib/constants";
 
   export let data: PageData;
   let loading = true;
@@ -64,7 +64,8 @@
               maxHeight: chartHeight,
               duration: 200,
               delay: 12 * i
-            }} />
+            }}>
+          </div>
           <div class="column flex-center">
             <strong>#{d.rank}</strong>
             <div>{formatNumber(d.value)}</div>
@@ -76,7 +77,7 @@
     <div class="stats-container">
       <table class="stat-table">
         <thead>
-          <th />
+          <th></th>
           <th>Count</th>
           <th>Percentage of all maps</th>
           <th>Global rank</th>

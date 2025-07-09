@@ -94,7 +94,7 @@
         class:active-rank={rankChartVisible}
         on:click={() => (rankChartVisible = !rankChartVisible)}
         use:tooltip={{ content: "Toggle ranks" }}>
-        <icon class="hash" />
+        <icon class="hash"></icon>
       </button>
     </li>
     <li>
@@ -111,7 +111,7 @@
         class="btn-icon"
         on:click={() => goto(`/osu/players/${playerId}/${category}`)}
         use:tooltip={{ content: "Go to full chart" }}>
-        <icon class="fullscreen" />
+        <icon class="fullscreen"></icon>
       </button>
     </li>
   </ul>

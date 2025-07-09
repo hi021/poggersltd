@@ -81,7 +81,7 @@
   <title>poggers</title>
 </svelte:head>
 
-<audio src="/poggers.mp3" bind:this={audioElementPoggers} />
+<audio src="/poggers.mp3" bind:this={audioElementPoggers}></audio>
 
 <main class="flex-center flex-fill unselectable" bind:this={mainDivElement}>
   {#if sessionCount}
@@ -117,7 +117,7 @@
     on:focus={blurOnFocus}
     on:click|preventDefault={handleClick}
     on:contextmenu|preventDefault={handleClick}
-    style="height: {senkoDimension}%; box-shadow: 0 0 2svw 1px {shadowColor};" />
+    style="height: {senkoDimension}%; box-shadow: 0 0 2svw 1px {shadowColor};"></button>
 
   <a class="a stroke" href="/home" draggable="false">home</a>
 </main>

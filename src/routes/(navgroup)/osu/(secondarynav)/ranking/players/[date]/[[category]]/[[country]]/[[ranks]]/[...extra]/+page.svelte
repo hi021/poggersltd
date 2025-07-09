@@ -8,7 +8,7 @@
   import Pagination from "$lib/components/Pagination.svelte";
   import { formatNumber, addDays, formatDate } from "$lib/util";
   import { rankingSettings } from "$lib/stores";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-  <title>{$page.params.date || "ranking"} - poggers</title>
+  <title>{page.params.date || "ranking"} - poggers</title>
 </svelte:head>
 
 <main class="flex-fill column osu-main">
@@ -53,9 +53,9 @@
         <br />
         <small>
           due to a gap between
-          <em>{formatDate(addDays(new Date($page.params.date), -pageData[0].gainedDays))}</em>
+          <em>{formatDate(addDays(new Date(page.params.date), -pageData[0].gainedDays))}</em>
           and
-          <em>{$page.params.date}</em>
+          <em>{page.params.date}</em>
         </small>
       </p>
     {/if}
@@ -76,7 +76,7 @@
 
             <RankingCountry country={plr.country} countryRank={plr.countryRank} />
 
-            <RankingName category={$page.params.category} {plr} />
+            <RankingName category={page.params.category} {plr} />
 
             <td style="width: 25%;">
               {formatNumber(plr.scores ?? 0)}
@@ -88,9 +88,9 @@
 
           {#if $rankingSettings.scoreDifferences && pageData[i + 1]}
             <tr class="osu-difference-column">
-              <td colspan="5" />
+              <td colspan="5"></td>
               {#if $rankingSettings.avatars}
-                <td class="hide-width-640" />
+                <td class="hide-width-640"></td>
               {/if}
               <td style="width: 25%; padding: 2px;">
                 +{formatNumber(plr.scores - pageData[i + 1].scores)}

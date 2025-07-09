@@ -1,21 +1,22 @@
 <script lang="ts">
-  import { formatDate, MIN_DATE, addDays } from "$lib/util";
+  import { formatDate, addDays } from "$lib/util";
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { rankingSettings } from "$lib/stores";
+  import { MIN_DATE } from "$lib/constants";
 
   const MAX_DATE = formatDate();
   let date =
-    !$page.params.date || $page.params.date === "latest" || $page.params.date === "last"
+    !page.params.date || page.params.date === "latest" || page.params.date === "last"
       ? MAX_DATE
-      : $page.params.date;
+      : page.params.date;
   let scoreCategory: string;
-  $: scoreCategory = $page.params.category;
+  $: scoreCategory = page.params.category;
   let type: string; // players, countries, or gains
-  $: type = $page.url.pathname.split("/")[3];
-  let country = $page.params.country;
+  $: type = page.url.pathname.split("/")[3];
+  let country = page.params.country;
   let rankingMode: string; // ranking or gains
-  $: rankingMode = $page.url.pathname.split("/")[2];
+  $: rankingMode = page.url.pathname.split("/")[2];
 
   function addDateNav(days: number) {
     let curDate = new Date(date);
@@ -35,8 +36,8 @@
 
     const typeUrl = "/" + (type || "players");
     const dateUrl = "/" + (date || "latest");
-    const extraUrl = $page.params.extra ? "/" + $page.params.extra : "";
-    const ranksUrl = $page.params.ranks || extraUrl ? "/" + ($page.params.ranks || "") : "";
+    const extraUrl = page.params.extra ? "/" + page.params.extra : "";
+    const ranksUrl = page.params.ranks || extraUrl ? "/" + (page.params.ranks || "") : "";
     const countryUrl = country || ranksUrl || extraUrl ? "/" + (country || "all") : "";
 
     goto(`/osu/ranking${typeUrl}${dateUrl}${categoryUrl}${countryUrl}${ranksUrl}${extraUrl}`, {
@@ -137,7 +138,7 @@
       title="Previous day"
       disabled={date <= MIN_DATE}
       on:click={() => addDateNav(-1)}>
-      <icon class="single-arrow flip-h" />
+      <icon class="single-arrow flip-h"></icon>
     </button>
     <div class="group">
       <input
@@ -155,7 +156,7 @@
       title="Next day"
       disabled={date >= MAX_DATE}
       on:click={() => addDateNav(1)}>
-      <icon class="single-arrow" />
+      <icon class="single-arrow"></icon>
     </button>
   </form>
 {/if}

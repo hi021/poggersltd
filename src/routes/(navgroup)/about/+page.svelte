@@ -11,8 +11,8 @@
     <br />
     Feel free to click around!
     <br />
-    Most of the functionality is already implemented, but some of it lacks polish... I'll be working on
-    that.
+    Most of the functionality is already implemented, but some of it lacks polish... I'll be working
+    on that.
   </p>
 
   <h2>What's different?</h2>
@@ -101,11 +101,11 @@
   <h2>Contact</h2>
   <p class="para">
     <span class="centered"
-      ><icon class="discord big" /> Scream at <code>hiihailey</code> in case something breaks;;</span>
+      ><icon class="discord big"></icon> Scream at <code>hiihailey</code> in case something breaks;;</span>
     <br />
     <span class="centered"
-      ><icon class="github big" /> If you'd like to contribute mandarin translations or see where
-      your data is being sold to,
+      ><icon class="github big"></icon> If you'd like to contribute mandarin translations or see
+      where your data is being sold to,
       <a class="a" href="https://github.com/hi021/poggersltd" target="_blank" rel="noreferrer"
         >here</a> is the full repo.</span>
   </p>
@@ -134,8 +134,8 @@
       satisfying charts
     </li>
     <li>
-      <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great osu!alternative stats
-      & clans ☻
+      <strong><a href="https://score.kirino.sh">osu! scores inspector</a></strong> - tons of great osu!alternative
+      stats & clans ☻
     </li>
     <li>
       <strong><a href="https://osudaily.net">osu!daily</a></strong> - lots of rankings like playcount,

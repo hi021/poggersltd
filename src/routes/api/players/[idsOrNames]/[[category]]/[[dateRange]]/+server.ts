@@ -1,15 +1,8 @@
-import {
-  DEFAULT_API_HEADERS,
-  getDaysBeforeDate,
-  getDaysBetweenDates,
-  getServerDate,
-  MAX_CHART_PLAYERS,
-  MIN_DATE,
-  SCORE_CATEGORIES
-} from "$lib/util";
+import { getDaysBeforeDate, getDaysBetweenDates, getServerDate } from "$lib/util";
 import { dbRankings, prepareAggregationProjectionForIdOrName } from "$lib/db";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
+import { DEFAULT_API_HEADERS, MAX_CHART_PLAYERS, MIN_DATE, SCORE_CATEGORIES } from "$lib/constants";
 
 function prepareFetchPlayer(
   scoreCategory: App.RankingCategory,

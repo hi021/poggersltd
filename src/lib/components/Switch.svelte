@@ -12,7 +12,7 @@
   <slot name="before" />
   <div class="switch" class:disabled>
     <input type="checkbox" {disabled} on:change={onChange} bind:checked />
-    <span class="slider" style="--size: {size};" />
+    <span class="slider" style="--size: {size};"></span>
   </div>
   <slot name="after" />
 </label>

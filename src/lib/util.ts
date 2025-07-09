@@ -1,5 +1,6 @@
 import tippy, { type Props } from "tippy.js";
 import { linear } from "svelte/easing";
+import { MIN_DATE } from "./constants";
 import "tippy.js/dist/tippy.css";
 
 export function formatNumber(number: number | string, delimiter = " "): string {
@@ -33,11 +34,11 @@ export function mergeObjectArraysOnField<K extends string | number | symbol, V>(
   nestedField?: K
 ) {
   const objResult = {} as Record<K, V>;
+  //@ts-ignore - I honestly don't know what I'm trying to do | also this nestedField workaround is so piss
   for (const objDest of arrayDest)
-    //@ts-ignore - I honestly don't know what I'm trying to do | also this nestedField workaround is so piss
     objResult[objDest[field]] = nestedField ? objDest[nestedField] : objDest;
-    for (const objSrc of arraySrc)
-    //@ts-ignore
+  //@ts-ignore
+  for (const objSrc of arraySrc)
     objResult[objSrc[field]] = {
       //@ts-ignore
       ...objResult[objSrc[field]],
@@ -151,12 +152,15 @@ export function getDaysBeforeDate(days: number, startDate?: Date) {
 }
 
 export const getAvatarURL = (id: number | string) => `https://a.ppy.sh/${id}?0.jpg`; // the 0 is a timestamp, should use latest to avoid caching
-export const getOsuProfileURL = (idOrName: number | string) =>`https://osu.ppy.sh/users/${idOrName}`;
+export const getOsuProfileURL = (idOrName: number | string) =>
+  `https://osu.ppy.sh/users/${idOrName}`;
 export const getOsuStatsURL = (name: string) => `https://osustats.ppy.sh/u/${name}//1/////-/1-50`;
 export const getOsuTrackURL = (name: string) => `https://ameobea.me/osutrack/user/${name}`;
 export const getOsuAltURL = (id: number | string) => `https://score.kirino.sh/user/${id}`;
-export const getOsuDailyURL = (name: number) => `https://osudaily.net/profile.php?u=${name}&s=1&m=0`;
-export const getOsuSnipeURL = (id: number | string, country = "global") => `https://snipe.huismetbenen.nl/player/${country.toLowerCase()}/osu/${id}`;
+export const getOsuDailyURL = (name: number) =>
+  `https://osudaily.net/profile.php?u=${name}&s=1&m=0`;
+export const getOsuSnipeURL = (id: number | string, country = "global") =>
+  `https://snipe.huismetbenen.nl/player/${country.toLowerCase()}/osu/${id}`;
 
 export function transitionHeight(
   node: Element,
@@ -193,6 +197,20 @@ export function animate({
   });
 }
 
+export function outClick(node: Element, ignoredNodes?: Element[]) {
+  const handleClick = (event: Event) => {
+    if (!ignoredNodes?.includes(event.target as Element) && !node.contains(event.target as Element))
+      node.dispatchEvent(new CustomEvent("outclick"));
+  };
+  document.addEventListener("click", handleClick, true);
+
+  return {
+    destroy() {
+      document.removeEventListener("click", handleClick, true);
+    }
+  };
+}
+
 export function tooltip(
   node: Element,
   { content, options }: { content?: string | Element; options?: Partial<Props> }
@@ -215,133 +233,3 @@ export function tooltip(
     }
   };
 }
-
-// consts
-export const SHORT_CACHE_CONTROL = "max-age=50";
-export const DEFAULT_CACHE_CONTROL = "max-age=300"; // 5 minutes
-export const LONG_CACHE_CONTROL = "max-age=172800"; // 48 hours
-export const DEFAULT_API_HEADERS = { "cache-control": DEFAULT_CACHE_CONTROL };
-export const LONG_CACHE_CONTROL_API_HEADERS = { "cache-control": LONG_CACHE_CONTROL };
-
-export const MIN_DATE = "2020-05-10";
-export const MAX_CHART_TREND_DAYS = 180;
-
-export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
-  "top50",
-  "top25",
-  "top8",
-  "top1"
-];
-
-export const CHART_COLORS = [
-  "#B39DDB",
-  "#CE93D8",
-  "#F48FB1",
-  "#EF9A9A",
-  "#FFAB91",
-  "#FFCC80",
-  "#FFE082",
-  "#FFF59D",
-  "#E6EE9C",
-  "#C5E1A5"
-];
-export const CHART_RANK_COLORS = [
-  "#D3548D",
-  "#C51162",
-  "#AA00FF",
-  "#6200EA",
-  "#2962FF",
-  "#00B8D4",
-  "#00BFA5",
-  "#64DD17",
-  "#FFD600",
-  "#FF6D00"
-];
-
-export const MAX_CHART_PLAYERS = 30;
-
-export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = {
-  "5795337": { img: "/badges/pogu.png", title: "poggers" },
-  "1023489": { img: "/badges/unhappi.png", title: "gay" },
-  "6502403": { img: "/badges/bowing.svg" },
-  "11495715": { img: "/badges/doggo.svg" }
-};
-
-export const COUNTRIES: { [countryCode: string]: string } = {
-  AE: "United Arab Emirates",
-  AR: "Argentina",
-  AT: "Austria",
-  AU: "Australia",
-  BE: "Belgium",
-  BG: "Bulgaria",
-  BR: "Brazil",
-  BY: "Belarus",
-  CA: "Canada",
-  CH: "Switzerland",
-  CL: "Chile",
-  CN: "China",
-  CO: "Colombia",
-  CR: "Costa Rica",
-  CZ: "Czechia",
-  DE: "Germany",
-  DK: "Denmark",
-  DO: "Dominican Republic",
-  EC: "Ecuador",
-  EE: "Estonia",
-  ES: "Spain",
-  FI: "Finland",
-  FR: "France",
-  GB: "United Kingdom",
-  GR: "Greece",
-  HK: "Hong Kong",
-  HR: "Croatia",
-  HU: "Hungary",
-  ID: "Indonesia",
-  IE: "Ireland",
-  IL: "Israel",
-  IN: "India",
-  IT: "Italy",
-  JE: "Jersey",
-  JP: "Japan",
-  KR: "Korea ",
-  KZ: "Kazakhstan",
-  LT: "Lithuania",
-  LU: "Luxembourg",
-  LV: "Latvia",
-  MA: "Morocco",
-  MN: "Mongolia",
-  MO: "Macao",
-  MX: "Mexico",
-  MY: "Malaysia",
-  NI: "Nicaragua",
-  NL: "Netherlands",
-  NO: "Norway",
-  NZ: "New Zealand",
-  PA: "Panama",
-  PE: "Peru",
-  PH: "Philippines",
-  PL: "Poland",
-  PR: "Puerto Rico",
-  PT: "Portugal",
-  QA: "Qatar",
-  RE: "Reunion",
-  RO: "Romania",
-  RS: "Serbia",
-  RU: "Russian Federation",
-  SA: "Saudi Arabia",
-  SE: "Sweden",
-  SG: "Singapore",
-  SI: "Slovenia",
-  SK: "Slovakia",
-  SM: "San Marino",
-  TH: "Thailand",
-  TR: "Turkey",
-  TT: "Trinidad and Tobago",
-  TW: "Taiwan",
-  UA: "Ukraine",
-  US: "United States",
-  UY: "Uruguay",
-  VE: "Venezuela",
-  VN: "Vietnam",
-  ZA: "South Africa"
-};
