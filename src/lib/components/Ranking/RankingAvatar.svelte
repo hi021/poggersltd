@@ -1,6 +1,10 @@
 <script lang="ts">
   import { getAvatarURL, getOsuProfileURL, tooltip } from "$lib/util";
-  export let id: number; // player osu id
+  interface Props {
+    id: number; // player osu id
+  }
+
+  let { id }: Props = $props();
 </script>
 
 <td class="hide-width-640" style="width: 36px;">

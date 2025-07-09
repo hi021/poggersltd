@@ -3,20 +3,32 @@
   import { formatNumber, tooltip } from "$lib/util";
   import { VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
 
-  export let ranks: Array<App.PlayerChartEntry> | undefined;
-  export let stats: App.PlayerProfileStats;
-  export let category: App.RankingCategory;
-  export let playerId: number;
-  export let days = 90;
-  export let scoresChartVisible = true;
-  export let rankChartVisible = true;
-
-  let ranksMap: Array<App.PlayerChartEntry> | undefined;
-  $: {
-    ranksMap = ranks?.toReversed().map((a, i) => {
-      return { ...a, day: a?.day ?? i };
-    });
+  interface Props {
+    ranks: Array<App.PlayerChartEntry> | undefined;
+    stats: App.PlayerProfileStats;
+    category: App.RankingCategory;
+    playerId: number;
+    days?: number;
+    scoresChartVisible?: boolean;
+    rankChartVisible?: boolean;
   }
+
+  let {
+    ranks,
+    stats,
+    category,
+    playerId,
+    days = 90,
+    scoresChartVisible = $bindable(true),
+    rankChartVisible = $bindable(true)
+  }: Props = $props();
+
+  let ranksMap: Array<App.PlayerChartEntry> | undefined = $derived(
+    ranks?.toReversed().map((a, i) => {
+      return { ...a, day: a?.day ?? i };
+    })
+  );
+
   const x = (d: App.PlayerChartEntry) => d.day;
   const y = (d: App.PlayerChartEntry) => d.scores;
   const yRank = (d: App.PlayerChartEntry) => (d.rank && stats ? stats.maxRank - d.rank : undefined);
@@ -90,26 +102,29 @@
   <ul class="chart-buttons-container ul row">
     <li>
       <button
+        aria-label="Toggle ranks"
         class="btn-icon"
         class:active-rank={rankChartVisible}
-        on:click={() => (rankChartVisible = !rankChartVisible)}
+        onclick={() => (rankChartVisible = !rankChartVisible)}
         use:tooltip={{ content: "Toggle ranks" }}>
         <icon class="hash"></icon>
       </button>
     </li>
     <li>
       <button
+        aria-label="Toggle scores"
         class="btn-icon"
         class:active-scores={scoresChartVisible}
-        on:click={() => (scoresChartVisible = !scoresChartVisible)}
+        onclick={() => (scoresChartVisible = !scoresChartVisible)}
         use:tooltip={{ content: "Toggle scores" }}>
         {category.substring(3)}
       </button>
     </li>
     <li>
       <button
+        aria-label="Go to full chart"
         class="btn-icon"
-        on:click={() => goto(`/osu/players/${playerId}/${category}`)}
+        onclick={() => goto(`/osu/players/${playerId}/${category}`)}
         use:tooltip={{ content: "Go to full chart" }}>
         <icon class="fullscreen"></icon>
       </button>

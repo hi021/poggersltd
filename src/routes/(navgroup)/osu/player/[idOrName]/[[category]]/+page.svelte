@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from "svelte/legacy";
+
   //a@ts-nocheck it's being really dumb, please don't worry about it
   import {
     getAvatarURL,
@@ -24,9 +26,13 @@
   import type { PageData } from "./$types";
   import { COUNTRIES, RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
 
-  export let data: PageData;
-  let loading = false;
-  let category = (page.params.category || "top50") as App.RankingCategory | "all";
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
+  let loading = $state(false);
+  let category = $state((page.params.category || "top50") as App.RankingCategory | "all");
 
   const updateURL = () => {
     if (!browser) return;
@@ -34,7 +40,9 @@
     goto(`/osu/player/${page.params.idOrName}/${category}`);
   };
 
-  $: category, updateURL();
+  run(() => {
+    category, updateURL();
+  });
   afterNavigate(() => (loading = false));
 </script>
 
@@ -79,7 +87,7 @@
               class="tab btn-none"
               type="button"
               class:active={category === cat}
-              on:click={() => (category = cat)}>
+              onclick={() => (category = cat)}>
               {cat}
             </button>
           {/each}
@@ -87,7 +95,7 @@
             class="tab btn-none"
             type="button"
             class:active={category === "all"}
-            on:click={() => (category = "all")}>
+            onclick={() => (category = "all")}>
             all
           </button>
         </div>
@@ -328,7 +336,7 @@
     cursor: pointer;
     transition: none;
   }
-  .tab:not(:disabled):is(:hover, :focus) {
+  .tab:not(:disabled):is(:global(:hover, :focus)) {
     box-shadow: none;
     outline-color: transparent;
     background-color: rgba(0, 0, 0, 0.4);

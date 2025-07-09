@@ -1,14 +1,21 @@
 <script lang="ts">
   import { tooltip } from "$lib/util";
-  export let categoryStats: App.PlayerRankingFullAPI;
+  interface Props {
+    categoryStats: App.PlayerRankingFullAPI;
+  }
 
-  $: content = `${categoryStats.daysOutdated} day${categoryStats.daysOutdated == 1 ? "" : "s"} out of date`;
-  $: warningColor =
+  let { categoryStats }: Props = $props();
+
+  let content = $derived(
+    `${categoryStats.daysOutdated} day${categoryStats.daysOutdated == 1 ? "" : "s"} out of date`
+  );
+  let warningColor = $derived(
     categoryStats.daysOutdated && categoryStats.daysOutdated >= 28
       ? "var(--color-red)"
       : categoryStats.daysOutdated && categoryStats.daysOutdated >= 3
         ? "var(--color-yellow)"
-        : "inherit";
+        : "inherit"
+  );
 </script>
 
 <small class="date-container">

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run, preventDefault } from "svelte/legacy";
+
   import { animate, formatNumber, tooltip } from "$lib/util";
   import { PUBLIC_SOCKET_PORT } from "$env/static/public";
   import { onDestroy, onMount } from "svelte";
@@ -20,19 +22,23 @@
     });
   });
 
-  let sessionCount = 0;
-  let localCount = 0;
+  let sessionCount = $state(0);
+  let localCount = $state(0);
   let globalCount = 0;
-  let globalCountAnimated = 0;
-  let globalInitialized = false;
-  let senkoDimension = 20;
-  let shadowColor = "#aaa";
+  let globalCountAnimated = $state(0);
+  let globalInitialized = $state(false);
+  let senkoDimension = $state(20);
+  let shadowColor = $state("#aaa");
   const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
-  let audioElementPoggers: HTMLAudioElement;
-  let mainDivElement: HTMLElement;
+  let audioElementPoggers: HTMLAudioElement = $state();
+  let mainDivElement: HTMLElement = $state();
 
-  $: senkoDimension = 20 + sessionCount * 0.5;
-  $: shadowColor = "#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa");
+  run(() => {
+    senkoDimension = 20 + sessionCount * 0.5;
+  });
+  run(() => {
+    shadowColor = "#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa");
+  });
 
   onMount(() => {
     if (localStorage.senko) localCount = localStorage.senko;
@@ -114,9 +120,9 @@
     class="unselectable"
     draggable="false"
     tabindex="-1"
-    on:focus={blurOnFocus}
-    on:click|preventDefault={handleClick}
-    on:contextmenu|preventDefault={handleClick}
+    onfocus={blurOnFocus}
+    onclick={preventDefault(handleClick)}
+    oncontextmenu={preventDefault(handleClick)}
     style="height: {senkoDimension}%; box-shadow: 0 0 2svw 1px {shadowColor};"></button>
 
   <a class="a stroke" href="/home" draggable="false">home</a>

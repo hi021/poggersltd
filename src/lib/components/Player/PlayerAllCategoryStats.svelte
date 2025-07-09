@@ -1,8 +1,12 @@
 <script lang="ts">
   import { addDays, formatDate, formatNumber } from "$lib/util";
-  export let playerCategory: App.PlayerRankingFull;
-  export let country: string;
-  export let title = "";
+  interface Props {
+    playerCategory: App.PlayerRankingFull;
+    country: string;
+    title?: string;
+  }
+
+  let { playerCategory, country, title = "" }: Props = $props();
 </script>
 
 <ul class="player-stats-container ul hoverable">

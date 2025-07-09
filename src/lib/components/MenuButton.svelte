@@ -1,12 +1,25 @@
 <script lang="ts">
   import { tooltip } from "$lib/util";
 
-  export let href: string;
-  export let label: string;
-  export let backgroundColor: string;
-  export let backgroundImage = "";
-  export let tooltipContent = "";
-  export let style = "";
+  interface Props {
+    href: string;
+    label: string;
+    backgroundColor: string;
+    backgroundImage?: string;
+    tooltipContent?: string;
+    style?: string;
+    children?: import("svelte").Snippet;
+  }
+
+  let {
+    href,
+    label,
+    backgroundColor,
+    backgroundImage = "",
+    tooltipContent = "",
+    style = "",
+    children
+  }: Props = $props();
 </script>
 
 <div
@@ -18,7 +31,7 @@
     <div
       class="btn-menu"
       style="background-color: {backgroundColor}; background-image: {backgroundImage}; {style}">
-      <slot />
+      {@render children?.()}
     </div>
     <div class="btn-menu-label" aria-hidden="true">{label}</div>
   </a>

@@ -1,11 +1,23 @@
 <script lang="ts">
-  export let method: "GET" | "POST" = "GET";
-  export let urlApi = "/api/";
-  export let urlCategory = "";
-  export let urlMain: string;
-  export let urlParams: App.ApiParams | undefined = undefined;
-  export let exampleUrl: string | undefined = undefined;
-  export let returnValueHtml: string | undefined = undefined;
+  interface Props {
+    method?: "GET" | "POST";
+    urlApi?: string;
+    urlCategory?: string;
+    urlMain: string;
+    urlParams?: App.ApiParams | undefined;
+    exampleUrl?: string | undefined;
+    returnValueHtml?: string | undefined;
+  }
+
+  let {
+    method = "GET",
+    urlApi = "/api/",
+    urlCategory = "",
+    urlMain,
+    urlParams = undefined,
+    exampleUrl = undefined,
+    returnValueHtml = undefined
+  }: Props = $props();
 
   function buildParamsRouteString() {
     if (!urlParams) return "";

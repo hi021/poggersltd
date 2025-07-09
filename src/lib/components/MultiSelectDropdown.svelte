@@ -2,11 +2,15 @@
   import { outClick } from "$lib/util";
   import type { Snippet } from "svelte";
 
-  export let options: { [value: string]: string } = {};
-  export let optionComponent: Snippet<[{value: string, label: string}]>;
-  export let value: string | null = null;
-  let dropdownOptionsElement: HTMLDivElement;
-  let dropdownVisible = false;
+  interface Props {
+    options?: { [value: string]: string };
+    optionComponent: Snippet<[{ value: string; label: string }]>;
+    value?: string | null;
+  }
+
+  let { options = {}, optionComponent, value = $bindable(null) }: Props = $props();
+  let dropdownOptionsElement = $state() as HTMLDivElement;
+  let dropdownVisible = $state(false);
 
   function onFocus() {
     dropdownVisible = true;
@@ -19,7 +23,7 @@
 
   function filterOptions() {
     const query = (value ?? "").toUpperCase();
-    const labels = dropdownOptionsElement.getElementsByTagName("label");
+    const labels = dropdownOptionsElement!.getElementsByTagName("label");
     let anyVisible = false;
 
     for (const label of labels) {
@@ -42,16 +46,16 @@
     class="input-dark"
     placeholder="Countries"
     bind:value
-    on:focus={onFocus}
-    on:keyup={filterOptions}
+    onfocus={onFocus}
+    onkeyup={filterOptions}
     use:outClick={[dropdownOptionsElement]}
-    on:outclick={onBlur} />
+    onoutclick={onBlur} />
   <div
     class="dropdown-options"
     style="display: {dropdownVisible ? 'block' : 'none'};"
     bind:this={dropdownOptionsElement}>
     {#each Object.entries(options) as [value, label]}
-      {@render optionComponent({value, label})}
+      {@render optionComponent({ value, label })}
     {/each}
   </div>
 </div>

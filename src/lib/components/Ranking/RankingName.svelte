@@ -3,9 +3,13 @@
   import { goto } from "$app/navigation";
   import { RANKING_BADGES } from "$lib/constants";
 
-  export let plr: App.RankingEntry | App.MostGainedRankingEntry;
-  export let category: App.RankingCategory | string | undefined = undefined;
-  export let showBadge = true;
+  interface Props {
+    plr: App.RankingEntry | App.MostGainedRankingEntry;
+    category?: App.RankingCategory | string | undefined;
+    showBadge?: boolean;
+  }
+
+  let { plr, category = undefined, showBadge = true }: Props = $props();
 
   const goToProfile = (plr: App.RankingEntry | App.MostGainedRankingEntry) =>
     goto(`/osu/player/${plr._id}/${category}`);
@@ -17,8 +21,8 @@
 
 <td
   class="osu-name-column"
-  on:click={() => goToProfile(plr)}
-  on:keypress={onKey}
+  onclick={() => goToProfile(plr)}
+  onkeypress={onKey}
   style="cursor: pointer;">
   <div class="row">
     <span>{plr.name}</span>

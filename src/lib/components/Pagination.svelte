@@ -1,12 +1,23 @@
 <script lang="ts">
   import { tooltip } from "$lib/util";
 
-  export let page: number;
-  export let maxPage: number;
-  export let entries: number | undefined = undefined;
-  export let onPageChange: (newPage: number) => void;
-  export let showPageNumber = true;
-  export let style = "";
+  interface Props {
+    page: number;
+    maxPage: number;
+    entries?: number | undefined;
+    onPageChange: (newPage: number) => void;
+    showPageNumber?: boolean;
+    style?: string;
+  }
+
+  let {
+    page,
+    maxPage,
+    entries = undefined,
+    onPageChange,
+    showPageNumber = true,
+    style = ""
+  }: Props = $props();
 </script>
 
 <div class="column flex-center" style:gap="2px" {style}>
@@ -15,7 +26,7 @@
       type="button"
       title="First page"
       disabled={page <= 1}
-      on:click={() => onPageChange(1)}
+      onclick={() => onPageChange(1)}
       use:tooltip={{ content: "First page" }}>
       <icon class="double-arrow flip-h"></icon>
     </button>
@@ -23,7 +34,7 @@
       type="button"
       title="Previous page"
       disabled={page <= 1}
-      on:click={() => onPageChange(page - 1)}>
+      onclick={() => onPageChange(page - 1)}>
       <icon class="single-arrow flip-h"></icon>
     </button>
 
@@ -31,14 +42,14 @@
       type="button"
       title="Next page"
       disabled={page >= maxPage}
-      on:click={() => onPageChange(page + 1)}>
+      onclick={() => onPageChange(page + 1)}>
       <icon class="single-arrow"></icon>
     </button>
     <button
       type="button"
       title="Last page"
       disabled={page >= maxPage}
-      on:click={() => onPageChange(maxPage)}
+      onclick={() => onPageChange(maxPage)}
       use:tooltip={{ content: "Last page" }}>
       <icon class="double-arrow"></icon>
     </button>

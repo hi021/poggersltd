@@ -1,15 +1,15 @@
 <script lang="ts">
   import { formatNumber } from "$lib/util";
 
-  export let stats: App.PlayerProfileStats;
-  export let days = 90;
-
-  let changeScores: number;
-  let avgPerDay: number;
-  $: {
-    changeScores = stats.endScores - stats.startScores;
-    avgPerDay = Math.round((changeScores / days) * 100) / 100;
+  interface Props {
+    stats: App.PlayerProfileStats;
+    days?: number;
   }
+
+  let { stats, days = 90 }: Props = $props();
+
+  let changeScores = $derived(stats.endScores - stats.startScores);
+  let avgPerDay = $derived(Math.round((changeScores / days) * 100) / 100);
 </script>
 
 <div class="player-chart-stats-container column">

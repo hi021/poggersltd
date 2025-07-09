@@ -1,20 +1,32 @@
 <script lang="ts">
-  export let onChange:
-    | undefined
-    | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void) = undefined;
-  export let checked: boolean;
-  export let disabled = false;
-  export let size = "1.625rem";
-  export let style = "gap: 2px;";
+  interface Props {
+    onChange?: undefined | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void);
+    checked: boolean;
+    disabled?: boolean;
+    size?: string;
+    style?: string;
+    before?: import("svelte").Snippet;
+    after?: import("svelte").Snippet;
+  }
+
+  let {
+    onChange = undefined,
+    checked = $bindable(),
+    disabled = false,
+    size = "1.625rem",
+    style = "gap: 2px;",
+    before,
+    after
+  }: Props = $props();
 </script>
 
 <label class="column" {style}>
-  <slot name="before" />
+  {@render before?.()}
   <div class="switch" class:disabled>
-    <input type="checkbox" {disabled} on:change={onChange} bind:checked />
+    <input type="checkbox" {disabled} onchange={onChange} bind:checked />
     <span class="slider" style="--size: {size};"></span>
   </div>
-  <slot name="after" />
+  {@render after?.()}
 </label>
 
 <style>

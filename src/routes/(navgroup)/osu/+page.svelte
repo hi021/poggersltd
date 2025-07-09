@@ -3,7 +3,7 @@
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { onMount } from "svelte";
 
-  let dialogElement: HTMLDialogElement;
+  let dialogElement: HTMLDialogElement = $state();
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
     (_id || name) && goto(`osu/player/${_id || name}`);
@@ -48,12 +48,12 @@
   <UserSearch {gotoPlayer} />
 
   <span class="buttons-container">
-    <!-- svelte-ignore a11y-invalid-attribute -->
+    <!-- svelte-ignore a11y_invalid_attribute -->
     <a
       class="search-button"
       href=""
       data-text="I'm feeling lucky"
-      on:click={() => dialogElement.showModal()}>
+      onclick={() => dialogElement.showModal()}>
       I'm feeling lucky
       <icon class="heart"></icon>
     </a>
@@ -133,7 +133,7 @@
     background: var(--color-dark);
     transition: opacity 0.1s linear;
   }
-  .search-button:is(:hover, :focus) {
+  .search-button:is(:global(:hover, :focus)) {
     background: linear-gradient(
       130deg,
       var(--color-dark),
@@ -142,10 +142,10 @@
       var(--color-dark)
     );
   }
-  .search-button:is(:hover, :focus) > icon {
+  .search-button:is(:global(:hover, :focus)) > icon {
     opacity: 0.7;
   }
-  .search-button:is(:hover, :focus)::after {
+  .search-button:is(:global(:hover, :focus))::after {
     opacity: 0;
   }
 

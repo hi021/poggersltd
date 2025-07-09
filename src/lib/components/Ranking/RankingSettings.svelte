@@ -10,12 +10,16 @@
   import { COUNTRIES, MIN_DATE } from "$lib/constants";
   import MultiSelectDropdown from "../MultiSelectDropdown.svelte";
 
-  export let viewMode: "players" | "countries" | "gains" | "mostGained" = "players";
-  export let settings: App.RankingSettings;
-  export let style = "";
+  interface Props {
+    viewMode?: "players" | "countries" | "gains" | "mostGained";
+    settings: App.RankingSettings;
+    style?: string;
+  }
 
-  let visible = false;
-  let isGainedDaysCustom: boolean;
+  let { viewMode = "players", settings = $bindable(), style = "" }: Props = $props();
+
+  let visible = $state(false);
+  let isGainedDaysCustom: boolean = $state(false);
   const maxDays = getDaysBetweenDates(
     addDays(new Date(MIN_DATE), 1).valueOf(),
     new Date(page.params.date).valueOf()
@@ -55,7 +59,11 @@
 </script>
 
 <div class="wrapper" {style}>
-  <button class="btn-icon" type="button" on:click={() => (visible = !visible)} aria-label="Ranking settings">
+  <button
+    class="btn-icon"
+    type="button"
+    onclick={() => (visible = !visible)}
+    aria-label="Ranking settings">
     <icon class="settings" style="transform: rotate({visible ? 45 : 0}deg);"></icon>
   </button>
 
@@ -63,17 +71,23 @@
     <div class="column background" transition:slide={{ duration: 200, axis: "y" }}>
       {#if viewMode != "countries"}
         <Switch bind:checked={settings.avatars}>
-          <span slot="before">Avatars</span>
+          {#snippet before()}
+            <span>Avatars</span>
+          {/snippet}
         </Switch>
       {/if}
       {#if viewMode == "players"}
         <Switch bind:checked={settings.scoreDifferences}>
-          <span slot="before">Score differences</span>
+          {#snippet before()}
+            <span>Score differences</span>
+          {/snippet}
         </Switch>
       {/if}
       {#if viewMode != "mostGained"}
         <Switch bind:checked={settings.dateSticky}>
-          <span slot="before">Sticky date bar</span>
+          {#snippet before()}
+            <span>Sticky date bar</span>
+          {/snippet}
         </Switch>
       {/if}
       {#if viewMode == "players" || viewMode == "gains"}
@@ -89,7 +103,7 @@
         </label>
 
         <MultiSelectDropdown options={COUNTRIES}>
-          {#snippet optionComponent({value, label})}
+          {#snippet optionComponent({ value, label })}
             <label
               ><input type="checkbox" {value} /><img
                 class="osu-flag-small"
@@ -103,7 +117,7 @@
       {#if viewMode == "gains"}
         <label>
           Gains time frame
-          <select class="input-dark normal-size" on:change={(e) => handleGainsTimeFrame(e)}>
+          <select class="input-dark normal-size" onchange={(e) => handleGainsTimeFrame(e)}>
             {#each Object.entries(gainsTimeFrames) as [days, label]}
               <option value={days}>{label}</option>
             {/each}

@@ -1,15 +1,19 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export let size = "4.2rem";
-  export let thickness = "0.78rem";
-  export let margin = "1rem";
-  export let sticky = false;
-  let element: HTMLDivElement;
+  interface Props {
+    size?: string;
+    thickness?: string;
+    margin?: string;
+    sticky?: boolean;
+  }
+
+  let { size = "4.2rem", thickness = "0.78rem", margin = "1rem", sticky = false }: Props = $props();
+  let element: HTMLDivElement | undefined = $state();
 
   onMount(() => {
-    element.style.setProperty("--loader-size", size);
-    element.style.setProperty("--loader-thickness", thickness);
+    element!.style.setProperty("--loader-size", size);
+    element!.style.setProperty("--loader-thickness", thickness);
   });
 </script>
 

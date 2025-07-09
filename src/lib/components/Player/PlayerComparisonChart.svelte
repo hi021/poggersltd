@@ -4,18 +4,22 @@
   import { VisAxis, VisCrosshair, VisLine, VisTooltip, VisXYContainer } from "@unovis/svelte";
   import type { NumericAccessor } from "@unovis/ts";
 
-  export let category: App.RankingCategory;
-  export let data: {
-    players: App.ComparisonChartPlayerCustomizable[];
-    ranks: App.ComparisonChartEntryProcessed[];
-  };
+  interface Props {
+    category: App.RankingCategory;
+    data: {
+      players: App.ComparisonChartPlayerCustomizable[];
+      ranks: App.ComparisonChartEntryProcessed[];
+    };
+  }
+
+  let { category, data }: Props = $props();
 
   const x = (d: App.ComparisonChartEntryProcessed) => Number(d.date);
   const rankColors = (d: App.ComparisonChartEntryProcessed, i: number) =>
     CHART_RANK_COLORS[i % CHART_RANK_COLORS.length];
-  let rankY: NumericAccessor<App.ComparisonChartEntryProcessed>[];
-  let scoreY: NumericAccessor<App.ComparisonChartEntryProcessed>[];
-  let scoreColors: string[];
+  let rankY: NumericAccessor<App.ComparisonChartEntryProcessed>[] = $state([]);
+  let scoreY: NumericAccessor<App.ComparisonChartEntryProcessed>[] = $state([]);
+  let scoreColors: string[] = $state([]);
 
   function resetAccessors() {
     rankY = [];
@@ -32,7 +36,7 @@
       scoreColors.push(player.color || CHART_COLORS[Number(i) % CHART_COLORS.length]);
     }
   }
-  $: data, resetAccessors();
+  $effect(() => resetAccessors()); // TODO test if changes to data actually call this function
 
   function tooltipPlayerHTML(d: App.ComparisonChartEntryProcessed, plrId: string) {
     const plrDataIndex = data.players.findIndex((plr) => plr.id == plrId);

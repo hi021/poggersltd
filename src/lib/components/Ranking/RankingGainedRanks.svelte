@@ -1,11 +1,16 @@
 <script lang="ts">
   import { tooltip } from "$lib/util";
-  export let gainedRanks: number | undefined;
 
-  let text: string;
-  let className: string;
+  interface Props {
+    gainedRanks: number | undefined;
+  }
 
-  $: {
+  let { gainedRanks }: Props = $props();
+
+  let text: string = $state("No change");
+  let className: string = $state("line");
+
+  $effect(() => {
     if (gainedRanks == null) {
       className = "circle";
       text = "New";
@@ -15,11 +20,8 @@
     } else if (gainedRanks < 0) {
       className = "arrow-down";
       text = `Down by ${-gainedRanks}`;
-    } else {
-      text = "No change";
-      className = "line";
     }
-  }
+  });
 </script>
 
 <td style="width: 22px;" use:tooltip={{ content: text }}>

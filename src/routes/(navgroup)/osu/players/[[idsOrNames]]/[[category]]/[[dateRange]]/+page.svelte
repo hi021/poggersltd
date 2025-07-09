@@ -30,22 +30,26 @@
     SCORE_CATEGORIES
   } from "$lib/constants";
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data = $bindable() }: Props = $props();
   const nowDate = getServerDate();
   const nowFormatted = formatDate(nowDate, true);
   const maxTrendDate = formatDate(addDays(nowDate, MAX_CHART_TREND_DAYS));
 
-  let loading = false;
-  let playersPanelVisible = true;
-  let category = (page.params.category || "top50") as App.RankingCategory;
-  let currentRange: App.DateRange = {
+  let loading = $state(false);
+  let playersPanelVisible = $state(true);
+  let category = $state((page.params.category || "top50") as App.RankingCategory);
+  let currentRange: App.DateRange = $state({
     start: page.params.dateRange?.split(" ")?.[0],
     end: page.params.dateRange?.split(" ")?.[1]
-  };
+  });
   let previousRange = { ...currentRange };
-  let comparePlayerName: string;
-  let editingPlayerIndex: number | null = null;
-  let userSearchComponent: UserSearch;
+  let comparePlayerName: string = $state("");
+  let editingPlayerIndex: number | null = $state(null);
+  let userSearchComponent: UserSearch = $state() as UserSearch;
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
@@ -192,7 +196,7 @@
         type="button"
         class="btn-icon"
         use:tooltip={{ content: "Toggle players panel" }}
-        on:click={() => (playersPanelVisible = !playersPanelVisible)}>
+        onclick={() => (playersPanelVisible = !playersPanelVisible)}>
         <icon class={playersPanelVisible ? "expand-left" : "expand-right"}></icon>
       </button>
       {#if playersPanelVisible}
@@ -210,10 +214,10 @@
             {editingPlayerIndex}
             {category}
             verticalIndex={Math.min(11, data.players.length - 1 - (editingPlayerIndex ?? 0))}
-            on:remove={(e) => removePlayer(e.detail)}
-            on:close={() => (editingPlayerIndex = null)}
-            on:goToProfile={(e) => goto(`/osu/player/${e.detail}`)}
-            on:compareNeighbors={(e) => compareNeighbors(e.detail)} />
+            remove={(playerId) => removePlayer(playerId)}
+            close={() => (editingPlayerIndex = null)}
+            goToProfile={(playerId) => goto(`/osu/player/${playerId}`)}
+            compareNeighbors={(playerId) => compareNeighbors(playerId)} />
         {/if}
 
         <form class="aside-inputs-container">
@@ -232,7 +236,7 @@
               title="Beginning of date range"
               type="date"
               disabled={loading}
-              on:change={onDateChange}
+              onchange={onDateChange}
               bind:value={currentRange.start} />
             <span>to</span>
             <input
@@ -242,7 +246,7 @@
               title="End of date range"
               type="date"
               disabled={loading}
-              on:change={onDateChange}
+              onchange={onDateChange}
               bind:value={currentRange.end} />
           </span>
 
@@ -251,7 +255,7 @@
             title="Score category"
             disabled={loading}
             bind:value={category}
-            on:change={() => updateUrl({})}>
+            onchange={() => updateUrl({})}>
             {#each SCORE_CATEGORIES as cat}
               <option>{cat}</option>
             {/each}
@@ -264,7 +268,7 @@
               type="button"
               class="btn-none clear-players-button"
               disabled={loading}
-              on:click={clearPlayers}>
+              onclick={clearPlayers}>
               Clear all players
             </button>
           {/if}
@@ -289,11 +293,11 @@
                     alt=""
                     src={getAvatarURL(player.id)} />
                 </a>
-                <!-- svelte-ignore a11y-invalid-attribute -->
+                <!-- svelte-ignore a11y_invalid_attribute -->
                 <a
                   class="a player-name-wrapper"
                   href="#"
-                  on:click={() =>
+                  onclick={() =>
                     (editingPlayerIndex =
                       editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>
                   <span>{player.name}</span>
@@ -313,7 +317,7 @@
                   class:active={player.rankVisible || player.rankVisible == null}
                   disabled={loading}
                   use:tooltip={{ content: "Toggle ranks" }}
-                  on:click={() =>
+                  onclick={() =>
                     (player.rankVisible =
                       player.rankVisible != null && player.rankVisible == false)}>
                   <icon class="hash"></icon>
@@ -324,7 +328,7 @@
                   class:active={player.scoresVisible || player.scoresVisible == null}
                   disabled={loading}
                   use:tooltip={{ content: "Toggle scores" }}
-                  on:click={() =>
+                  onclick={() =>
                     (player.scoresVisible =
                       player.scoresVisible != null && player.scoresVisible == false)}>
                   {category.substring(3)}

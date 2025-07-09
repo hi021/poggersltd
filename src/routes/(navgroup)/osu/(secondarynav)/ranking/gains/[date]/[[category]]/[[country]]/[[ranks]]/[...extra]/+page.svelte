@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from "svelte/legacy";
+
   import RankingGainedRanks from "$lib/components/Ranking/RankingGainedRanks.svelte";
   import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
@@ -11,19 +13,24 @@
   import { page } from "$app/state";
   import type { PageData } from "./$types";
 
-  export let data: PageData;
-  let pageData: App.RankingEntry[];
-  let maxPage: number;
-  let curPage = 1;
+  interface Props {
+    data: PageData;
+  }
 
-  $: pageData = data.rankingData.slice(
-    $rankingSettings.perPage * (curPage - 1),
-    $rankingSettings.perPage * curPage
+  let { data }: Props = $props();
+  let pageData: App.RankingEntry[] = $derived(
+    data.rankingData.slice(
+      $rankingSettings.perPage * (curPage - 1),
+      $rankingSettings.perPage * curPage
+    )
   );
-  $: {
+  let maxPage: number = $state();
+  let curPage = $state(1);
+
+  run(() => {
     maxPage = Math.ceil((data?.rankingData?.length ?? 0) / $rankingSettings.perPage);
     if (maxPage && curPage > maxPage) curPage = maxPage;
-  }
+  });
 </script>
 
 <svelte:head>

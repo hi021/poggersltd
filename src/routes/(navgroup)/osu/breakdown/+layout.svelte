@@ -1,13 +1,20 @@
 <script lang="ts">
+  import { preventDefault } from "svelte/legacy";
+
   import Switch from "$lib/components/Switch.svelte";
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { tooltip } from "$lib/util";
   import { fly } from "svelte/transition";
+  interface Props {
+    children?: import("svelte").Snippet;
+  }
 
-  let singleRank = false;
-  let rank: number;
-  let mode: string = "0";
-  let username: string;
+  let { children }: Props = $props();
+
+  let singleRank = $state(false);
+  let rank: number = $state();
+  let mode: string = $state("0");
+  let username: string = $state();
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) => {
     if (!singleRank) gotoPlayerOnEnter({ _id, name });
@@ -25,7 +32,7 @@
   <form
     class="row"
     spellcheck="false"
-    on:submit|preventDefault={() => gotoPlayerOnEnter({ name: username })}>
+    onsubmit={preventDefault(() => gotoPlayerOnEnter({ name: username }))}>
     <UserSearch disabled={true} {gotoPlayer} {gotoPlayerOnEnter} bind:value={username} />
 
     <select
@@ -57,7 +64,9 @@
       disabled={true}
       bind:checked={singleRank}
       style="flex-direction: row; gap: 8px; align-items: center;">
-      <span slot="after">Single rank</span>
+      {#snippet after()}
+        <span>Single rank</span>
+      {/snippet}
     </Switch>
   </div>
 
@@ -66,7 +75,7 @@
     <small>go yell at peppy (violence)</small>
   </p>
 
-  <slot />
+  {@render children?.()}
 </main>
 
 <style>

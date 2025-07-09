@@ -1,17 +1,29 @@
 <script lang="ts">
+  import { preventDefault } from "svelte/legacy";
+
   import { onMount, tick } from "svelte";
   import { debounce, getAvatarURL } from "$lib/util";
   import { slide } from "svelte/transition";
 
-  let searchInputElement: HTMLInputElement;
-  let autocompleteEntries: Array<{ _id: number; name: string }> = [];
-  export let value = "";
-  export let style = "";
-  export let disabled = false;
-  export let autofocus = true;
-  export let gotoPlayer: ({ _id, name }: { _id?: number; name: string }) => void;
-  export let gotoPlayerOnEnter: ({ _id, name }: { _id?: number; name: string }) => void =
-    gotoPlayer;
+  let searchInputElement = $state() as HTMLInputElement;
+  let autocompleteEntries: Array<{ _id: number; name: string }> = $state([]);
+  interface Props {
+    value?: string;
+    style?: string;
+    disabled?: boolean;
+    autofocus?: boolean;
+    gotoPlayer: ({ _id, name }: { _id?: number; name: string }) => void;
+    gotoPlayerOnEnter?: ({ _id, name }: { _id?: number; name: string }) => void;
+  }
+
+  let {
+    value = $bindable(""),
+    style = "",
+    disabled = false,
+    autofocus = true,
+    gotoPlayer,
+    gotoPlayerOnEnter = gotoPlayer
+  }: Props = $props();
 
   export const focusInput = () => tick().then(() => searchInputElement.focus());
 
@@ -58,7 +70,7 @@
   class="search-input-wrapper input-dark row"
   class:disabled
   {style}
-  on:submit|preventDefault={() => gotoPlayerOnEnter({ name: value })}>
+  onsubmit={preventDefault(() => gotoPlayerOnEnter({ name: value }))}>
   <div class="autocmp-wrapper">
     <input
       class="search-input input-dark"
@@ -70,23 +82,23 @@
       bind:this={searchInputElement}
       bind:value
       {disabled}
-      on:focus={() => getAutocomplete(value)}
-      on:input={() => getAutocomplete(value)} />
+      onfocus={() => getAutocomplete(value)}
+      oninput={() => getAutocomplete(value)} />
 
     <ul class="autocmp-items">
       {#each autocompleteEntries as a (a._id)}
         <li transition:slide={{ duration: 100, axis: "y" }}>
-          <!-- svelte-ignore a11y-invalid-attribute -->
+          <!-- svelte-ignore a11y_invalid_attribute -->
           <a
             href=""
             class="autocmp-item"
             tabindex="0"
             role="button"
-            on:click|preventDefault={() => {
+            onclick={preventDefault(() => {
               value = a.name;
               gotoPlayer(a);
               autocompleteEntries = [];
-            }}>
+            })}>
             <img
               class="osu-avatar-small"
               alt=""
@@ -179,7 +191,7 @@
     line-height: 1;
     padding: 0.5rem;
   }
-  .autocmp-item:is(:hover, :focus) {
+  .autocmp-item:is(:global(:hover, :focus)) {
     outline-color: transparent;
     background-color: var(--color-purple);
   }

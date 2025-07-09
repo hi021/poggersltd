@@ -1,6 +1,10 @@
 <script lang="ts">
   import { formatNumber } from "$lib/util";
-  export let playerCategory: App.PlayerRankingFull;
+  interface Props {
+    playerCategory: App.PlayerRankingFull;
+  }
+
+  let { playerCategory }: Props = $props();
 </script>
 
 <ul class="player-stats-container ul">

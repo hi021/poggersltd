@@ -1,6 +1,11 @@
 <script lang="ts">
   import Footer from "$lib/components/Footer.svelte";
   import { page } from "$app/state";
+  interface Props {
+    children?: import("svelte").Snippet;
+  }
+
+  let { children }: Props = $props();
 </script>
 
 <header class="row">
@@ -40,7 +45,7 @@
   </nav>
 </header>
 
-<slot />
+{@render children?.()}
 
 <Footer />
 
@@ -68,7 +73,7 @@
     color: inherit;
     text-decoration: none;
   }
-  .nav-tab:is(:hover, :focus) {
+  .nav-tab:is(:global(:hover, :focus)) {
     outline-color: transparent;
     background-color: rgba(0, 0, 0, 0.2);
   }

@@ -1,22 +1,33 @@
 <script lang="ts">
+  import { run, preventDefault } from "svelte/legacy";
+
   import { formatDate, addDays } from "$lib/util";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import { rankingSettings } from "$lib/stores";
   import { MIN_DATE } from "$lib/constants";
+  interface Props {
+    children?: import("svelte").Snippet;
+  }
+
+  let { children }: Props = $props();
 
   const MAX_DATE = formatDate();
-  let date =
+  let date = $state(
     !page.params.date || page.params.date === "latest" || page.params.date === "last"
       ? MAX_DATE
-      : page.params.date;
-  let scoreCategory: string;
-  $: scoreCategory = page.params.category;
-  let type: string; // players, countries, or gains
-  $: type = page.url.pathname.split("/")[3];
+      : page.params.date
+  );
+  let scoreCategory: string = $state();
+  run(() => {
+    scoreCategory = page.params.category;
+  });
+  let type: string = $state(); // players, countries, or gains
+  run(() => {
+    type = page.url.pathname.split("/")[3];
+  });
   let country = page.params.country;
-  let rankingMode: string; // ranking or gains
-  $: rankingMode = page.url.pathname.split("/")[2];
+  let rankingMode: string = $derived(page.url.pathname.split("/")[2]); // ranking or gains
 
   function addDateNav(days: number) {
     let curDate = new Date(date);
@@ -52,7 +63,7 @@
       tabindex="0"
       class="secondary-nav-tab btn-none btn-rect"
       class:active={scoreCategory === "top50"}
-      on:click={() => {
+      onclick={() => {
         scoreCategory = "top50";
         setURL();
       }}>
@@ -62,7 +73,7 @@
       tabindex="0"
       class="secondary-nav-tab btn-none btn-rect"
       class:active={scoreCategory === "top25"}
-      on:click={() => {
+      onclick={() => {
         scoreCategory = "top25";
         setURL();
       }}>
@@ -72,7 +83,7 @@
       tabindex="0"
       class="secondary-nav-tab btn-none btn-rect"
       class:active={scoreCategory === "top8"}
-      on:click={() => {
+      onclick={() => {
         scoreCategory = "top8";
         setURL();
       }}>
@@ -82,7 +93,7 @@
       tabindex="0"
       class="secondary-nav-tab btn-none btn-rect"
       class:active={scoreCategory === "top1"}
-      on:click={() => {
+      onclick={() => {
         scoreCategory = "top1";
         setURL();
       }}>
@@ -96,7 +107,7 @@
         tabindex="0"
         class="secondary-nav-tab btn-none btn-rect"
         class:active={type === "countries"}
-        on:click={() => {
+        onclick={() => {
           type = "countries";
           setURL();
         }}>
@@ -106,7 +117,7 @@
         tabindex="0"
         class="secondary-nav-tab btn-none btn-rect"
         class:active={type === "gains"}
-        on:click={() => {
+        onclick={() => {
           type = "gains";
           setURL();
         }}>
@@ -116,7 +127,7 @@
         tabindex="0"
         class="secondary-nav-tab btn-none btn-rect"
         class:active={type === "players"}
-        on:click={() => {
+        onclick={() => {
           type = "players";
           setURL();
         }}>
@@ -131,13 +142,13 @@
     id="group-container"
     class="row"
     class:sticky={$rankingSettings.dateSticky}
-    on:submit|preventDefault={() => setURL(true)}>
+    onsubmit={preventDefault(() => setURL(true))}>
     <button
       class="arrow-button btn-none"
       type="button"
       title="Previous day"
       disabled={date <= MIN_DATE}
-      on:click={() => addDateNav(-1)}>
+      onclick={() => addDateNav(-1)}>
       <icon class="single-arrow flip-h"></icon>
     </button>
     <div class="group">
@@ -155,13 +166,13 @@
       type="button"
       title="Next day"
       disabled={date >= MAX_DATE}
-      on:click={() => addDateNav(1)}>
+      onclick={() => addDateNav(1)}>
       <icon class="single-arrow"></icon>
     </button>
   </form>
 {/if}
 
-<slot />
+{@render children?.()}
 
 <style>
   .secondary-nav {
@@ -181,7 +192,7 @@
     cursor: pointer;
     color: var(--color-light);
   }
-  .secondary-nav-tab:is(:hover, :focus) {
+  .secondary-nav-tab:is(:global(:hover, :focus)) {
     outline-color: transparent;
     color: var(--color-lightest);
   }
@@ -212,7 +223,7 @@
     background-color: var(--color-active);
     transition: opacity 0.2s;
   }
-  .yoink-button:is(:hover, :focus) {
+  .yoink-button:is(:global(:hover, :focus)) {
     opacity: 0.75;
   }
 

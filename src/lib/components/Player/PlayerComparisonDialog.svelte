@@ -1,23 +1,41 @@
 <script lang="ts">
   import { CHART_COLORS } from "$lib/constants";
   import { formatNumber, getDaysBetweenDates, tooltip } from "$lib/util";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { onMount } from "svelte";
   import { fly } from "svelte/transition";
 
-  const dispatch = createEventDispatcher<{
-    remove: string;
-    close: void;
-    compareNeighbors: string;
-    goToProfile: string;
-  }>();
-  let editPlayerDialog: HTMLDialogElement;
+  // TODO test if events work
+  //   const dispatch = createEventDispatcher<{
+  //     remove: string;
+  //     close: void;
+  //     compareNeighbors: string;
+  //     goToProfile: string;
+  //   }>();
+  let editPlayerDialog = $state() as HTMLDialogElement;
 
-  export let player: App.ComparisonChartPlayerCustomizable & {
-    stats: App.PlayerProfileStatsWithDates;
-  };
-  export let category: App.RankingCategory;
-  export let editingPlayerIndex: number;
-  export let verticalIndex = 0;
+  interface Props {
+    player: App.ComparisonChartPlayerCustomizable & {
+      stats: App.PlayerProfileStatsWithDates;
+    };
+    category: App.RankingCategory;
+    editingPlayerIndex: number;
+    verticalIndex?: number;
+    remove: (playerId: string) => void;
+    close: () => void;
+    compareNeighbors: (playerId: string) => void;
+    goToProfile: (playerId: string) => void;
+  }
+
+  let {
+    player = $bindable(),
+    category,
+    editingPlayerIndex,
+    verticalIndex = 0,
+    remove,
+    close,
+    compareNeighbors,
+    goToProfile
+  }: Props = $props();
 
   const days = getDaysBetweenDates(
     new Date(player.stats.startDate).valueOf(),
@@ -25,7 +43,7 @@
   );
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") return dispatch("close");
+    if (e.key === "Escape") return close();
   };
   const onMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -34,7 +52,7 @@
       !target?.classList.contains("player-name-wrapper") &&
       !target?.parentElement?.classList.contains("player-name-wrapper")
     )
-      return dispatch("close");
+      return close();
   };
 
   onMount(() => {
@@ -63,7 +81,7 @@
         >({formatNumber(player.stats.endScores)})</small>
     </span>
     <form method="dialog">
-      <button type="button" class="btn-icon" on:click={() => dispatch("close")}
+      <button type="button" aria-label="Close" class="btn-icon" onclick={close}
         ><icon class="close"></icon></button>
     </form>
   </h3>
@@ -75,9 +93,9 @@
     </label>
     <button
       class="btn-icon"
+      aria-label="Reset color"
       use:tooltip={{ content: "Reset color" }}
-      on:click={() =>
-        (player.color = CHART_COLORS[(editingPlayerIndex ?? 0) % CHART_COLORS.length])}
+      onclick={() => (player.color = CHART_COLORS[(editingPlayerIndex ?? 0) % CHART_COLORS.length])}
       ><icon class="undo"></icon></button>
   </span>
 
@@ -116,20 +134,17 @@
   </ul>
 
   <div class="row btn-row">
-    <button class="btn-icon" type="button" on:click={() => dispatch("compareNeighbors", player.id)}>
+    <button class="btn-icon" type="button" onclick={() => compareNeighbors(player.id)}>
       <small>Compare neighbors</small>
       <icon class="group"></icon>
     </button>
 
-    <button class="btn-icon" type="button" on:click={() => dispatch("goToProfile", player.id)}>
+    <button class="btn-icon" type="button" onclick={() => goToProfile(player.id)}>
       <small>Go to profile</small>
       <icon class="user"></icon>
     </button>
 
-    <button
-      class="btn-icon remove-player-btn"
-      type="button"
-      on:click={() => dispatch("remove", player.id)}>
+    <button class="btn-icon remove-player-btn" type="button" onclick={() => remove(player.id)}>
       <small>Remove user</small>
       <icon class="delete"></icon>
     </button>
