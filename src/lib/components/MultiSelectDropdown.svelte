@@ -3,13 +3,19 @@
   import type { Snippet } from "svelte";
 
   interface Props {
-    options?: { [value: string]: string };
+    options: { [value: string]: string };
+    selected: string[];
     optionComponent: Snippet<[{ value: string; label: string }]>;
-    value?: string | null;
+    query?: string | undefined;
   }
 
-  let { options = {}, optionComponent, value = $bindable(null) }: Props = $props();
-  let dropdownOptionsElement = $state() as HTMLDivElement;
+  let {
+    options = {},
+    selected = $bindable([]),
+    optionComponent,
+    query = $bindable()
+  }: Props = $props();
+  let dropdownOptionsElement = $state() as HTMLUListElement;
   let dropdownVisible = $state(false);
 
   function onFocus() {
@@ -22,7 +28,7 @@
   }
 
   function filterOptions() {
-    const query = (value ?? "").toUpperCase();
+    const optionsQuery = (query ?? "").toUpperCase();
     const labels = dropdownOptionsElement!.getElementsByTagName("label");
     let anyVisible = false;
 
@@ -31,7 +37,8 @@
       const countryCode = checkboxElement.value;
       const countryName = label.textContent || label.innerText;
 
-      const isMatched = query == countryCode || countryName.toUpperCase().includes(query);
+      const isMatched =
+        optionsQuery == countryCode || countryName.toUpperCase().includes(optionsQuery);
       label.style.display = isMatched ? "" : "none";
       if (isMatched) anyVisible = true;
     }
@@ -41,23 +48,27 @@
 </script>
 
 <div class="dropdown">
-  <input
-    type="text"
-    class="input-dark"
-    placeholder="Countries"
-    bind:value
-    onfocus={onFocus}
-    onkeyup={filterOptions}
-    use:outClick={[dropdownOptionsElement]}
-    onoutclick={onBlur} />
-  <div
-    class="dropdown-options"
+  {#if dropdownOptionsElement}
+    <input
+      type="text"
+      class="input-dark"
+      placeholder="Countries"
+      bind:value={query}
+      onfocus={onFocus}
+      onkeyup={filterOptions}
+      use:outClick={[dropdownOptionsElement]}
+      onoutclick={onBlur} />
+  {/if}
+  <ul
+    class="dropdown-options ul scrollbar-small scrollbar-dark"
     style="display: {dropdownVisible ? 'block' : 'none'};"
     bind:this={dropdownOptionsElement}>
     {#each Object.entries(options) as [value, label]}
-      {@render optionComponent({ value, label })}
+      <li class:selected={selected.includes(value)}>
+        {@render optionComponent({ value, label })}
+      </li>
     {/each}
-  </div>
+  </ul>
 </div>
 
 <style>
@@ -73,7 +84,7 @@
 
   .dropdown-options {
     position: absolute;
-    max-height: minmax(150px, 25vh);
+    max-height: clamp(150px, 25vh, 40vh);
     overflow-y: auto;
     border: 1px solid #ccc;
     background: #fff;
@@ -81,13 +92,17 @@
     z-index: 1;
   }
 
-  .dropdown-options label {
-    display: block;
-    padding: 5px;
+  :global(.dropdown-options li label) {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background-color: var(--color-darkish);
     cursor: pointer;
   }
-
-  .dropdown-options label:hover {
-    background-color: #f0f0f0;
+  .dropdown-options li.selected {
+    background-color: var(--color-active);
+  }
+  :global(.dropdown-options li label:hover) {
+    background-color: var(--color-purple);
   }
 </style>

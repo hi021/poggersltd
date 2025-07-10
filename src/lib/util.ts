@@ -198,12 +198,22 @@ export function animate({
 }
 
 export function outClick(node: Element, ignoredNodes?: Element[]) {
-  const handleClick = (event: Event) => {
-    if (!ignoredNodes?.includes(event.target as Element) && !node.contains(event.target as Element))
-      node.dispatchEvent(new CustomEvent("outclick"));
-  };
-  document.addEventListener("click", handleClick, true);
+  const ignoreClick = (event: Event) => {
+    const target = event.target as Element;
 
+    if (node.contains(target)) return true;
+    for (const ignoredNode of ignoredNodes ?? []) {
+      if (ignoredNode.contains(target)) return true;
+    }
+
+    return false;
+  };
+
+  const handleClick = (event: Event) => {
+    if (!ignoreClick(event)) node.dispatchEvent(new CustomEvent("outclick"));
+  };
+
+  document.addEventListener("click", handleClick, true);
   return {
     destroy() {
       document.removeEventListener("click", handleClick, true);

@@ -1,8 +1,9 @@
 <script lang="ts">
   import Footer from "$lib/components/Footer.svelte";
   import { page } from "$app/state";
+  import type { Snippet } from "svelte";
   interface Props {
-    children?: import("svelte").Snippet;
+    children?: Snippet;
   }
 
   let { children }: Props = $props();

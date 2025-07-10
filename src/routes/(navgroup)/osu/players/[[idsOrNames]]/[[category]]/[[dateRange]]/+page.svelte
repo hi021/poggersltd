@@ -49,7 +49,7 @@
   let previousRange = { ...currentRange };
   let comparePlayerName: string = $state("");
   let editingPlayerIndex: number | null = $state(null);
-  let userSearchComponent: UserSearch = $state() as UserSearch;
+  let userSearchComponent = $state() as UserSearch;
 
   const comparePlayerSearch = ({ _id, name }: { _id?: number; name: string }) => {
     if (!_id) return false;
@@ -195,6 +195,7 @@
       <button
         type="button"
         class="btn-icon"
+        aria-label="Toggle players panel"
         use:tooltip={{ content: "Toggle players panel" }}
         onclick={() => (playersPanelVisible = !playersPanelVisible)}>
         <icon class={playersPanelVisible ? "expand-left" : "expand-right"}></icon>
@@ -314,6 +315,7 @@
                 <button
                   type="button"
                   class="btn-icon"
+                  aria-label="Toggle ranks"
                   class:active={player.rankVisible || player.rankVisible == null}
                   disabled={loading}
                   use:tooltip={{ content: "Toggle ranks" }}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tooltip } from "$lib/util";
+  import type { Snippet } from "svelte";
 
   interface Props {
     href: string;
@@ -8,7 +9,7 @@
     backgroundImage?: string;
     tooltipContent?: string;
     style?: string;
-    children?: import("svelte").Snippet;
+    children?: Snippet;
   }
 
   let {

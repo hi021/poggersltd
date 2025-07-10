@@ -104,11 +104,10 @@
 
         <MultiSelectDropdown options={COUNTRIES}>
           {#snippet optionComponent({ value, label })}
-            <label
-              ><input type="checkbox" {value} /><img
-                class="osu-flag-small"
-                alt={value}
-                src="/flags/{value}.svg" />{label}
+            <label>
+              <input type="checkbox" class="no-appearance" {value} />
+              <img class="osu-flag-small" alt={value} src="/flags/{value}.svg" />
+              {label}
             </label>
           {/snippet}
         </MultiSelectDropdown>
@@ -152,7 +151,7 @@
     gap: 8px;
   }
 
-  label {
+  .background > label {
     display: flex;
     flex-direction: column;
     gap: 3px;

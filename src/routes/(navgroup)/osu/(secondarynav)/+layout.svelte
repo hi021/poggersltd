@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { run, preventDefault } from "svelte/legacy";
-
+  import { preventDefault } from "svelte/legacy";
   import { formatDate, addDays } from "$lib/util";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import { rankingSettings } from "$lib/stores";
   import { MIN_DATE } from "$lib/constants";
+  import type { Snippet } from "svelte";
   interface Props {
-    children?: import("svelte").Snippet;
+    children?: Snippet;
   }
 
   let { children }: Props = $props();
@@ -18,16 +18,11 @@
       ? MAX_DATE
       : page.params.date
   );
-  let scoreCategory: string = $state();
-  run(() => {
-    scoreCategory = page.params.category;
-  });
-  let type: string = $state(); // players, countries, or gains
-  run(() => {
-    type = page.url.pathname.split("/")[3];
-  });
+  let scoreCategory = $derived(page.params.category);
+  let type = $derived(page.url.pathname.split("/")[3]); // players, countries, or gains
+
   let country = page.params.country;
-  let rankingMode: string = $derived(page.url.pathname.split("/")[2]); // ranking or gains
+  let rankingMode = $derived(page.url.pathname.split("/")[2]); // ranking or gains
 
   function addDateNav(days: number) {
     let curDate = new Date(date);
@@ -147,6 +142,7 @@
       class="arrow-button btn-none"
       type="button"
       title="Previous day"
+      aria-label="Previous day"
       disabled={date <= MIN_DATE}
       onclick={() => addDateNav(-1)}>
       <icon class="single-arrow flip-h"></icon>
@@ -165,6 +161,7 @@
       class="arrow-button btn-none"
       type="button"
       title="Next day"
+      aria-label="Next day"
       disabled={date >= MAX_DATE}
       onclick={() => addDateNav(1)}>
       <icon class="single-arrow"></icon>

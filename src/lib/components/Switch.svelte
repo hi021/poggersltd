@@ -1,12 +1,14 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+
   interface Props {
     onChange?: undefined | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void);
     checked: boolean;
     disabled?: boolean;
     size?: string;
     style?: string;
-    before?: import("svelte").Snippet;
-    after?: import("svelte").Snippet;
+    before?: Snippet;
+    after?: Snippet;
   }
 
   let {
@@ -23,7 +25,7 @@
 <label class="column" {style}>
   {@render before?.()}
   <div class="switch" class:disabled>
-    <input type="checkbox" {disabled} onchange={onChange} bind:checked />
+    <input type="checkbox" class="no-appearance" {disabled} onchange={onChange} bind:checked />
     <span class="slider" style="--size: {size};"></span>
   </div>
   {@render after?.()}
@@ -36,9 +38,6 @@
     width: 3.875rem;
     height: 2rem;
     cursor: pointer;
-  }
-  .switch input {
-    appearance: none;
   }
   .switch.disabled {
     opacity: 0.5;

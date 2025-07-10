@@ -41,17 +41,12 @@ body {
 }
 
 /* INPUTS */
-button,
-input,
-select,
-textarea {
+:where(button, input, select, textarea) {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
 }
-input,
-select,
-textarea {
+:where(input, select, textarea):not(.no-appearance) {
   margin-bottom: 0;
   padding: 4px;
   border-radius: 8px;
@@ -66,12 +61,12 @@ textarea {
     border-color 0.1s ease-in-out,
     box-shadow 0.1s ease-in-out;
 }
-:is(input, select, textarea):focus {
+:where(input, select, textarea):focus {
   border-color: #80bdff;
   outline-color: transparent;
   box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
 }
-:is(input, select, textarea):disabled {
+:where(input, select, textarea):disabled {
   background-color: var(--color-light);
 }
 textarea {
@@ -103,7 +98,12 @@ hr {
   transform: translateX(-1px);
 }
 
-.input-dark {
+.no-appearance {
+  appearance: none;
+  margin: 0;
+}
+
+:is(.input-dark) {
   font-size: 1.375rem;
   background-color: var(--color-dark);
   color: var(--color-lighter);
@@ -112,15 +112,15 @@ hr {
   border-radius: 9999px;
   color-scheme: dark;
 }
-.input-dark:disabled {
+:is(.input-dark):disabled {
   background-color: var(--color-dark);
   color: var(--color-lighter);
   opacity: 0.5;
 }
-.input-dark:focus-visible {
+:is(.input-dark):focus-visible {
   box-shadow: 0 0 2px 0.125rem var(--color-light);
 }
-.input-dark.normal-size {
+:is(.input-dark).normal-size {
   font-size: 1rem;
   padding: 0.5rem 0.425rem;
 }
@@ -438,23 +438,15 @@ button:disabled {
 /* OSU */
 
 /* SCROLLBAR */
-.scrollbar-dark,
+/* TODO: Test on other browsers */
+/* .scrollbar-dark,
 .scrollbar-small {
   scrollbar-color: #222 var(--color-dark);
-}
+} */
 /* apparently something must be in here for other styles to work */
 .scrollbar-dark::-webkit-scrollbar,
 .scrollbar-small::-webkit-scrollbar {
   display: initial;
-}
-.scrollbar-dark::-webkit-scrollbar-track {
-  background: var(--color-dark);
-}
-.scrollbar-dark::-webkit-scrollbar-thumb {
-  background: #222;
-}
-.scrollbar-dark::-webkit-scrollbar-thumb:hover {
-  background: #333;
 }
 .scrollbar-dark::-webkit-scrollbar-button,
 .scrollbar-small::-webkit-scrollbar-button {
@@ -475,6 +467,16 @@ button:disabled {
 }
 .scrollbar-small::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.4);
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: var(--color-dark);
+}
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background: #222;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: #333;
 }
 /* SCROLLBAR */
 

@@ -25,6 +25,7 @@
     <button
       type="button"
       title="First page"
+      aria-label="First page"
       disabled={page <= 1}
       onclick={() => onPageChange(1)}
       use:tooltip={{ content: "First page" }}>
@@ -33,6 +34,7 @@
     <button
       type="button"
       title="Previous page"
+      aria-label="Previous page"
       disabled={page <= 1}
       onclick={() => onPageChange(page - 1)}>
       <icon class="single-arrow flip-h"></icon>
@@ -41,6 +43,7 @@
     <button
       type="button"
       title="Next page"
+      aria-label="Next page"
       disabled={page >= maxPage}
       onclick={() => onPageChange(page + 1)}>
       <icon class="single-arrow"></icon>
@@ -48,6 +51,7 @@
     <button
       type="button"
       title="Last page"
+      aria-label="Last page"
       disabled={page >= maxPage}
       onclick={() => onPageChange(maxPage)}
       use:tooltip={{ content: "Last page" }}>
@@ -58,7 +62,7 @@
   {#if showPageNumber || entries}
     <div style="font-weight: 300;">
       {#if showPageNumber}
-        Page <span style="font-weight: 400;">{page}</span>/{maxPage}
+        Page <strong>{page}</strong>/{maxPage}
         {#if entries}
           ●
         {/if}

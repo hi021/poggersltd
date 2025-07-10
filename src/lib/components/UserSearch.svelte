@@ -1,6 +1,5 @@
 <script lang="ts">
   import { preventDefault } from "svelte/legacy";
-
   import { onMount, tick } from "svelte";
   import { debounce, getAvatarURL } from "$lib/util";
   import { slide } from "svelte/transition";
@@ -111,7 +110,7 @@
     </ul>
   </div>
 
-  <button type="submit" class="btn-search btn-none" {disabled}>
+  <button type="submit" class="btn-search btn-none" aria-label="Search" {disabled}>
     <icon class="search big"></icon>
   </button>
 </form>
