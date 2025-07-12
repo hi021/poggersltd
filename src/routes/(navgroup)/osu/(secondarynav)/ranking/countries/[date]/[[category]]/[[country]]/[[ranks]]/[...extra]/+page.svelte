@@ -1,5 +1,3 @@
-<!-- @migration-task Error while migrating Svelte code: `<th>` cannot be a child of `<thead>`. `<thead>` only allows these children: `<tr>`, `<style>`, `<script>`, `<template>`. The browser will 'repair' the HTML (by moving, removing, or inserting elements) which breaks Svelte's assumptions about the structure of your components.
-https://svelte.dev/e/node_invalid_placement -->
 <script lang="ts">
   import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
@@ -34,61 +32,63 @@ https://svelte.dev/e/node_invalid_placement -->
 
     <table class="osu-table">
       <thead>
-        <th></th>
+        <tr>
+          <th></th>
 
-        <th> Country </th>
+          <th> Country </th>
 
-        <th
-          class="sortable"
-          on:click={() => {
-            if (sortBy === "weighted") sortDescending = !sortDescending;
-            else sortBy = "weighted";
-          }}>
-          <span
-            class:desc={sortBy === "weighted" && sortDescending}
-            class:asc={sortBy === "weighted" && !sortDescending}>
-            Weighted
-          </span>
-        </th>
+          <th
+            class="sortable"
+            on:click={() => {
+              if (sortBy === "weighted") sortDescending = !sortDescending;
+              else sortBy = "weighted";
+            }}>
+            <span
+              class:desc={sortBy === "weighted" && sortDescending}
+              class:asc={sortBy === "weighted" && !sortDescending}>
+              Weighted
+            </span>
+          </th>
 
-        <th
-          class="sortable"
-          on:click={() => {
-            if (sortBy === "total") sortDescending = !sortDescending;
-            else sortBy = "total";
-          }}>
-          <span
-            class:desc={sortBy === "total" && sortDescending}
-            class:asc={sortBy === "total" && !sortDescending}>
-            Total
-          </span>
-        </th>
+          <th
+            class="sortable"
+            on:click={() => {
+              if (sortBy === "total") sortDescending = !sortDescending;
+              else sortBy = "total";
+            }}>
+            <span
+              class:desc={sortBy === "total" && sortDescending}
+              class:asc={sortBy === "total" && !sortDescending}>
+              Total
+            </span>
+          </th>
 
-        <th
-          class="sortable"
-          on:click={() => {
-            if (sortBy === "players") sortDescending = !sortDescending;
-            else sortBy = "players";
-          }}>
-          <span
-            class:desc={sortBy === "players" && sortDescending}
-            class:asc={sortBy === "players" && !sortDescending}>
-            Players
-          </span>
-        </th>
+          <th
+            class="sortable"
+            on:click={() => {
+              if (sortBy === "players") sortDescending = !sortDescending;
+              else sortBy = "players";
+            }}>
+            <span
+              class:desc={sortBy === "players" && sortDescending}
+              class:asc={sortBy === "players" && !sortDescending}>
+              Players
+            </span>
+          </th>
 
-        <th
-          class="sortable"
-          on:click={() => {
-            if (sortBy === "average") sortDescending = !sortDescending;
-            else sortBy = "average";
-          }}>
-          <span
-            class:desc={sortBy === "average" && sortDescending}
-            class:asc={sortBy === "average" && !sortDescending}>
-            Average
-          </span>
-        </th>
+          <th
+            class="sortable"
+            on:click={() => {
+              if (sortBy === "average") sortDescending = !sortDescending;
+              else sortBy = "average";
+            }}>
+            <span
+              class:desc={sortBy === "average" && sortDescending}
+              class:asc={sortBy === "average" && !sortDescending}>
+              Average
+            </span>
+          </th>
+        </tr>
       </thead>
       <tbody>
         {#each data.rankingData as country, i (country.country)}

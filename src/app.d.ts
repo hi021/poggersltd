@@ -117,6 +117,8 @@ declare namespace App {
     perPage: number; //                                      number of players shown on one page (default 50)
     dateSticky: boolean; //                                  whether top date bar is sticky
     gainedDays: number; //                                   number of days to look back for gains ranking (default 1)
+    countryFilter: string[]; //                              list of selected country codes, empty for all (not saved to local storage)
+    rankFilter: { min: number; max: number }; //               rank range, 0 for any (not saved to local storage)
   }
 
   interface ApiParams {
@@ -125,7 +127,7 @@ declare namespace App {
 
   interface RankingQuery {
     _id; //                                                  ranking entry date as YYYY-MM-DD string
-    country?: { $in: string[] }; //                            2-uppercase-letter country code or "all"
+    country?: { $in: string[] }; //                          2-uppercase-letter country code or "all"
     rank?: { $lte: number; $gte: number }; //                rankMin - rankMax
   }
 }

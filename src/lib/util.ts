@@ -2,6 +2,7 @@ import tippy, { type Props } from "tippy.js";
 import { linear } from "svelte/easing";
 import { MIN_DATE } from "./constants";
 import "tippy.js/dist/tippy.css";
+import type { RouteParams } from "../routes/(navgroup)/osu/(secondarynav)/ranking/players/[date]/[[category]]/[[country]]/[[ranks]]/[...extra]/$types";
 
 export function formatNumber(number: number | string, delimiter = " "): string {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
@@ -161,6 +162,19 @@ export const getOsuDailyURL = (name: number) =>
   `https://osudaily.net/profile.php?u=${name}&s=1&m=0`;
 export const getOsuSnipeURL = (id: number | string, country = "global") =>
   `https://snipe.huismetbenen.nl/player/${country.toLowerCase()}/osu/${id}`;
+
+export const getRankingUrl = (
+  params: RouteParams,
+  ranking: "players" | "gains" | "countries" = "players",
+  baseUrl: "api" | "osu" = "api",
+  gainedDays = 1
+) => {
+  const extraString =
+    gainedDays > 1 || params.extra ? `/${gainedDays > 1 ? gainedDays : params.extra}` : "";
+  const ranksString = params.ranks || extraString ? `/${params.ranks ?? "-"}` : "";
+
+  return `/${baseUrl}/ranking/${ranking}/${params.date}/${params.category ?? "top50"}/${params.country ?? "all"}${ranksString}${extraString}`;
+};
 
 export function transitionHeight(
   node: Element,

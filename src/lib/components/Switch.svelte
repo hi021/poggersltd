@@ -2,7 +2,7 @@
   import type { Snippet } from "svelte";
 
   interface Props {
-    onChange?: undefined | ((e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void);
+    onChange?: (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => void;
     checked: boolean;
     disabled?: boolean;
     size?: string;
@@ -12,7 +12,7 @@
   }
 
   let {
-    onChange = undefined,
+    onChange,
     checked = $bindable(),
     disabled = false,
     size = "1.625rem",

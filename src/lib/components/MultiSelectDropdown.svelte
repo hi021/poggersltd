@@ -1,18 +1,23 @@
 <script lang="ts">
   import { outClick } from "$lib/util";
   import type { Snippet } from "svelte";
+  import { slide } from "svelte/transition";
 
   interface Props {
     options: { [value: string]: string };
     selected: string[];
-    optionComponent: Snippet<[{ value: string; label: string }]>;
-    query?: string | undefined;
+    optionComponent: Snippet<[{ value: string; label: string; onchange: (e: Event) => void }]>;
+    onBlur?: (e?: FocusEvent) => void;
+    placeholder?: string;
+    query?: string;
   }
 
   let {
     options = {},
-    selected = $bindable([]),
+    selected = $bindable(),
     optionComponent,
+    onBlur,
+    placeholder,
     query = $bindable()
   }: Props = $props();
   let dropdownOptionsElement = $state() as HTMLUListElement;
@@ -20,14 +25,28 @@
 
   function onFocus() {
     dropdownVisible = true;
-    console.log(options);
   }
 
-  function onBlur() {
+  function onOutClick() {
     dropdownVisible = false;
+    onBlur?.();
   }
 
-  function filterOptions() {
+  function clearAll() {
+    selected = [];
+  }
+
+  function onOptionChecked(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const value = target.value;
+
+    if (target.checked) selected.push(value);
+    else selected = selected.filter((it) => it != value);
+  }
+
+  function filterOptions(e: KeyboardEvent) {
+    if (e.key == "Escape") return onOutClick();
+
     const optionsQuery = (query ?? "").toUpperCase();
     const labels = dropdownOptionsElement!.getElementsByTagName("label");
     let anyVisible = false;
@@ -52,20 +71,22 @@
     <input
       type="text"
       class="input-dark"
-      placeholder="Countries"
+      {placeholder}
       bind:value={query}
       onfocus={onFocus}
       onkeyup={filterOptions}
       use:outClick={[dropdownOptionsElement]}
-      onoutclick={onBlur} />
+      onoutclick={onOutClick}
+      onblur={onBlur} />
   {/if}
   <ul
     class="dropdown-options ul scrollbar-small scrollbar-dark"
     style="display: {dropdownVisible ? 'block' : 'none'};"
+    transition:slide={{ duration: 100, axis: "y" }}
     bind:this={dropdownOptionsElement}>
     {#each Object.entries(options) as [value, label]}
       <li class:selected={selected.includes(value)}>
-        {@render optionComponent({ value, label })}
+        {@render optionComponent({ value, label, onchange: onOptionChecked })}
       </li>
     {/each}
   </ul>
@@ -78,7 +99,6 @@
 
   input[type="text"] {
     width: 100%;
-    padding: 8px;
     box-sizing: border-box;
   }
 
@@ -86,9 +106,10 @@
     position: absolute;
     max-height: clamp(150px, 25vh, 40vh);
     overflow-y: auto;
-    border: 1px solid #ccc;
-    background: #fff;
-    width: 100%;
+    width: calc(100% - 44px);
+    margin: 0 22px;
+    margin-top: 1px;
+    border-radius: 0 8px;
     z-index: 1;
   }
 
@@ -99,10 +120,18 @@
     background-color: var(--color-darkish);
     cursor: pointer;
   }
-  .dropdown-options li.selected {
+  :global(.dropdown-options li.selected > label) {
     background-color: var(--color-active);
   }
   :global(.dropdown-options li label:hover) {
     background-color: var(--color-purple);
+  }
+  :global(.dropdown-options label > input:focus) {
+    box-shadow: none;
+  }
+
+  .scrollbar-small::-webkit-scrollbar-track,
+  .scrollbar-small::-webkit-scrollbar-thumb {
+    border-radius: 0;
   }
 </style>

@@ -1,6 +1,6 @@
 <script>
   import { goto } from "$app/navigation";
-  const yoink = () => goto("/osu/ranking/players/last/top50");
+  const yoink = () => goto("/osu/ranking/players/latest/top50");
 </script>
 
 <svelte:head>

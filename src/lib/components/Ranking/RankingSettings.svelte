@@ -1,13 +1,12 @@
 <script lang="ts">
+  import { addDays, getDaysBetweenDates, getRankingUrl } from "$lib/util";
+  import { COUNTRIES, MIN_DATE } from "$lib/constants";
+  import { browser } from "$app/environment";
   import { slide } from "svelte/transition";
-  import Switch from "../Switch.svelte";
-  import { addDays, getDaysBetweenDates } from "$lib/util";
-  import { _getGainsRankingUrl } from "../../../routes/(navgroup)/osu/(secondarynav)/ranking/gains/[date]/[[category]]/[[country]]/[[ranks]]/[...extra]/+page";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import { browser } from "$app/environment";
   import { onMount } from "svelte";
-  import { COUNTRIES, MIN_DATE } from "$lib/constants";
+  import Switch from "../Switch.svelte";
   import MultiSelectDropdown from "../MultiSelectDropdown.svelte";
 
   interface Props {
@@ -18,8 +17,8 @@
 
   let { viewMode = "players", settings = $bindable(), style = "" }: Props = $props();
 
-  let visible = $state(false);
-  let isGainedDaysCustom: boolean = $state(false);
+  let expanded = $state(false);
+  let isGainedDaysCustom = $state(false);
   const maxDays = getDaysBetweenDates(
     addDays(new Date(MIN_DATE), 1).valueOf(),
     new Date(page.params.date).valueOf()
@@ -50,9 +49,30 @@
   }
 
   function handleGainsTimeFrameNavigation(days: number) {
-    console.log(days);
+    console.log(days); // TODO
     if (browser)
-      goto(_getGainsRankingUrl(page.params as any, days, "osu"), { invalidateAll: false });
+      goto(getRankingUrl(page.params as any, "gains", "osu", days), { invalidateAll: false });
+  }
+
+  // TODO replace "players"
+  function handleCountryFilterChange() {
+    console.log(
+      getRankingUrl(
+        { ...page.params, country: settings.countryFilter?.join(",") } as any,
+        "players",
+        "osu",
+        settings.gainedDays
+      )
+    );
+    if (browser)
+      goto(
+        getRankingUrl(
+          { ...page.params, country: settings.countryFilter?.join(",") } as any,
+          "players",
+          "osu",
+          settings.gainedDays
+        )
+      );
   }
 
   onMount(() => checkAndSetIsGainedDaysCustom());
@@ -60,14 +80,15 @@
 
 <div class="wrapper" {style}>
   <button
+    class:expanded
     class="btn-icon"
     type="button"
-    onclick={() => (visible = !visible)}
+    onclick={() => (expanded = !expanded)}
     aria-label="Ranking settings">
-    <icon class="settings" style="transform: rotate({visible ? 45 : 0}deg);"></icon>
+    <icon class="settings" style="transform: rotate({expanded ? 45 : 0}deg);"></icon>
   </button>
 
-  {#if visible}
+  {#if expanded}
     <div class="column background" transition:slide={{ duration: 200, axis: "y" }}>
       {#if viewMode != "countries"}
         <Switch bind:checked={settings.avatars}>
@@ -102,10 +123,14 @@
           </select>
         </label>
 
-        <MultiSelectDropdown options={COUNTRIES}>
-          {#snippet optionComponent({ value, label })}
+        <MultiSelectDropdown
+          options={COUNTRIES}
+          bind:selected={settings.countryFilter}
+          placeholder="Country filter ({settings.countryFilter.length})"
+          onBlur={handleCountryFilterChange}>
+          {#snippet optionComponent({ value, label, onchange })}
             <label>
-              <input type="checkbox" class="no-appearance" {value} />
+              <input type="checkbox" class="no-appearance" {value} {onchange} />
               <img class="osu-flag-small" alt={value} src="/flags/{value}.svg" />
               {label}
             </label>
@@ -162,10 +187,18 @@
 
   .btn-icon {
     font-size: 1.75em;
+    padding: 8px;
     color: var(--color-lighter);
   }
   .btn-icon:focus {
     box-shadow: none;
+  }
+  button.expanded {
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-bottom: -6px;
+    opacity: 1;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
   icon.settings {
     transition: transform 0.2s;

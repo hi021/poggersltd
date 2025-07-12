@@ -443,6 +443,7 @@ button:disabled {
 .scrollbar-small {
   scrollbar-color: #222 var(--color-dark);
 } */
+
 /* apparently something must be in here for other styles to work */
 .scrollbar-dark::-webkit-scrollbar,
 .scrollbar-small::-webkit-scrollbar {
