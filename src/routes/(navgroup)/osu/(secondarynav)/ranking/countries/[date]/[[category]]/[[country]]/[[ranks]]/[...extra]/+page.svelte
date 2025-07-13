@@ -4,20 +4,28 @@
   import { formatNumber } from "$lib/util";
   import { rankingSettings } from "$lib/stores";
   import { page } from "$app/state";
-  import type { PageData } from "./$types";
   import { COUNTRIES } from "$lib/constants";
+  import type { PageData } from "./$types";
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
 
-  let sortBy = "weighted";
-  let sortDescending = true;
+  let { data = $bindable() }: Props = $props();
+
+  let sortBy = $state("weighted");
+  let sortDescending = $state(true);
 
   function sortData() {
     const order = sortDescending ? 1 : -1;
     const sorting = (a: any, b: any) => (a[sortBy] < b[sortBy] ? order : -order);
     data = { ...data, rankingData: data.rankingData.sort(sorting) };
   }
-  $: sortBy, sortDescending, data, sortData();
+  $effect(() => sortData());
+  // TODO
+  //   run(() => {
+  //     sortBy, sortDescending, data, sortData();
+  //   });
 </script>
 
 <svelte:head>
@@ -39,7 +47,7 @@
 
           <th
             class="sortable"
-            on:click={() => {
+            onclick={() => {
               if (sortBy === "weighted") sortDescending = !sortDescending;
               else sortBy = "weighted";
             }}>
@@ -52,7 +60,7 @@
 
           <th
             class="sortable"
-            on:click={() => {
+            onclick={() => {
               if (sortBy === "total") sortDescending = !sortDescending;
               else sortBy = "total";
             }}>
@@ -65,7 +73,7 @@
 
           <th
             class="sortable"
-            on:click={() => {
+            onclick={() => {
               if (sortBy === "players") sortDescending = !sortDescending;
               else sortBy = "players";
             }}>
@@ -78,7 +86,7 @@
 
           <th
             class="sortable"
-            on:click={() => {
+            onclick={() => {
               if (sortBy === "average") sortDescending = !sortDescending;
               else sortBy = "average";
             }}>
@@ -187,7 +195,7 @@
     background-image: url("/icons/arrow_up.svg");
     opacity: 0;
   }
-  :is(span.asc, span.desc)::after {
+  :is(:global(span.asc, span.desc))::after {
     opacity: 1;
   }
   span.desc::after {

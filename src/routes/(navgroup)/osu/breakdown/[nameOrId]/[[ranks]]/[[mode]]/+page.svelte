@@ -1,5 +1,3 @@
-<!-- @migration-task Error while migrating Svelte code: `<th>` cannot be a child of `<thead>`. `<thead>` only allows these children: `<tr>`, `<style>`, `<script>`, `<template>`. The browser will 'repair' the HTML (by moving, removing, or inserting elements) which breaks Svelte's assumptions about the structure of your components.
-https://svelte.dev/e/node_invalid_placement -->
 <script lang="ts">
   import {
     formatNumber,
@@ -9,16 +7,17 @@ https://svelte.dev/e/node_invalid_placement -->
     getOsuProfileURL
   } from "$lib/util";
   import Loader from "$lib/components/Loader.svelte";
-  import { onMount } from "svelte";
-  import type { PageData } from "./$types";
   import { COUNTRIES } from "$lib/constants";
+  import type { PageData } from "./$types";
 
-  export let data: PageData;
-  let loading = true;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
+  //   let loading = $state(true);
   const chartHeight = 320; // px
-  let showRaw = false;
-
-  onMount(() => {});
+  let showRaw = $state(false);
 </script>
 
 <svelte:head>
@@ -79,10 +78,12 @@ https://svelte.dev/e/node_invalid_placement -->
     <div class="stats-container">
       <table class="stat-table">
         <thead>
-          <th></th>
-          <th>Count</th>
-          <th>Percentage of all maps</th>
-          <th>Global rank</th>
+          <tr>
+            <th></th>
+            <th>Count</th>
+            <th>Percentage of all maps</th>
+            <th>Global rank</th>
+          </tr>
         </thead>
         <tbody>
           {#each Object.entries(data.stats) as [k, v]}
@@ -117,7 +118,7 @@ https://svelte.dev/e/node_invalid_placement -->
       type="button"
       class="btn-gray"
       style="margin-bottom: 16px;"
-      on:click={() => (showRaw = !showRaw)}>
+      onclick={() => (showRaw = !showRaw)}>
       Show raw data
     </button>
     {#if showRaw}

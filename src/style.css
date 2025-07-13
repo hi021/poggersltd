@@ -570,7 +570,7 @@ button:disabled {
   color: inherit;
   text-decoration: none;
 }
-.a:hover {
+.a:not(.no-decoration):hover {
   text-decoration: underline;
 }
 .ul {

@@ -5,16 +5,17 @@
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { tooltip } from "$lib/util";
   import { fly } from "svelte/transition";
+  import type { Snippet } from "svelte";
   interface Props {
-    children?: import("svelte").Snippet;
+    children?: Snippet;
   }
 
   let { children }: Props = $props();
 
   let singleRank = $state(false);
-  let rank: number = $state();
   let mode: string = $state("0");
-  let username: string = $state();
+  let rank: number | undefined = $state(undefined);
+  let username: string | undefined = $state(undefined);
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) => {
     if (!singleRank) gotoPlayerOnEnter({ _id, name });

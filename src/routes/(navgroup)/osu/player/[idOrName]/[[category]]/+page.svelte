@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
-  //a@ts-nocheck it's being really dumb, please don't worry about it
+  //@ts-nocheck the chart library is being really dumb, please don't worry about it
   import {
     getAvatarURL,
     getOsuAltURL,
@@ -10,7 +8,8 @@
     getOsuSnipeURL,
     getOsuStatsURL,
     getOsuTrackURL,
-    tooltip
+    tooltip,
+    parseCategoryNumber
   } from "$lib/util";
   import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
   import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
@@ -18,13 +17,14 @@
   import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
   import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
   import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
+  import { COUNTRIES, RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
   import { afterNavigate, goto } from "$app/navigation";
   import { quintOut } from "svelte/easing";
   import { browser } from "$app/environment";
   import { fade } from "svelte/transition";
   import { page } from "$app/state";
   import type { PageData } from "./$types";
-  import { COUNTRIES, RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
+  import PlayerAllCategoryChart from "$lib/components/Player/PlayerAllCategoryChart.svelte";
 
   interface Props {
     data: PageData;
@@ -40,9 +40,7 @@
     goto(`/osu/player/${page.params.idOrName}/${category}`);
   };
 
-  run(() => {
-    category, updateURL();
-  });
+  $effect(() => updateURL());
   afterNavigate(() => (loading = false));
 </script>
 
@@ -104,9 +102,10 @@
     <div class="main-wrapper row flex-fill">
       <aside class="column">
         <a
-          class="a"
+          class="a no-decoration"
           target="_blank"
           href={getOsuProfileURL(data._id)}
+          aria-label="osu! profile"
           use:tooltip={{ content: "osu! profile" }}
           rel="noreferrer">
           <div class="icon-wrapper osu-icon-wrapper">
@@ -115,9 +114,10 @@
           </div>
         </a>
         <a
-          class="a"
+          class="a no-decoration"
           target="_blank"
           href={getOsuStatsURL(data.name)}
+          aria-label="osu!Stats"
           use:tooltip={{ content: "osu!Stats" }}
           rel="noreferrer">
           <div class="icon-wrapper chart-icon-wrapper">
@@ -126,9 +126,10 @@
           </div>
         </a>
         <a
-          class="a"
+          class="a no-decoration"
           target="_blank"
           href={getOsuTrackURL(data.name)}
+          aria-label="osu!track"
           use:tooltip={{ content: "osu!track" }}
           rel="noreferrer">
           <div class="icon-wrapper">
@@ -137,9 +138,10 @@
           </div>
         </a>
         <a
-          class="a"
+          class="a no-decoration"
           target="_blank"
           href={getOsuAltURL(data._id)}
+          aria-label="osu! scores inspector"
           use:tooltip={{ content: "osu! scores inspector" }}
           rel="noreferrer">
           <div class="icon-wrapper">
@@ -148,9 +150,10 @@
           </div>
         </a>
         <a
-          class="a"
+          class="a no-decoration"
           target="_blank"
           href={getOsuDailyURL(data.name)}
+          aria-label="osu!daily"
           use:tooltip={{ content: "osu!daily" }}
           rel="noreferrer">
           <div class="icon-wrapper">
@@ -159,9 +162,10 @@
           </div>
         </a>
         <a
-          class="a"
+          class="a no-decoration"
           target="_blank"
           href={getOsuSnipeURL(data._id, data.country)}
+          aria-label="osu!snipe"
           use:tooltip={{ content: "osu!snipe" }}
           rel="noreferrer">
           <div class="icon-wrapper">
@@ -176,14 +180,19 @@
         {:else}
           <div class="data-container row">
             {#if category === "all"}
-              {#each SCORE_CATEGORIES as cat}
-                {#if data[cat]}
-                  <PlayerAllCategoryStats
-                    country={data.country}
-                    title="{cat}s"
-                    playerCategory={data[cat]} />
-                {/if}
-              {/each}
+              <div class="column" style="width: 100%;">
+                <div class="row" style="width: 100%;">
+                  {#each SCORE_CATEGORIES as cat}
+                    {#if data[cat]}
+                      <PlayerAllCategoryStats
+                        country={data.country}
+                        title="#{parseCategoryNumber(cat)}"
+                        playerCategory={data[cat]} />
+                    {/if}
+                  {/each}
+                </div>
+                <PlayerAllCategoryChart {data} forceVisible={true} />
+              </div>
             {:else if data[category]}
               <PlayerRecordStats playerCategory={data[category]} />
               <div class="player-chart-stats-wrapper">
@@ -348,10 +357,16 @@
   .data-container {
     gap: 20px;
   }
-  :global(.data-container > .player-stats-container:first-child) {
+  :global(
+    .data-container > .player-stats-container:first-child,
+    .data-container > .column > .row > .player-stats-container:first-child
+  ) {
     margin-left: auto;
   }
-  :global(.data-container > .player-stats-container:last-child) {
+  :global(
+    .data-container > .player-stats-container:last-child,
+    .data-container > .column > .row > .player-stats-container:last-child
+  ) {
     margin-right: auto;
   }
 
@@ -385,10 +400,16 @@
     #top-bar-top {
       border-radius: 0;
     }
-    :global(.data-container > .player-stats-container:first-child) {
+    :global(
+      .data-container > .player-stats-container:first-child,
+      .data-container > .column > .row > .player-stats-container:first-child
+    ) {
       margin-left: 0;
     }
-    :global(.data-container > .player-stats-container:last-child) {
+    :global(
+      .data-container > .player-stats-container:last-child,
+      .data-container > .column > .row > .player-stats-container:last-child
+    ) {
       margin-right: 0;
     }
   }

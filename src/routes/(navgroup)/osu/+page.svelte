@@ -3,7 +3,7 @@
   import UserSearch from "$lib/components/UserSearch.svelte";
   import { onMount } from "svelte";
 
-  let dialogElement: HTMLDialogElement = $state();
+  let dialogElement = $state() as HTMLDialogElement;
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
     (_id || name) && goto(`osu/player/${_id || name}`);
@@ -27,7 +27,7 @@
   <h2>
     <span>Lucky you!</span>
     <form method="dialog">
-      <button type="submit" class="btn-icon"><icon class="close"></icon></button>
+      <button type="submit" class="btn-icon" aria-label="close"><icon class="close"></icon></button>
     </form>
   </h2>
 
