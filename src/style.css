@@ -38,6 +38,14 @@ body {
   margin: 0;
   background-color: var(--color-darker);
   color: var(--color-lighter);
+
+  --vis-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
+  --vis-dark-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
+  --vis-tooltip-border-color: transparent;
+  --vis-dark-tooltip-border-color: transparent;
+  --vis-tooltip-text-color: var(--color-light);
+  --vis-dark-tooltip-text-color: var(--color-light);
+  --vis-tooltip-padding: 4px 6px;
 }
 
 /* INPUTS */

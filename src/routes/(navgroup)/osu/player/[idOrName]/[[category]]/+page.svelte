@@ -186,7 +186,7 @@
                     {#if data[cat]}
                       <PlayerAllCategoryStats
                         country={data.country}
-                        title="#{parseCategoryNumber(cat)}"
+                        title={parseCategoryNumber(cat)}
                         playerCategory={data[cat]} />
                     {/if}
                   {/each}

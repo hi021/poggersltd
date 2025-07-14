@@ -1,29 +1,46 @@
 <script lang="ts">
   import { VisStackedBar, VisTooltip, VisXYContainer } from "@unovis/svelte";
-  import { SCORE_CATEGORIES } from "$lib/constants";
   import { Direction, Orientation, StackedBar } from "@unovis/ts";
+  import { CATEGORY_COLORS, SCORE_CATEGORIES } from "$lib/constants";
   import type { PageData } from "../../../routes/(navgroup)/osu/player/[idOrName]/[[category]]/$types";
 
   interface Props {
     data: PageData;
     forceVisible?: boolean;
   }
-  interface ChartData {
-    [category: string]: number;
-  }
-
-  const CATEGORY_COLORS = {
-    top50: "var(--color-active)",
-    top25: "",
-    top8: "",
-    top1: "var(--color-pink)"
+  type ChartData = {
+    [category in App.RankingCategory]: number;
   };
 
   let { data, forceVisible }: Props = $props();
-  let chartData = convertCategoryData(data);
+  const enoughDataToRender = isEnoughDataToRender();
+  const chartData = convertCategoryData(data);
+  const tooltipData = getTooltipData(data);
+
+  function removeOutdatedCategories(data: PageData) {
+    for (const category of SCORE_CATEGORIES) {
+      const categoryData = data[category];
+      console.log(categoryData);
+    }
+    // TODO
+  }
+
+  function isEnoughDataToRender() {
+    if (forceVisible) return true;
+    removeOutdatedCategories(data);
+
+    let fitCategoryCount = 0;
+    for (const category of SCORE_CATEGORIES) {
+      const categoryData = data[category];
+      if (categoryData?.scores) ++fitCategoryCount;
+    }
+
+    return fitCategoryCount >= 2;
+  }
 
   function convertCategoryData(data: PageData) {
     const convertedData: ChartData[] = [];
+    if (!enoughDataToRender) return convertedData;
 
     for (const category of SCORE_CATEGORIES) {
       const categoryData = data[category];
@@ -35,33 +52,44 @@
     return convertedData.reverse();
   }
 
-  const x = (d: ChartData, i: number) => i;
-  const y = SCORE_CATEGORIES.map((i) => (d: ChartData) => d[i]);
+  function getTooltipData(data: PageData) {
+    return "";
+  }
 
-  function tooltipTemplate(d: ChartData, i: number) {
-    const category = SCORE_CATEGORIES[i];
-    return `<div style="font-size: 12px">
-    ${category}
-    ${d[category]}
-    </div>`;
+  const x = (d: ChartData, i: number) => i;
+  const y = SCORE_CATEGORIES.map((category) => (d: ChartData) => d[category]);
+
+  function tooltipTemplate() {
+    return `<table>
+       <tbody>
+        <tr><td class="">scores</td></tr>
+        <tr><td class="">uaua ${tooltipData}</tr>
+       </tbody>
+    </table>`;
   }
 </script>
 
-<div class="player-all-chart-wrapper">
-  <VisXYContainer
-    class="player-all-chart"
-    data={chartData}
-    height={50}
-    yDirection={Direction.South}>
-    <VisStackedBar
-      {x}
-      {y}
+{#if enoughDataToRender}
+  <div class="player-all-chart-wrapper">
+    <VisXYContainer
+      class="player-all-chart"
       data={chartData}
-      orientation={Orientation.Horizontal}
-      color={(d: ChartData, i: number) => CATEGORY_COLORS[SCORE_CATEGORIES[i]]} />
-    <VisTooltip triggers={{ [StackedBar.selectors.bar]: tooltipTemplate }} />
-  </VisXYContainer>
-</div>
+      height={50}
+      yDirection={Direction.South}>
+      <VisStackedBar
+        {x}
+        {y}
+        data={chartData}
+        orientation={Orientation.Horizontal}
+        color={(d: ChartData, i: number) => CATEGORY_COLORS[SCORE_CATEGORIES[i]]} />
+      <VisTooltip
+        triggers={{ [StackedBar.selectors.bar]: tooltipTemplate }}
+        verticalPlacement="bottom"
+        verticalShift={30}
+        container={document.body} />
+    </VisXYContainer>
+  </div>
+{/if}
 
 <style>
   .player-all-chart-wrapper {

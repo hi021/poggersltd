@@ -15,6 +15,13 @@ export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = [
   "top1"
 ];
 
+export const CATEGORY_COLORS = {
+  top50: "#E57373",
+  top25: "#7986CB",
+  top8: "#4DB6AC",
+  top1: "#DCE775"
+};
+
 export const CHART_COLORS = [
   "#B39DDB",
   "#CE93D8",

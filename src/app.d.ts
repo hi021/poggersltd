@@ -118,7 +118,7 @@ declare namespace App {
     dateSticky: boolean; //                                  whether top date bar is sticky
     gainedDays: number; //                                   number of days to look back for gains ranking (default 1)
     countryFilter: string[]; //                              list of selected country codes, empty for all (not saved to local storage)
-    rankFilter: { min: number; max: number }; //               rank range, 0 for any (not saved to local storage)
+    rankFilter: { min: number; max: number }; //             rank range, 0 for any (not saved to local storage)
   }
 
   interface ApiParams {

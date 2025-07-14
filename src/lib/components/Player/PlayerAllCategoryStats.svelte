@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { CATEGORY_COLORS } from "$lib/constants";
   import { addDays, formatDate, formatNumber } from "$lib/util";
   interface Props {
     playerCategory: App.PlayerRankingFull;
@@ -7,10 +8,11 @@
   }
 
   let { playerCategory, country, title = "" }: Props = $props();
+  const color = CATEGORY_COLORS[`top${title}` as App.RankingCategory];
 </script>
 
 <ul class="player-stats-container ul hoverable">
-  <li><h3 class="player-category-header">{title}</h3></li>
+  <li><h3 class="player-category-header">#<strong style="color: {color}">{title}</strong></h3></li>
   <li>
     <span class="player-stat-name"> scores </span>
     <span class="player-stat-value">
