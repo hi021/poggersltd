@@ -191,7 +191,8 @@
                     {/if}
                   {/each}
                 </div>
-                <PlayerAllCategoryChart {data} forceVisible={true} />
+                <!-- forceVisible={true} -->
+                <PlayerAllCategoryChart {data} />
               </div>
             {:else if data[category]}
               <PlayerRecordStats playerCategory={data[category]} />

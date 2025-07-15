@@ -281,13 +281,6 @@ button:disabled {
 .player-chart-container {
   --vis-crosshair-circle-stroke-opacity: 1;
   --vis-crosshair-line-stroke-width: 3;
-  --vis-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
-  --vis-dark-tooltip-background-color: color-mix(in srgb, var(--color-darker) 80%, transparent);
-  --vis-tooltip-border-color: transparent;
-  --vis-dark-tooltip-border-color: transparent;
-  --vis-tooltip-text-color: var(--color-light);
-  --vis-dark-tooltip-text-color: var(--color-light);
-  --vis-tooltip-padding: 4px 6px;
   --vis-axis-grid-color: color-mix(in srgb, var(--color-lighter) 70%, transparent);
   --vis-dark-axis-grid-color: color-mix(in srgb, var(--color-lighter) 70%, transparent);
   position: absolute !important;

@@ -134,6 +134,9 @@ export function addDays(date: Date, days: number) {
   return d;
 }
 
+export const getDaysBetweenStringFormattedDates = (startDate: string, endDate: string) =>
+  getDaysBetweenDates(new Date(startDate).valueOf(), new Date(endDate).valueOf());
+
 export const getDaysBetweenDates = (
   startTimestamp: number,
   endTimestamp = getServerDate().valueOf()

@@ -1,4 +1,3 @@
-import devtoolsJson from "vite-plugin-devtools-json";
 import { defineConfig, type ViteDevServer } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { Server } from "socket.io";
@@ -26,5 +25,5 @@ const websocketServer = {
 };
 
 export default defineConfig({
-  plugins: [sveltekit(), websocketServer, devtoolsJson()]
+  plugins: [sveltekit(), websocketServer]
 });

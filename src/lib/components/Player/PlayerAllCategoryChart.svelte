@@ -2,6 +2,7 @@
   import { VisStackedBar, VisTooltip, VisXYContainer } from "@unovis/svelte";
   import { Direction, Orientation, StackedBar } from "@unovis/ts";
   import { CATEGORY_COLORS, SCORE_CATEGORIES } from "$lib/constants";
+  import { formatNumber, getDaysBetweenStringFormattedDates, parseCategoryNumber } from "$lib/util";
   import type { PageData } from "../../../routes/(navgroup)/osu/player/[idOrName]/[[category]]/$types";
 
   interface Props {
@@ -15,14 +16,25 @@
   let { data, forceVisible }: Props = $props();
   const enoughDataToRender = isEnoughDataToRender();
   const chartData = convertCategoryData(data);
-  const tooltipData = getTooltipData(data);
+  const tooltipData = getTooltipData(chartData);
 
   function removeOutdatedCategories(data: PageData) {
+    let mostRecentDate = "";
     for (const category of SCORE_CATEGORIES) {
       const categoryData = data[category];
-      console.log(categoryData);
+      if (!categoryData) continue;
+
+      const date = categoryData.date;
+      if (!mostRecentDate || mostRecentDate < date) mostRecentDate = date;
     }
-    // TODO
+
+    for (const category of SCORE_CATEGORIES) {
+      const categoryData = data[category];
+      if (!categoryData) continue;
+
+      const date = categoryData.date;
+      if (getDaysBetweenStringFormattedDates(date, mostRecentDate) > 3) delete data[category];
+    }
   }
 
   function isEnoughDataToRender() {
@@ -52,18 +64,42 @@
     return convertedData.reverse();
   }
 
-  function getTooltipData(data: PageData) {
-    return "";
+  function getTooltipData(data: ChartData[]) {
+    let maxScores = 1;
+    const tooltipCategories: string[] = [];
+    const tooltipScores: string[] = [];
+    const tooltipRatios: string[] = [];
+
+    for (const categoryString in data[0]) {
+      const category = categoryString as App.RankingCategory;
+      const scores = data[0][category];
+      if (maxScores == 1) maxScores = scores;
+
+      tooltipCategories.push(`<td>Top ${parseCategoryNumber(category)}</td>`);
+      tooltipScores.push(
+        `<td style="color: ${CATEGORY_COLORS[category]}">${formatNumber(scores)}</td>`
+      );
+      tooltipRatios.push(
+        `<td><small>${Math.round((scores / maxScores) * 10000) / 100}%</small></td>`
+      );
+    }
+
+    return {
+      categories: tooltipCategories.join(""),
+      scores: tooltipScores.join(""),
+      ratios: tooltipRatios.join("")
+    };
   }
 
   const x = (d: ChartData, i: number) => i;
   const y = SCORE_CATEGORIES.map((category) => (d: ChartData) => d[category]);
 
   function tooltipTemplate() {
-    return `<table>
+    return `<table class="player-all-chart-tooltip-table">
        <tbody>
-        <tr><td class="">scores</td></tr>
-        <tr><td class="">uaua ${tooltipData}</tr>
+        <tr>${tooltipData.categories}</tr>
+        <tr>${tooltipData.scores}</tr>
+        <tr>${tooltipData.ratios}</tr>
        </tbody>
     </table>`;
   }
@@ -97,5 +133,12 @@
     margin: 12px auto 0 auto;
     border-radius: 12px;
     overflow: hidden;
+  }
+
+  :global(.player-all-chart-tooltip-table) {
+    border-spacing: 10px 2px;
+  }
+  :global(.player-all-chart-tooltip-table td) {
+    text-align: center;
   }
 </style>
