@@ -1,8 +1,8 @@
 <script lang="ts">
+    import { formatNumber, getDaysBetweenStringFormattedDates, parseCategoryNumber } from "$lib/util";
   import { VisStackedBar, VisTooltip, VisXYContainer } from "@unovis/svelte";
   import { Direction, Orientation, StackedBar } from "@unovis/ts";
   import { CATEGORY_COLORS, SCORE_CATEGORIES } from "$lib/constants";
-  import { formatNumber, getDaysBetweenStringFormattedDates, parseCategoryNumber } from "$lib/util";
   import type { PageData } from "../../../routes/(navgroup)/osu/player/[idOrName]/[[category]]/$types";
 
   interface Props {
@@ -10,7 +10,7 @@
     forceVisible?: boolean;
   }
   type ChartData = {
-    [category in App.RankingCategory]: number;
+    [category in App.RankingCategory]: {total: number, normalized: number};
   };
 
   let { data, forceVisible }: Props = $props();
@@ -54,26 +54,28 @@
     const convertedData: ChartData[] = [];
     if (!enoughDataToRender) return convertedData;
 
-    for (const category of SCORE_CATEGORIES) {
+    let previousCategory;
+    for (const category of SCORE_CATEGORIES.toReversed()) {
       const categoryData = data[category];
       if (!categoryData) continue;
 
-      convertedData[0] = { ...(convertedData[0] ?? {}), [category]: categoryData.scores };
+      convertedData[0] = { ...(convertedData[0] ?? {}), [category]: {total: categoryData.scores, normalized: categoryData.scores - (data[previousCategory as App.RankingCategory]?.scores ?? 0) } };
+      previousCategory = category;
     }
 
-    return convertedData.reverse();
+    return convertedData;
   }
 
   function getTooltipData(data: ChartData[]) {
-    let maxScores = 1;
+    let maxScores = 0;
     const tooltipCategories: string[] = [];
     const tooltipScores: string[] = [];
     const tooltipRatios: string[] = [];
 
-    for (const categoryString in data[0]) {
+    for (const categoryString of SCORE_CATEGORIES) {
       const category = categoryString as App.RankingCategory;
-      const scores = data[0][category];
-      if (maxScores == 1) maxScores = scores;
+      const scores = data[0][category].total;
+      if (!maxScores) maxScores = scores;
 
       tooltipCategories.push(`<td>Top ${parseCategoryNumber(category)}</td>`);
       tooltipScores.push(
@@ -92,7 +94,7 @@
   }
 
   const x = (d: ChartData, i: number) => i;
-  const y = SCORE_CATEGORIES.map((category) => (d: ChartData) => d[category]);
+  const y = SCORE_CATEGORIES.map((category) => (d: ChartData) => d[category].normalized);
 
   function tooltipTemplate() {
     return `<table class="player-all-chart-tooltip-table">
@@ -129,8 +131,8 @@
 
 <style>
   .player-all-chart-wrapper {
-    max-width: clamp(480px, 50%, 100%);
-    margin: 12px auto 0 auto;
+    width: clamp(480px, 50%, 100%);
+    margin: 20px auto 0 auto;
     border-radius: 12px;
     overflow: hidden;
   }
