@@ -18,8 +18,8 @@ export const rankingSettings = writable<App.RankingSettings>(defaultRankingSetti
 
 rankingSettings.subscribe((newValue) => {
   if (!browser || !newValue) return;
-  // TODO don't save these
-  // delete newValue.countryFilter;
-  // delete newValue.rankFilter;
-  localStorage.setItem("rankingSettings", JSON.stringify(newValue));
+
+  const transformedValue = JSON.parse(JSON.stringify(newValue)); // stringifying removes countryFilter since it is a set
+  delete transformedValue.rankFilter;
+  localStorage.setItem("rankingSettings", JSON.stringify(transformedValue));
 });

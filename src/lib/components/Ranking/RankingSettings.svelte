@@ -23,6 +23,7 @@
     addDays(new Date(MIN_DATE), 1).valueOf(),
     new Date(page.params.date).valueOf()
   );
+  const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
 
   // TODO: make maxDays refresh
   const gainsTimeFrames = {
@@ -36,6 +37,11 @@
     [maxDays]: "Maximum",
     Custom: "Custom"
   };
+
+  // TODO set from url
+  console.log(page.state);
+  console.log(page.url);
+  settings.countryFilter = new Set<string>();
 
   function checkAndSetIsGainedDaysCustom(days = settings.gainedDays) {
     return (isGainedDaysCustom = !days || gainsTimeFrames[days] == null);
@@ -54,21 +60,20 @@
       goto(getRankingUrl(page.params as any, "gains", "osu", days), { invalidateAll: false });
   }
 
-  // TODO replace "players"
   function handleCountryFilterChange() {
     console.log(
       getRankingUrl(
-        { ...page.params, country: settings.countryFilter?.join(",") } as any,
-        "players",
+        { ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
+        viewMode as "players" | "gains",
         "osu",
         settings.gainedDays
       )
-    );
+    ); // TODO remove log...
     if (browser)
       goto(
         getRankingUrl(
-          { ...page.params, country: settings.countryFilter?.join(",") } as any,
-          "players",
+          { ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
+          viewMode as "players" | "gains",
           "osu",
           settings.gainedDays
         )
@@ -91,29 +96,29 @@
   {#if expanded}
     <div class="column background" transition:slide={{ duration: 200, axis: "y" }}>
       {#if viewMode != "countries"}
-        <Switch bind:checked={settings.avatars}>
+        <Switch labelOrientation="row" style={switchStyle} bind:checked={settings.avatars}>
           {#snippet before()}
             <span>Avatars</span>
           {/snippet}
         </Switch>
       {/if}
       {#if viewMode == "players"}
-        <Switch bind:checked={settings.scoreDifferences}>
+        <Switch labelOrientation="row" style={switchStyle} bind:checked={settings.scoreDifferences}>
           {#snippet before()}
             <span>Score differences</span>
           {/snippet}
         </Switch>
       {/if}
       {#if viewMode != "mostGained"}
-        <Switch bind:checked={settings.dateSticky}>
+        <Switch labelOrientation="row" style={switchStyle} bind:checked={settings.dateSticky}>
           {#snippet before()}
             <span>Sticky date bar</span>
           {/snippet}
         </Switch>
       {/if}
       {#if viewMode == "players" || viewMode == "gains"}
-        <label>
-          Players per page
+        <label class="row" style={switchStyle}>
+          <span>Players per page</span>
           <select class="input-dark normal-size" bind:value={settings.perPage}>
             <option value={10}>10</option>
             <option value={25}>25</option>
@@ -126,7 +131,7 @@
         <MultiSelectDropdown
           options={COUNTRIES}
           bind:selected={settings.countryFilter}
-          placeholder="Country filter ({settings.countryFilter.length})"
+          placeholder="Country filter ({settings.countryFilter.size})"
           onBlur={handleCountryFilterChange}>
           {#snippet optionComponent({ value, label, onchange })}
             <label>
@@ -176,11 +181,6 @@
     gap: 8px;
   }
 
-  .background > label {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
   select {
     width: max-content;
   }

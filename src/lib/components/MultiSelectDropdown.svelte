@@ -1,11 +1,11 @@
 <script lang="ts">
   import { outClick } from "$lib/util";
-  import type { Snippet } from "svelte";
   import { slide } from "svelte/transition";
+  import type { Snippet } from "svelte";
 
   interface Props {
     options: { [value: string]: string };
-    selected: string[];
+    selected: Set<string>;
     optionComponent: Snippet<[{ value: string; label: string; onchange: (e: Event) => void }]>;
     onBlur?: (e?: FocusEvent) => void;
     placeholder?: string;
@@ -22,6 +22,7 @@
   }: Props = $props();
   let dropdownOptionsElement = $state() as HTMLUListElement;
   let dropdownVisible = $state(false);
+  let hasChanged = false;
 
   function onFocus() {
     dropdownVisible = true;
@@ -29,19 +30,20 @@
 
   function onOutClick() {
     dropdownVisible = false;
-    onBlur?.();
+    if (hasChanged) onBlur?.();
+    hasChanged = false;
   }
 
   function clearAll() {
-    selected = [];
+    selected.clear();
   }
 
   function onOptionChecked(e: Event) {
     const target = e.target as HTMLInputElement;
     const value = target.value;
 
-    if (target.checked) selected.push(value);
-    else selected = selected.filter((it) => it != value);
+    selected = target.checked ? selected.add(value) : selected.difference(new Set([value]));
+    hasChanged = true;
   }
 
   function filterOptions(e: KeyboardEvent) {
@@ -84,8 +86,8 @@
     style="display: {dropdownVisible ? 'block' : 'none'};"
     transition:slide={{ duration: 100, axis: "y" }}
     bind:this={dropdownOptionsElement}>
-    {#each Object.entries(options) as [value, label]}
-      <li class:selected={selected.includes(value)}>
+    {#each Object.entries(options) as [value, label] (value)}
+      <li class:selected={selected.has(value)}>
         {@render optionComponent({ value, label, onchange: onOptionChecked })}
       </li>
     {/each}

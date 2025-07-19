@@ -117,7 +117,7 @@ declare namespace App {
     perPage: number; //                                      number of players shown on one page (default 50)
     dateSticky: boolean; //                                  whether top date bar is sticky
     gainedDays: number; //                                   number of days to look back for gains ranking (default 1)
-    countryFilter: string[]; //                              list of selected country codes, empty for all (not saved to local storage)
+    countryFilter: Set<string>; //                           selected country codes, empty for all (not saved to local storage)
     rankFilter: { min: number; max: number }; //             rank range, 0 for any (not saved to local storage)
   }
 

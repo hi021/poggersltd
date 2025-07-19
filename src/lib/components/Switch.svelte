@@ -7,6 +7,7 @@
     disabled?: boolean;
     size?: string;
     style?: string;
+    labelOrientation: "row" | "column";
     before?: Snippet;
     after?: Snippet;
   }
@@ -17,12 +18,13 @@
     disabled = false,
     size = "1.625rem",
     style = "gap: 2px;",
+    labelOrientation = "column",
     before,
     after
   }: Props = $props();
 </script>
 
-<label class="column" {style}>
+<label class={labelOrientation} {style}>
   {@render before?.()}
   <div class="switch" class:disabled>
     <input type="checkbox" class="no-appearance" {disabled} onchange={onChange} bind:checked />
