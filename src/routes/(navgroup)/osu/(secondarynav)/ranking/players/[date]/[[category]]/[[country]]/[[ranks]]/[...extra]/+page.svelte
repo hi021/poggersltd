@@ -45,11 +45,10 @@
     </div>
   {/if}
 
+  <RankingSettings bind:settings={$rankingSettings} viewMode="players" />
   {#if !pageData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode="players" />
-
     {#if pageData[0].gainedDays}
       <p class="gains-notice">
         Showing gained scores over <strong>{pageData[0].gainedDays}</strong>

@@ -45,11 +45,10 @@
     </div>
   {/if}
 
+  <RankingSettings bind:settings={$rankingSettings} viewMode="gains" />
   {#if !pageData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode="gains" />
-
     <table class="osu-table">
       <tbody>
         {#each pageData as plr, i (plr._id)}

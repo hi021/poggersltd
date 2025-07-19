@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { formatNumber, getDaysBetweenStringFormattedDates, parseCategoryNumber } from "$lib/util";
+  import { formatNumber, getDaysBetweenStringFormattedDates, parseCategoryNumber } from "$lib/util";
   import { VisStackedBar, VisTooltip, VisXYContainer } from "@unovis/svelte";
   import { Direction, Orientation, StackedBar } from "@unovis/ts";
   import { CATEGORY_COLORS, SCORE_CATEGORIES } from "$lib/constants";
@@ -10,7 +10,7 @@
     forceVisible?: boolean;
   }
   type ChartData = {
-    [category in App.RankingCategory]: {total: number, normalized: number};
+    [category in App.RankingCategory]: { total: number; normalized: number };
   };
 
   let { data, forceVisible }: Props = $props();
@@ -59,7 +59,14 @@
       const categoryData = data[category];
       if (!categoryData) continue;
 
-      convertedData[0] = { ...(convertedData[0] ?? {}), [category]: {total: categoryData.scores, normalized: categoryData.scores - (data[previousCategory as App.RankingCategory]?.scores ?? 0) } };
+      convertedData[0] = {
+        ...(convertedData[0] ?? {}),
+        [category]: {
+          total: categoryData.scores,
+          normalized:
+            categoryData.scores - (data[previousCategory as App.RankingCategory]?.scores ?? 0)
+        }
+      };
       previousCategory = category;
     }
 

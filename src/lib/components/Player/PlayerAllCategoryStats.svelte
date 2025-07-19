@@ -11,11 +11,17 @@
 
   const color = CATEGORY_COLORS[`top${title}` as App.RankingCategory];
   const peakDifference = formatNumber(playerCategory.scores - (playerCategory.peak?.scores ?? 0));
-  const daysSincePeak = getDaysBetweenDates(new Date(playerCategory.peak?.date ?? 0).valueOf())
-  const daysSincePeakString = daysSincePeak ? `${daysSincePeak} day${daysSincePeak == 1 ? "" : "s"} ago` : "now";
-  const lowestDifference = formatNumber(playerCategory.scores - (playerCategory.lowest?.scores ?? 0));
-  const daysSinceLowest = getDaysBetweenDates(new Date(playerCategory.lowest?.date ?? 0).valueOf())
-  const daysSinceLowestString = daysSinceLowest ? `${daysSinceLowest} day${daysSinceLowest == 1 ? "" : "s"} ago` : "now";
+  const daysSincePeak = getDaysBetweenDates(new Date(playerCategory.peak?.date ?? 0).valueOf());
+  const daysSincePeakString = daysSincePeak
+    ? `${daysSincePeak} day${daysSincePeak == 1 ? "" : "s"} ago`
+    : "now";
+  const lowestDifference = formatNumber(
+    playerCategory.scores - (playerCategory.lowest?.scores ?? 0)
+  );
+  const daysSinceLowest = getDaysBetweenDates(new Date(playerCategory.lowest?.date ?? 0).valueOf());
+  const daysSinceLowestString = daysSinceLowest
+    ? `${daysSinceLowest} day${daysSinceLowest == 1 ? "" : "s"} ago`
+    : "now";
 </script>
 
 <ul class="player-stats-container ul hoverable">
@@ -32,7 +38,7 @@
     </span>
   </li>
   {#if playerCategory.peak?.scores != null}
-    <li use:tooltip={{content: `${peakDifference} ● ${daysSincePeakString}`}}>
+    <li use:tooltip={{ content: `${peakDifference} ● ${daysSincePeakString}` }}>
       <span class="player-stat-name"> peak </span>
       <span class="player-stat-value">
         {formatNumber(playerCategory.peak.scores)}
@@ -41,7 +47,7 @@
     </li>
   {/if}
   {#if playerCategory.lowest?.scores != null}
-    <li use:tooltip={{content: `+${lowestDifference} ● ${daysSinceLowestString}`}}>
+    <li use:tooltip={{ content: `+${lowestDifference} ● ${daysSinceLowestString}` }}>
       <span class="player-stat-name"> lowest </span>
       <span class="player-stat-value">
         {formatNumber(playerCategory.lowest.scores)}

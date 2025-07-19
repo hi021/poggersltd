@@ -1,10 +1,11 @@
 <script lang="ts">
   import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
   import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
-  import { formatNumber } from "$lib/util";
   import { rankingSettings } from "$lib/stores";
-  import { page } from "$app/state";
   import { COUNTRIES } from "$lib/constants";
+  import { formatNumber, tooltip } from "$lib/util";
+  import { page } from "$app/state";
+  import { untrack } from "svelte";
   import type { PageData } from "./$types";
 
   interface Props {
@@ -16,16 +17,12 @@
   let sortBy = $state("weighted");
   let sortDescending = $state(true);
 
-  function sortData() {
-    const order = sortDescending ? 1 : -1;
-    const sorting = (a: any, b: any) => (a[sortBy] < b[sortBy] ? order : -order);
-    data = { ...data, rankingData: data.rankingData.sort(sorting) };
+  function sortData(sortingColumn: string, isDescending: boolean) {
+    const order = isDescending ? 1 : -1;
+    const sorting = (a: any, b: any) => (a[sortingColumn] < b[sortingColumn] ? order : -order);
+    untrack(() => (data = { ...data, rankingData: data.rankingData.sort(sorting) }));
   }
-  $effect(() => sortData());
-  // TODO
-  //   run(() => {
-  //     sortBy, sortDescending, data, sortData();
-  //   });
+  $effect(() => sortData(sortBy, sortDescending));
 </script>
 
 <svelte:head>
@@ -33,11 +30,11 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
+  <RankingSettings bind:settings={$rankingSettings} viewMode="countries" />
+
   {#if !data?.rankingData?.length}
     <RankingEmpty />
   {:else}
-    <RankingSettings bind:settings={$rankingSettings} viewMode="countries" />
-
     <table class="osu-table">
       <thead>
         <tr>
@@ -45,11 +42,16 @@
 
           <th> Country </th>
 
+          <!-- TODO: Can move these into a component -->
           <th
             class="sortable"
             onclick={() => {
               if (sortBy === "weighted") sortDescending = !sortDescending;
               else sortBy = "weighted";
+            }}
+            use:tooltip={{
+              content:
+                "Weights player scores by their country rank, where:<br><strong>#1 - #11</strong> weight = <code>1 - (rank - 1) * 0.09</code>,<br><strong>#12 - #20</strong> weight = 0.05,<br><strong>>#20</strong> weight = 0.02"
             }}>
             <span
               class:desc={sortBy === "weighted" && sortDescending}
@@ -174,7 +176,7 @@
     cursor: pointer;
   }
   .sortable:hover {
-    background-color: var(--color-lightest);
+    background-color: var(--color-purple);
   }
   .sortable span {
     display: flex;
@@ -193,6 +195,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-image: url("/icons/arrow_up.svg");
+    filter: invert(1);
     opacity: 0;
   }
   :is(:global(span.asc, span.desc))::after {
