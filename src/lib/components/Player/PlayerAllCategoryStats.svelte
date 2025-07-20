@@ -38,7 +38,11 @@
     </span>
   </li>
   {#if playerCategory.peak?.scores != null}
-    <li use:tooltip={{ content: `${peakDifference} ● ${daysSincePeakString}` }}>
+    <li
+      use:tooltip={{
+        content: `${peakDifference} ● ${daysSincePeakString}`,
+        options: { placement: "right" }
+      }}>
       <span class="player-stat-name"> peak </span>
       <span class="player-stat-value">
         {formatNumber(playerCategory.peak.scores)}
@@ -47,7 +51,11 @@
     </li>
   {/if}
   {#if playerCategory.lowest?.scores != null}
-    <li use:tooltip={{ content: `+${lowestDifference} ● ${daysSinceLowestString}` }}>
+    <li
+      use:tooltip={{
+        content: `+${lowestDifference} ● ${daysSinceLowestString}`,
+        options: { placement: "right" }
+      }}>
       <span class="player-stat-name"> lowest </span>
       <span class="player-stat-value">
         {formatNumber(playerCategory.lowest.scores)}

@@ -12,6 +12,7 @@
     parseCategoryNumber
   } from "$lib/util";
   import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
+  import PlayerAllCategoryChart from "$lib/components/Player/PlayerAllCategoryChart.svelte";
   import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
   import PlayerRecordStats from "$lib/components/Player/PlayerRecordStats.svelte";
   import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
@@ -24,7 +25,6 @@
   import { fade } from "svelte/transition";
   import { page } from "$app/state";
   import type { PageData } from "./$types";
-  import PlayerAllCategoryChart from "$lib/components/Player/PlayerAllCategoryChart.svelte";
 
   interface Props {
     data: PageData;
@@ -37,7 +37,7 @@
   const updateURL = () => {
     if (!browser) return;
     loading = true;
-    goto(`/osu/player/${page.params.idOrName}/${category}`);
+    goto(`/osu/player/${page.params.idOrName}/${category}`, { replaceState: true });
   };
 
   $effect(() => updateURL());

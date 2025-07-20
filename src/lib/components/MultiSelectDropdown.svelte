@@ -47,7 +47,7 @@
   }
 
   function filterOptions(e: KeyboardEvent) {
-    if (e.key == "Escape") return onOutClick();
+    if (e.key === "Escape" || e.key == "Enter") return onOutClick();
 
     const optionsQuery = (query ?? "").toUpperCase();
     const labels = dropdownOptionsElement!.getElementsByTagName("label");
@@ -72,7 +72,7 @@
   {#if dropdownOptionsElement}
     <input
       type="text"
-      class="input-dark"
+      class="input-dark normal-size"
       {placeholder}
       bind:value={query}
       onfocus={onFocus}
@@ -81,27 +81,35 @@
       onoutclick={onOutClick}
       onblur={onBlur} />
   {/if}
-  <ul
-    class="dropdown-options ul scrollbar-small scrollbar-dark"
-    style="display: {dropdownVisible ? 'block' : 'none'};"
-    transition:slide={{ duration: 100, axis: "y" }}
-    bind:this={dropdownOptionsElement}>
-    {#each Object.entries(options) as [value, label] (value)}
-      <li class:selected={selected.has(value)}>
-        {@render optionComponent({ value, label, onchange: onOptionChecked })}
-      </li>
-    {/each}
-  </ul>
+  {#key dropdownVisible}
+    <ul
+      class="dropdown-options ul scrollbar-small scrollbar-dark"
+      style="display: {dropdownVisible ? 'block' : 'none'};"
+      transition:slide={{ duration: 100, axis: "y" }}
+      bind:this={dropdownOptionsElement}>
+      {#each Object.entries(options) as [value, label] (value)}
+        <li class:selected={selected.has(value)}>
+          {@render optionComponent({ value, label, onchange: onOptionChecked })}
+        </li>
+      {/each}
+    </ul>
+  {/key}
 </div>
 
 <style>
   .dropdown {
     position: relative;
+    min-width: 300px;
   }
 
   input[type="text"] {
     width: 100%;
     box-sizing: border-box;
+  }
+
+  input[type="text"]:focus {
+    outline-color: transparent;
+    box-shadow: 2px 2px 4px var(--shadow-color);
   }
 
   .dropdown-options {

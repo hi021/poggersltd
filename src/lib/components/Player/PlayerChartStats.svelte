@@ -12,8 +12,8 @@
   let avgPerDay = $derived(Math.round((changeScores / days) * 100) / 100);
 </script>
 
+<div class="player-chart-stats-container-header">Last <strong>{days}</strong> days</div>
 <div class="player-chart-stats-container column">
-  <span class="day-span">Last <strong>{days}</strong> days:</span>
   <ul class="player-stats-container center-align ul row">
     <li>
       <span class="player-stat-name">Peak</span>
@@ -34,17 +34,24 @@
 </div>
 
 <style>
+  .player-chart-stats-container-header,
   .player-chart-stats-container {
-    margin-top: 16px;
-    gap: 8px;
     background-color: var(--color-darkish);
     padding: 8px;
     border-radius: 12px;
   }
+  .player-chart-stats-container-header {
+    margin: 0 auto;
+    margin-top: 16px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    width: fit-content;
+  }
+  .player-chart-stats-container {
+    gap: 8px;
+  }
+
   .ul li {
     flex-direction: column;
-  }
-  .day-span {
-    text-align: center;
   }
 </style>

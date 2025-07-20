@@ -6,7 +6,7 @@
   let dialogElement = $state() as HTMLDialogElement;
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
-    (_id || name) && goto(`osu/player/${_id || name}`);
+    (_id || name) && goto(`osu/player/${_id || name}/top50`);
 
   const onMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement;

@@ -81,7 +81,10 @@
 
     for (const categoryString of SCORE_CATEGORIES) {
       const category = categoryString as App.RankingCategory;
-      const scores = data[0][category].total;
+      const categoryData = data[0][category];
+      if (!categoryData) continue;
+
+      const scores = categoryData.total;
       if (!maxScores) maxScores = scores;
 
       tooltipCategories.push(`<td>Top ${parseCategoryNumber(category)}</td>`);

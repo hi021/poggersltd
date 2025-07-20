@@ -140,7 +140,7 @@
     border-top-right-radius: var(--radius);
     border-bottom-right-radius: var(--radius);
   }
-  .btn-search:not(:disabled):hover {
+  .btn-search:not(:disabled):is(:hover, :focus) {
     background-color: var(--color-darker);
   }
   .search-input {
@@ -149,10 +149,9 @@
     background-color: transparent;
     width: 100%;
   }
-  .search-input:focus {
+  .search-input:focus-visible {
     box-shadow: 2px 2px 4px var(--shadow-color);
-    outline: none;
-    outline-color: transparent;
+    outline: transparent 3px solid;
   }
   /* SEARCH WRAPPER */
 
