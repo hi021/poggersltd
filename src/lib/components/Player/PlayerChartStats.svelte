@@ -37,17 +37,18 @@
   .player-chart-stats-container-header,
   .player-chart-stats-container {
     background-color: var(--color-darkish);
-    padding: 8px;
     border-radius: 12px;
   }
   .player-chart-stats-container-header {
     margin: 0 auto;
     margin-top: 16px;
+    padding: 4px 16px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     width: fit-content;
   }
   .player-chart-stats-container {
+    padding: 8px;
     gap: 8px;
   }
 

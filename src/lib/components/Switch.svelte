@@ -7,7 +7,7 @@
     disabled?: boolean;
     size?: string;
     style?: string;
-    labelOrientation: "row" | "column";
+    labelOrientation?: "row" | "column";
     before?: Snippet;
     after?: Snippet;
   }
@@ -24,9 +24,9 @@
   }: Props = $props();
 </script>
 
-<label class={labelOrientation} {style}>
+<label class={labelOrientation} {style} class:disabled>
   {@render before?.()}
-  <div class="switch" class:disabled>
+  <div class="switch">
     <input type="checkbox" class="no-appearance" {disabled} onchange={onChange} bind:checked />
     <span class="slider" style="--size: {size};"></span>
   </div>
@@ -41,8 +41,10 @@
     height: 2rem;
     cursor: pointer;
   }
-  .switch.disabled {
+  label.disabled {
     opacity: 0.5;
+  }
+  label.disabled > .switch {
     cursor: default;
   }
 
@@ -71,8 +73,11 @@
   input:checked + .slider {
     background-color: var(--color-purple);
   }
-  input:focus + .slider {
-    box-shadow: 0 0 1px var(--color-purple);
+  input:is(:focus, :focus-visible) {
+    box-shadow: none;
+  }
+  input:is(:focus, :focus-visible) + .slider {
+    box-shadow: 0 0 3px var(--color-purple);
   }
   input:checked + .slider:before {
     transform: translateX(var(--size));

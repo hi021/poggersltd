@@ -11,7 +11,9 @@
   {#if playerCategory.mostGained}
     <li>
       <span class="player-stat-name"> most gained </span>
-      <span class="player-stat-value" use:tooltip={{ content: playerCategory.mostGained.date }}>
+      <span
+        class="player-stat-value"
+        use:tooltip={{ content: playerCategory.mostGained.date, options: { placement: "left" } }}>
         {formatNumber(playerCategory.mostGained.scores)}
       </span>
     </li>
@@ -19,7 +21,9 @@
   {#if playerCategory.peak}
     <li>
       <span class="player-stat-name"> peak </span>
-      <span class="player-stat-value" use:tooltip={{ content: playerCategory.peak.date }}>
+      <span
+        class="player-stat-value"
+        use:tooltip={{ content: playerCategory.peak.date, options: { placement: "left" } }}>
         {formatNumber(playerCategory.peak.scores)}
       </span>
     </li>
@@ -27,7 +31,9 @@
   {#if playerCategory.lowest}
     <li>
       <span class="player-stat-name"> lowest </span>
-      <span class="player-stat-value" use:tooltip={{ content: playerCategory.lowest.date }}>
+      <span
+        class="player-stat-value"
+        use:tooltip={{ content: playerCategory.lowest.date, options: { placement: "left" } }}>
         {formatNumber(playerCategory.lowest.scores)}
       </span>
     </li>

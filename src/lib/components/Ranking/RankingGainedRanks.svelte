@@ -1,32 +1,32 @@
 <script lang="ts">
   import { tooltip } from "$lib/util";
-
   interface Props {
-    gainedRanks: number | undefined;
+    gainedRanks?: number;
   }
 
   let { gainedRanks }: Props = $props();
 
-  let text: string = $state("No change");
-  let className: string = $state("line");
+  let text = $derived.by(() => {
+    if (gainedRanks == null) return "New";
+    if (gainedRanks > 0) return `Up by ${gainedRanks}`;
+    if (gainedRanks < 0) return `Down by ${-gainedRanks}`;
 
-  $effect(() => {
-    if (gainedRanks == null) {
-      className = "circle";
-      text = "New";
-    } else if (gainedRanks > 0) {
-      className = "arrow";
-      text = `Up by ${gainedRanks}`;
-    } else if (gainedRanks < 0) {
-      className = "arrow-down";
-      text = `Down by ${-gainedRanks}`;
-    }
+    return "No change";
+  });
+  let className = $derived.by(() => {
+    if (gainedRanks == null) return "circle";
+    if (gainedRanks > 0) return "arrow";
+    if (gainedRanks < 0) return "arrow-down";
+
+    return "line";
   });
 </script>
 
-<td style="width: 22px;" use:tooltip={{ content: text }}>
-  <div class={"rank-indicator " + className}></div>
-</td>
+{#key text}
+  <td style="width: 22px;" use:tooltip={{ content: text }}>
+    <div class="rank-indicator {className}"></div>
+  </td>
+{/key}
 
 <style>
   /* 16x11 px */

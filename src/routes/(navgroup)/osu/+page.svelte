@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
   import UserSearch from "$lib/components/UserSearch.svelte";
+  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
 
   let dialogElement = $state() as HTMLDialogElement;
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) =>
-    (_id || name) && goto(`osu/player/${_id || name}/top50`);
+    (_id || name) && goto(`osu/player/${_id || name}`);
 
   const onMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -133,7 +133,7 @@
     background: var(--color-dark);
     transition: opacity 0.1s linear;
   }
-  .search-button:is(:global(:hover, :focus)) {
+  .search-button:is(:hover, :focus) {
     background: linear-gradient(
       130deg,
       var(--color-dark),
@@ -142,10 +142,10 @@
       var(--color-dark)
     );
   }
-  .search-button:is(:global(:hover, :focus)) > icon {
+  .search-button:is(:hover, :focus) > icon {
     opacity: 0.7;
   }
-  .search-button:is(:global(:hover, :focus))::after {
+  .search-button:is(:hover, :focus)::after {
     opacity: 0;
   }
 

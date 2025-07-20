@@ -27,6 +27,9 @@ icon.rot-90 {
 icon.rot-45 {
   transform: rotate(45deg);
 }
+icon.medium {
+  font-size: 1.25em;
+}
 icon.big {
   font-size: 1.5em;
 }

@@ -23,36 +23,34 @@
   }: Props = $props();
 </script>
 
-<div
+<a
+  {href}
   aria-label={label}
-  role="button"
   class="btn-menu-main"
   use:tooltip={{ content: tooltipContent, options: { theme: "large", placement: "bottom" } }}>
-  <a {href} aria-hidden="true">
-    <div
-      class="btn-menu"
-      style="background-color: {backgroundColor}; background-image: {backgroundImage}; {style}">
-      {@render children?.()}
-    </div>
-    <div class="btn-menu-label" aria-hidden="true">{label}</div>
-  </a>
-</div>
+  <div
+    class="btn-menu"
+    style="background-color: {backgroundColor}; background-image: {backgroundImage}; {style}">
+    {@render children?.()}
+  </div>
+  <div class="btn-menu-label" aria-hidden="true">{label}</div>
+</a>
 
 <style>
   .btn-menu-main {
     position: relative;
-    box-shadow: -2px 3px 8px 1px color-mix(in srgb, var(--color-light) 50%, transparent);
-    border-radius: 20px;
-    background-color: var(--color-lighter);
+    height: fit-content;
+    flex: 1;
     min-width: 300px;
     max-width: 600px;
-    height: fit-content;
-    overflow: hidden;
-    flex: 1;
-    transition: transform 0.25s ease;
-  }
-  .btn-menu-main a {
     text-decoration: none;
+    border-radius: 20px;
+    background-color: var(--color-lighter);
+    box-shadow: -2px 3px 8px 1px color-mix(in srgb, var(--color-light) 50%, transparent);
+    transition: transform 0.25s ease;
+    overflow: hidden;
+  }
+  .btn-menu-main .btn-menu-label {
     color: var(--color-darkest);
     font-weight: 700;
     font-size: 1.25rem;
@@ -69,10 +67,11 @@
     text-align: right;
   }
 
-  .btn-menu-main:hover {
+  .btn-menu-main:is(:hover, :focus) {
     transform: translateY(-9px);
+    outline: transparent 3px solid;
   }
-  .btn-menu-main:hover a {
+  .btn-menu-main:is(:hover, :focus) .btn-menu-label {
     color: var(--color-dark);
   }
 </style>

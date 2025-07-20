@@ -191,8 +191,7 @@
                     {/if}
                   {/each}
                 </div>
-                <!-- TODO: don't forceVisible -->
-                <PlayerAllCategoryChart {data} forceVisible={true} />
+                <PlayerAllCategoryChart {data} />
               </div>
             {:else if data[category]}
               <PlayerRecordStats playerCategory={data[category]} />
@@ -222,6 +221,9 @@
     </div>
   {:else}
     <p class="solo-text">Player not found &gt;~&lt;</p>
+    <small style="text-align: center;"
+      >Remember capitalization matters and only nicknames from the last tracked point in time work</small>
+    <a style="width: fit-content; margin: 0 auto;" href="/osu">Try another!</a>
   {/if}
 </main>
 
@@ -236,8 +238,8 @@
   }
 
   #avatar {
+    width: var(--av-height);
     height: var(--av-height);
-    aspect-ratio: 1/1;
     border-radius: 50%;
     outline: 5px solid var(--color-lightest);
     outline-offset: -1px;

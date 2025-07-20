@@ -40,6 +40,7 @@
 
             <RankingCountry country={plr.country} />
 
+            <!-- TODO: add comment field for manually added entries (and make them persist in the scripts) -->
             <!-- TODO: Add players' current name next to old name -->
             <RankingName category={page.params.category} {plr} />
 

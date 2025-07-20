@@ -21,7 +21,7 @@
   let scoreCategory = $derived(page.params.category);
   let type = $derived(page.url.pathname.split("/")[3]); // players, countries, or gains
 
-  let country = page.params.country;
+  let country = $derived(page.params.country);
   let rankingMode = $derived(page.url.pathname.split("/")[2]); // ranking or gains
 
   function addDateNav(days: number) {

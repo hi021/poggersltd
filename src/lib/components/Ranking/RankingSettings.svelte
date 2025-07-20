@@ -38,10 +38,7 @@
     Custom: "Custom"
   };
 
-  // TODO set from url
-  console.log(page.state);
-  console.log(page.url);
-  settings.countryFilter = new Set<string>();
+  settings.countryFilter = new Set<string>(page.params.country?.split(","));
 
   function checkAndSetIsGainedDaysCustom(days = settings.gainedDays) {
     return (isGainedDaysCustom = !days || gainsTimeFrames[days] == null);
@@ -76,7 +73,8 @@
           viewMode as "players" | "gains",
           "osu",
           settings.gainedDays
-        )
+        ),
+        { noScroll: true }
       );
   }
 
@@ -142,7 +140,7 @@
           {/snippet}
         </MultiSelectDropdown>
       {/if}
-      <!-- TODO: ranks filter and countries filter -->
+      <!-- TODO: rank range filter -->
       {#if viewMode == "gains"}
         <label>
           Gains time frame

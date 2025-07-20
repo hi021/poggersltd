@@ -15,7 +15,7 @@
   let singleRank = $state(false);
   let mode: string = $state("0");
   let rank: number | undefined = $state(undefined);
-  let username: string | undefined = $state(undefined);
+  let username: string = $state("");
 
   const gotoPlayer = ({ _id, name }: { _id?: number; name: string }) => {
     if (!singleRank) gotoPlayerOnEnter({ _id, name });

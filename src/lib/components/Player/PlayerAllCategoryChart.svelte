@@ -81,7 +81,7 @@
 
     for (const categoryString of SCORE_CATEGORIES) {
       const category = categoryString as App.RankingCategory;
-      const categoryData = data[0][category];
+      const categoryData = data[0]?.[category];
       if (!categoryData) continue;
 
       const scores = categoryData.total;
