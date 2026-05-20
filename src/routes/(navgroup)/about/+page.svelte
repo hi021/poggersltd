@@ -66,10 +66,10 @@
 		Probably because the API was down for the entire day or it never updated with that day's data, making it impossible
 		to retrieve the ranking.
 		<br />
-		Top 25s, 8s, and 1s have been tracked between October 9, 2022 and March 20, 2023 - there is no data beyond that period.
+		Top 25s, 8s, and 1s were tracked only between October 9, 2022 and March 20, 2023, resumed since May 14, 2026.
 		<br />
 		<br />
-		If you're looking for today's ranking, it becomes available around <em>3:45 p.m. UTC</em>.
+		If you're looking for today's ranking, it becomes available around <em>12:00 a.m. UTC</em>.
 		<br />
 	</p>
 	<h4>How does it work?</h4>
@@ -131,7 +131,13 @@
 			daily profile stats tracking similar to osu!track
 		</li>
 		<li>
+			<strong><a href="https://osucomplete.org">osu!complete</a></strong> - be overwhelmed by the amount of maps ranked every day
+		</li>
+		<li>
 			<strong><a href="https://inex.osekai.net">Osekai</a></strong> - everything about medals and more interesting stats
+		</li>
+		<li>
+			<strong><a href="https://osuchan.syrin.me">osu!chan</a></strong> - PP+, mod-specific leaderboards, and more
 		</li>
 		<li>
 			<strong><a href="https://osuskills.com">osu!Skills</a></strong> - pp ranking but even more broken
