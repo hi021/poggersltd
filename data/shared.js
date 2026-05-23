@@ -7,8 +7,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 
 export const CATEGORY_NAMES = ["top50", "top25", "top8", "top1"]; // only the ones stored in db
-export const RANKING_INDEXES = { _id: -1, rank: 1, country: -1, gainedScores: -1 }; // ranking collection indexes
-export const PLAYER_INDEXES = { rank: 1, countryRank: 1 }; // players collection indexes
+export const SKIP_CATEGORY_NAMES = ["top100", "top15"]; // TODO
+export const OSUSTATS_FETCH_ENDPOINT = "https://osustats.ppy.sh/api/getScoreRanking";
+export const RANKING_INDEXES_PER_CATEGORY = { _id: -1, rank: 1, country: -1, gainedScores: -1 };
+export const PLAYER_INDEXES_PER_CATEGORY = { rank: 1, countryRank: 1 };
 export const COUNTRY_CODES = [
 	"US",
 	"RU",
@@ -162,4 +164,38 @@ export async function getClosestPrevArchiveEntry(initialDate, daysBack = 1, maxD
 
 	client.close();
 	return daysLate > maxDaysLate ? null : { date: curDateString, daysLate };
+}
+
+export async function createRankingIndexes(collection) {
+	console.log("Creating indexes...");
+	const indexNames = [];
+
+	for (const category of CATEGORY_NAMES) {
+		for (const [field, index] of Object.entries(RANKING_INDEXES_PER_CATEGORY)) {
+			const column = `${category}.${field}`;
+			indexNames.push({ key: { [column]: index } });
+		}
+	}
+
+	await collection.createIndexes(indexNames);
+}
+
+export async function createPlayerIndexes(collection) {
+	console.log("Creating indexes...");
+	const indexNames = [
+		{
+			key: { nameKey: "text" },
+			defaultLanguage: "english"
+		},
+		{ key: { country: -1 } }
+	];
+
+	for (const category of CATEGORY_NAMES) {
+		for (const [field, index] of Object.entries(PLAYER_INDEXES_PER_CATEGORY)) {
+			const column = `${category}.${field}`;
+			indexNames.push({ key: { [column]: index } });
+		}
+	}
+
+	await collection.createIndexes(indexNames);
 }

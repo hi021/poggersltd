@@ -1,11 +1,11 @@
 // recreates and upserts the `players` collection from scratch
 // based on all existing ranking entries from the database
 
-import { CATEGORY_NAMES, createNGram, getRankingEntries } from "./shared.js";
-import { fileURLToPath } from "url";
-import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
+import { MongoClient } from "mongodb";
 import * as path from "path";
+import { fileURLToPath } from "url";
+import { CATEGORY_NAMES, createNGram, createPlayerIndexes, getRankingEntries } from "./shared.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
@@ -130,25 +130,11 @@ export async function populatePlayers(mongoClient = null, rankingEntries = null)
 		await dbPlayers.updateOne({ _id: id }, { $set: player }, { upsert: true });
 	}
 
-	console.log("Creating indexes...");
-	await dbPlayers.createIndexes([
-		{
-			key: { nameKey: "text" },
-			defaultLanguage: "english"
-		},
-		{ key: { country: -1 } },
-		{ key: { "top50.rank": 1 } },
-		{ key: { "top50.countryRank": 1 } },
-		{ key: { "top25.rank": 1 } },
-		{ key: { "top25.countryRank": 1 } },
-		{ key: { "top8.rank": 1 } },
-		{ key: { "top8.countryRank": 1 } },
-		{ key: { "top1.rank": 1 } },
-		{ key: { "top1.countryRank": 1 } }
-	]);
+	await createPlayerIndexes(dbPlayers);
 
 	if (useOwnClient) mongoClient.close();
-	console.log("Player data updated ✅");
+	console.log("Player data updated");
 }
 
+// run if called directly from console
 if (process.argv[1] === import.meta.filename) populatePlayers();

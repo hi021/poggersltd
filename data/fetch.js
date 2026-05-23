@@ -11,12 +11,13 @@ import { fileURLToPath } from "url";
 import { populatePlayers } from "./populatePlayers.js";
 import { setMostGainedRanking } from "./setMostGainedRanking.js";
 import {
-  CATEGORY_NAMES,
-  compareByGivenFieldDescendingOrId,
-  COUNTRY_CODES,
-  formatDate,
-  parseCategoryNumber,
-  RANKING_INDEXES
+	CATEGORY_NAMES,
+	compareByGivenFieldDescendingOrId,
+	COUNTRY_CODES,
+	createRankingIndexes,
+	formatDate,
+	OSUSTATS_FETCH_ENDPOINT,
+	parseCategoryNumber
 } from "./shared.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -37,7 +38,8 @@ const FLAGS = {
 	SKIP_PLAYERS: "-noPlayers",
 	SKIP_DB: "-noDb",
 	SKIP_OUTPUT_FILES: "-noFile",
-	NO_RESUME: "-noResume"
+	NO_RESUME: "-noResume",
+	FORCE_OVERWRITE: "-force"
 };
 ////////////////////////////
 
@@ -62,12 +64,14 @@ function saveResumeState(date, category, countryIndex, page) {
 
 function loadResumeState(date, flags) {
 	if (flags.includes(FLAGS.NO_RESUME)) return null;
-	
+
 	try {
 		const resumeFile = path.resolve(__dirname, RESUME_INPUT_DIR, `${date}.json`);
 		if (fs.existsSync(resumeFile)) {
 			const resumeState = JSON.parse(fs.readFileSync(resumeFile, "utf-8"));
-			console.log(`Found resume state for ${date}: category=${resumeState.category}, countryIndex=${resumeState.countryIndex}, page=${resumeState.page}`);
+			console.log(
+				`Found resume state for ${date}: category=${resumeState.category}, countryIndex=${resumeState.countryIndex}, page=${resumeState.page}`
+			);
 			return resumeState;
 		}
 	} catch (e) {
@@ -90,7 +94,7 @@ function deleteResumeState(date) {
 
 function loadPartialData(date, flags) {
 	if (flags.includes(FLAGS.NO_RESUME)) return null;
-	
+
 	try {
 		const partialFile = path.resolve(__dirname, OUTPUT_DIR, `${date}.json`);
 		if (fs.existsSync(partialFile)) return JSON.parse(fs.readFileSync(partialFile, "utf-8"));
@@ -124,7 +128,7 @@ async function fetchCountryPage(country, page = 1, category = "top50") {
 			rankMax: parseCategoryNumber(category),
 			country
 		});
-		const response = await fetch("https://osustats.ppy.sh/api/getScoreRanking", {
+		const response = await fetch(OSUSTATS_FETCH_ENDPOINT, {
 			method: "POST",
 			body,
 			headers: {
@@ -163,19 +167,6 @@ async function fetchCountryPage(country, page = 1, category = "top50") {
 	}
 }
 
-async function createIndexes(collection) {
-	const indexNames = [];
-	for (const category of CATEGORY_NAMES) {
-		for (const [field, index] of Object.entries(RANKING_INDEXES)) {
-			const column = `${category}.${field}`;
-			indexNames.push({ key: { [column]: index } });
-		}
-	}
-
-	await collection.createIndexes(indexNames);
-}
-
-// TODO add saving incomplete entries to a separate file for later retry
 // Returns { (categoryName: [entries]) x4 }
 async function fetchRankingEntry(mongoClient, flags, date, resumeState = null) {
 	console.time(`Fetching ${date} ranking took`);
@@ -187,33 +178,35 @@ async function fetchRankingEntry(mongoClient, flags, date, resumeState = null) {
 	for (let catIdx = categoryStartIndex; catIdx < CATEGORY_NAMES.length; catIdx++) {
 		const category = CATEGORY_NAMES[catIdx];
 		console.log(`Fetching ${category} ranking...`);
-		const categoryEntries = (resumeState && resumeState.category === category && rankingEntries[category])
-			? [...rankingEntries[category]]
-			: [];
+		const categoryEntries =
+			resumeState && resumeState.category === category && rankingEntries[category] ? [...rankingEntries[category]] : [];
 		const countryStartIndex = resumeState && resumeState.category === category ? resumeState.countryIndex : 0;
 		const countryArray = Object.entries(COUNTRY_CODES).map(([i, code]) => ({ i: Number(i), code }));
 
 		for (const { i, code: country } of countryArray.slice(countryStartIndex)) {
-			let page = resumeState && resumeState.category === category && resumeState.countryIndex === i ? resumeState.page : 1;
+			let page =
+				resumeState && resumeState.category === category && resumeState.countryIndex === i ? resumeState.page : 1;
 			let pageData = { players: null, hasNextPage: true };
-			
+
 			while (pageData.hasNextPage && page <= MAX_PAGE) {
 				pageData = await fetchCountryPage(country, page++, category);
 
 				if (pageData.players == null) {
 					console.log("Returned null - aborting.");
-					
+
 					if (!flags.includes(FLAGS.SKIP_OUTPUT_FILES)) {
-						rankingEntries[category] = categoryEntries.sort((a, b) => compareByGivenFieldDescendingOrId(a, b, "scores"));
+						rankingEntries[category] = categoryEntries.sort((a, b) =>
+							compareByGivenFieldDescendingOrId(a, b, "scores")
+						);
 						for (const idx in categoryEntries) categoryEntries[idx].rank = Number(idx) + 1;
-						
+
 						saveResumeState(date, category, i, page - 1);
-						
+
 						const PARTIAL_OUTPUT_FILE = path.resolve(__dirname, OUTPUT_DIR, date + ".json");
 						fs.writeFileSync(PARTIAL_OUTPUT_FILE, JSON.stringify(rankingEntries, null, 2));
 						console.log("Partial data saved to " + PARTIAL_OUTPUT_FILE);
 					}
-					
+
 					mongoClient && mongoClient.close();
 					process.exit(2);
 				}
@@ -229,43 +222,21 @@ async function fetchRankingEntry(mongoClient, flags, date, resumeState = null) {
 			for (const idx in categoryEntries) categoryEntries[idx].rank = Number(idx) + 1;
 
 			if (i == "0") {
-				// TODO: Assume 0th categoryEntries index will always be the US with the most players and abort script if no scores are gained by any player (like the old script)
+				// TODO: Assume 0th categoryEntries index will always be the US with the most players
+				// abort script if no scores are gained by any player (like the old script)
+				// add flag to skip the check
 				if (flags.includes(FLAGS.ONE_PAGE_ONLY)) break;
 			}
 
-			await new Promise((resolve) => setTimeout(() => resolve(true), 2000)); // rate limiting to prevent 429 errors
+			await new Promise(resolve => setTimeout(() => resolve(true), 2000)); // rate limiting to prevent 429 errors
 		}
 
 		if (resumeState && resumeState.category === category) resumeState = null;
 	}
 
-  console.log(`Fetched ${totalPlayerCount} entries`);
-
-	if (!flags.includes(FLAGS.SKIP_OUTPUT_FILES)) {
-		const OUTPUT_FILE = path.resolve(__dirname, OUTPUT_DIR, date + ".json");
-		if (OUTPUT_FILE) {
-			fs.writeFileSync(OUTPUT_FILE, JSON.stringify(rankingEntries));
-			console.log("Output saved to " + OUTPUT_FILE);
-		}
-	}
-
-	try {
-		if(!flags.includes(FLAGS.SKIP_DB)){
-			const dbRankings = mongoClient.db(process.env.DB_NAME).collection("rankings");
-			console.log("Inserting into database and creating indexes...");
-			await dbRankings.updateOne({ _id: date }, { $set: { rankingEntries } }, { upsert: true });
-			await createIndexes(dbRankings);
-		}
-	} catch (e) {
-		console.error("Failed to insert into database:\n", e);
-	} finally {
-		console.timeEnd(`Fetching ${date} ranking took`);
-		if (!flags.includes(FLAGS.SKIP_DB)) {
-			deleteResumeState(date);
-		}
-
-		return rankingEntries;
-	}
+	console.log(`Fetched ${totalPlayerCount} entries`);
+	console.timeEnd(`Fetching ${date} ranking took`);
+	return rankingEntries;
 }
 
 // MAIN EXECUTION
@@ -278,14 +249,53 @@ if (flags.includes("help") || flags.includes("--help") || flags.includes("-h")) 
 
 const date = parseCustomDate(flags);
 const resumeState = loadResumeState(date, flags);
-const client = !flags.includes(FLAGS.SKIP_DB) && await MongoClient.connect(process.env.DB_URI);
-const rankingEntry = await fetchRankingEntry(client, flags, date, resumeState);
-if (client && !flags.includes(FLAGS.SKIP_PLAYERS)) {
-	await populatePlayers(client, [convertToDatabaseEntry(rankingEntry, date)]);
+if (
+	!resumeState &&
+	!flags.includes(FLAGS.FORCE_OVERWRITE) &&
+	fs.existsSync(path.resolve(__dirname, OUTPUT_DIR, `${date}.json`))
+) {
+	console.log(
+		`Output file for ${date} already exists, aborting. Use ${FLAGS.FORCE_OVERWRITE} flag to force overwrite.`
+	);
+	process.exit(1);
 }
-const mostGainedPerCategory = !client || flags.includes(FLAGS.SKIP_MOST_GAINED) ? {} : await setMostGainedRanking(client);
-// TODO set gains...
-// TODO validate if this thing will overwrite existing entries from this date and prevent that unless a flag is given
+
+const client = !flags.includes(FLAGS.SKIP_DB) && (await MongoClient.connect(process.env.DB_URI));
+const rankingEntry = await fetchRankingEntry(client, flags, date, resumeState);
+
+if (!flags.includes(FLAGS.SKIP_OUTPUT_FILES)) {
+	try {
+		const OUTPUT_FILE = path.resolve(__dirname, OUTPUT_DIR, date + ".json");
+		fs.writeFileSync(OUTPUT_FILE, JSON.stringify(rankingEntry));
+		console.log("Output saved to " + OUTPUT_FILE);
+	} catch (e) {
+		console.error("Failed to save output file:\n", e);
+	}
+}
+
+if (!flags.includes(FLAGS.SKIP_DB)) {
+	try {
+		const dbRankings = client.db(process.env.DB_NAME).collection("rankings");
+		if (!flags.includes(FLAGS.FORCE_OVERWRITE) && (await dbRankings.countDocuments({ _id: date })) > 0) {
+			console.log(
+				`Database entry for ${date} already exists, skipping database update. Use ${FLAGS.FORCE_OVERWRITE} flag to overwrite.`
+			);
+		} else {
+			console.log("Inserting into database...");
+			await dbRankings.updateOne({ _id: date }, { $set: { ...rankingEntry } }, { upsert: true });
+			await createRankingIndexes(dbRankings);
+		}
+	} catch (e) {
+		console.error("Failed to insert into database:\n", e);
+	}
+}
+
+deleteResumeState(date);
+if (client && !flags.includes(FLAGS.SKIP_PLAYERS))
+	await populatePlayers(client, [convertToDatabaseEntry(rankingEntry, date)]);
+
+const mostGainedPerCategory =
+	!client || flags.includes(FLAGS.SKIP_MOST_GAINED) ? {} : await setMostGainedRanking(client);
 client && client.close();
 
 if (!flags.includes(FLAGS.SKIP_SOCKET)) {
@@ -297,8 +307,8 @@ if (!flags.includes(FLAGS.SKIP_SOCKET)) {
 	await new Promise((resolve, reject) => {
 		socket.on("connect", () => {
 			socket.emit("ranking-update", mostGainedPerCategory);
-			resolve(1);
 			console.log("Ranking update socket notified");
+			resolve(1);
 
 			// disconnect after receiving confirmation from the server (might be kind of dum, was used for debug)
 			// socket.on("ranking-update-confirm", () => {
@@ -309,7 +319,7 @@ if (!flags.includes(FLAGS.SKIP_SOCKET)) {
 
 		socket.on("connect_failed", e => {
 			console.error("Failed to connect to socket:\n", e);
-			reject(-1);
+			reject(e);
 		});
 	});
 }

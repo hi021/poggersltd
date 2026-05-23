@@ -62,31 +62,11 @@ try {
 		console.log(`Writing to ${outputPath}...`);
 		fs.writeFileSync(outputPath, JSON.stringify(fileConverted));
 
-		const insertRes = await dbRankings.updateOne({ _id: date }, { $set: fileConverted }, { $upsert: true });
+		const insertRes = await dbRankings.updateOne({ _id: date }, { $set: fileConverted }, { upsert: true });
 		console.log(`Modified ${insertRes.modifiedCount}, upserted ${insertRes.upsertedCount}`);
 
 		prevDate = date;
 	}
-
-	console.log("Creating indexes...");
-	await dbRankings.createIndexes([
-		{ key: { "top50._id": -1 } },
-		{ key: { "top50.rank": 1 } },
-		{ key: { "top50.country": -1 } },
-		{ key: { "top50.gainedScores": -1 } },
-		{ key: { "top25._id": -1 } },
-		{ key: { "top25.rank": 1 } },
-		{ key: { "top25.country": -1 } },
-		{ key: { "top25.gainedScores": -1 } },
-		{ key: { "top8._id": -1 } },
-		{ key: { "top8.rank": 1 } },
-		{ key: { "top8.country": -1 } },
-		{ key: { "top8.gainedScores": -1 } },
-		{ key: { "top1._id": -1 } },
-		{ key: { "top1.rank": 1 } },
-		{ key: { "top1.country": -1 } },
-		{ key: { "top1.gainedScores": -1 } }
-	]);
 
 	client.close();
 } catch (e) {
