@@ -33,12 +33,12 @@
 		if (hasChanged) onBlur?.();
 		hasChanged = false;
 	}
-	
+
 	function clearAll() {
 		selected = new Set<string>();
-			query = "";
-			onBlur?.();
-			hasChanged = false;
+		query = "";
+		onBlur?.();
+		hasChanged = false;
 	}
 
 	function onOptionChecked(e: Event) {
@@ -55,7 +55,7 @@
 	}
 
 	function filterOptions() {
-				const optionsQuery = (query ?? "").toUpperCase();
+		const optionsQuery = (query ?? "").toUpperCase();
 		const labels = dropdownOptionsElement!.getElementsByTagName("label");
 		let anyVisible = false;
 
@@ -64,7 +64,8 @@
 			const countryCode = checkboxElement.value;
 			const countryName = label.textContent || label.innerText;
 
-			const isMatched = !optionsQuery || optionsQuery == countryCode || countryName.toUpperCase().includes(optionsQuery);
+			const isMatched =
+				!optionsQuery || optionsQuery == countryCode || countryName.toUpperCase().includes(optionsQuery);
 			label.style.display = isMatched ? "" : "none";
 			if (isMatched) anyVisible = true;
 		}

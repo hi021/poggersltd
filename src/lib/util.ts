@@ -235,15 +235,15 @@ export function transitionHeight(node: Element, { delay = 0, duration = 400, eas
 }
 
 export function preventDefault(handler: (arg0: Event, ...args: any[]) => void) {
-return (event: Event) => {
-	event.preventDefault();
-	handler(event);
+	return (event: Event) => {
+		event.preventDefault();
+		handler(event);
 	};
 }
 
 export function getCountryName(countryCode: string) {
 	const name = COUNTRIES[countryCode];
-	if(!name) console.warn(`Unknown country code: ${countryCode}`);
+	if (!name) console.warn(`Unknown country code: ${countryCode}`);
 	return name ?? "Unknown";
 }
 

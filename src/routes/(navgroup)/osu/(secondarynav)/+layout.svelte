@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { preventDefault } from "svelte/legacy";
-	import { formatDate, addDays } from "$lib/util";
+	import { formatDate, addDays, preventDefault } from "$lib/util";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import { rankingSettings } from "$lib/stores";

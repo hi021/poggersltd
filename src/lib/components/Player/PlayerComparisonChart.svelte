@@ -13,11 +13,16 @@
 	import { Crosshair, Direction, Tooltip, XYContainer } from "@unovis/ts";
 	import { onMount } from "svelte";
 
-	let {category, data} : { category: App.RankingCategory, data: {
-		players: App.ComparisonChartPlayerCustomizable[];
-		ranks: App.ComparisonChartEntryProcessed[];
-	}}
-	= $props();
+	let {
+		category,
+		data
+	}: {
+		category: App.RankingCategory;
+		data: {
+			players: App.ComparisonChartPlayerCustomizable[];
+			ranks: App.ComparisonChartEntryProcessed[];
+		};
+	} = $props();
 
 	const x = (d: App.ComparisonChartEntryProcessed) => Number(d.date);
 	const rankColors = (_: App.ComparisonChartEntryProcessed[], i: number) =>
@@ -47,13 +52,13 @@
 		}
 	}
 
-$effect(() => {	
-	if (data) {
-		resetAccessors();
-		if (rankChart) initRankChart();
-		if (scoreChart) initScoreChart();
-	}
-});
+	$effect(() => {
+		if (data) {
+			resetAccessors();
+			if (rankChart) initRankChart();
+			if (scoreChart) initScoreChart();
+		}
+	});
 
 	function tooltipPlayerHTML(d: App.ComparisonChartEntryProcessed, plrId: string) {
 		const plrDataIndex = data.players.findIndex(plr => plr.id == plrId);

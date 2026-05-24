@@ -305,13 +305,13 @@ button:disabled {
 	height: 1.5em;
 	aspect-ratio: 4/3;
 	border-radius: 0.333rem;
-	    overflow: hidden;
+	overflow: hidden;
 }
 .osu-flag-smaller {
 	height: 1em;
 	aspect-ratio: 4/3;
 	border-radius: 0.25rem;
-	    overflow: hidden;
+	overflow: hidden;
 }
 .osu-avatar-small {
 	width: 36px;

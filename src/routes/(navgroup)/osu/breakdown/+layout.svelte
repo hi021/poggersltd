@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { preventDefault } from "svelte/legacy";
-
 	import Switch from "$lib/components/Switch.svelte";
 	import UserSearch from "$lib/components/UserSearch.svelte";
-	import { tooltip } from "$lib/util";
-	import { fly } from "svelte/transition";
+	import { preventDefault, tooltip } from "$lib/util";
 	import type { Snippet } from "svelte";
+	import { fly } from "svelte/transition";
 	interface Props {
 		children?: Snippet;
 	}

@@ -5,7 +5,9 @@
 <main>
 	<h1>hii</h1>
 	<p style="margin-bottom: 48px;">
-		This is an ongoing rewrite of a rewrite of poggers.ltd/pogowanie - a site for tracking <em>osu! score leaderboards</em>.
+		This is an ongoing rewrite of a rewrite of poggers.ltd/pogowanie - a site for tracking <em
+			>osu! score leaderboards</em
+		>.
 		<br />
 		Feel free to click around!
 		<br />
@@ -14,7 +16,8 @@
 
 	<h2>What's different?</h2>
 	<p class="para">
-		The site and its API were remade from scratch to hopefully be much more performant and nicer to use while providing extra nerdy stats.
+		The site and its API were remade from scratch to hopefully be much more performant and nicer to use while providing
+		extra nerdy stats.
 		<br />
 		<s>I've also moved away from osu!Stats to respektive's newer API.</s> Well that got shut down... the plan was to have
 		top 25, top 8, and top 1 tracking too;
@@ -56,7 +59,10 @@
 			Top 25, top 8, and top 1 scores were only collected from Oct 9, 2022 until Mar 20, 2023 (they killed respektive's
 			api aaa)
 		</li>
-		<li>There are gaps in data due to API downtime, the site is designed around them, but you may encounter little missing dots on the charts.</li>
+		<li>
+			There are gaps in data due to API downtime, the site is designed around them, but you may encounter little missing
+			dots on the charts.
+		</li>
 	</ul>
 
 	<h2>osu! score ranking archive</h2>
@@ -130,7 +136,8 @@
 			daily profile stats tracking similar to osu!track
 		</li>
 		<li>
-			<strong><a href="https://osucomplete.org">osu!complete</a></strong> - be overwhelmed by the amount of maps ranked every day
+			<strong><a href="https://osucomplete.org">osu!complete</a></strong> - be overwhelmed by the amount of maps ranked every
+			day
 		</li>
 		<li>
 			<strong><a href="https://inex.osekai.net">Osekai</a></strong> - everything about medals and more interesting stats

@@ -1,5 +1,17 @@
 <script lang="ts">
 	//@ts-nocheck the chart library is being really dumb, please don't worry about it
+	import { browser } from "$app/environment";
+	import { afterNavigate, goto } from "$app/navigation";
+	import { page } from "$app/state";
+	import PlayerAllCategoryChart from "$lib/components/Player/PlayerAllCategoryChart.svelte";
+	import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
+	import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
+	import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
+	import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
+	import PlayerRecordStats from "$lib/components/Player/PlayerRecordStats.svelte";
+	import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
+	import { RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
 	import {
 		getAvatarURL,
 		getOsuAltURL,
@@ -8,23 +20,11 @@
 		getOsuSnipeURL,
 		getOsuStatsURL,
 		getOsuTrackURL,
-		tooltip,
-		parseCategoryNumber
+		parseCategoryNumber,
+		tooltip
 	} from "$lib/util";
-	import PlayerAllCategoryStats from "$lib/components/Player/PlayerAllCategoryStats.svelte";
-	import PlayerAllCategoryChart from "$lib/components/Player/PlayerAllCategoryChart.svelte";
-	import PlayerScoresChart from "$lib/components/Player/PlayerScoresChart.svelte";
-	import PlayerRecordStats from "$lib/components/Player/PlayerRecordStats.svelte";
-	import PlayerChartStats from "$lib/components/Player/PlayerChartStats.svelte";
-	import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
-	import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
-	import { COUNTRIES, RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
-	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
-	import { afterNavigate, goto } from "$app/navigation";
 	import { quintOut } from "svelte/easing";
-	import { browser } from "$app/environment";
 	import { fade } from "svelte/transition";
-	import { page } from "$app/state";
 	import type { PageData } from "./$types";
 
 	interface Props {

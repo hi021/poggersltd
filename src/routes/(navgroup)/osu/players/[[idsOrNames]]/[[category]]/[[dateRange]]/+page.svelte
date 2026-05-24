@@ -4,8 +4,10 @@
 	import Loader from "$lib/components/Loader.svelte";
 	import PlayerComparisonChart from "$lib/components/Player/PlayerComparisonChart.svelte";
 	import PlayerComparisonDialog from "$lib/components/Player/PlayerComparisonDialog.svelte";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import UserSearch from "$lib/components/UserSearch.svelte";
-	import { COUNTRIES, MAX_CHART_PLAYERS, MAX_CHART_TREND_DAYS, MIN_DATE, SCORE_CATEGORIES } from "$lib/constants";
+	import { MAX_CHART_PLAYERS, MAX_CHART_TREND_DAYS, MIN_DATE, SCORE_CATEGORIES } from "$lib/constants";
+	import { alertData } from "$lib/stores";
 	import {
 		addDays,
 		formatDate,
@@ -21,14 +23,12 @@
 	import { Tween } from "svelte/motion";
 	import { fade, fly, slide } from "svelte/transition";
 	import type { PageData } from "./$types";
-	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import {
 		_mergePlayerRanksIntoExistingArray,
 		_processResult,
 		_pruneExistingDataOutsideDateRange,
 		_setExistingPlayerColors
 	} from "./+page";
-	import { alertData } from "$lib/stores";
 
 	interface Props {
 		data: PageData;
@@ -303,7 +303,10 @@
 									onclick={() =>
 										(editingPlayerIndex = editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>
 									<span>{player.name}</span>
-									<RankingFlag className="osu-flag-smaller unselectable" countryCode={player.country} tooltipContent={getCountryName(player.country)} />
+									<RankingFlag
+										className="osu-flag-smaller unselectable"
+										countryCode={player.country}
+										tooltipContent={getCountryName(player.country)} />
 								</a>
 							</div>
 

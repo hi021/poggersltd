@@ -53,7 +53,7 @@
 				<br />
 				<small>
 					due to a gap between
-					<em>{formatDate(addDays(new Date(page.params.date), -pageData[0].gainedDays))}</em>
+					<em>{formatDate(addDays(new Date(page.params.date as string), -pageData[0].gainedDays))}</em>
 					and
 					<em>{page.params.date}</em>
 				</small>

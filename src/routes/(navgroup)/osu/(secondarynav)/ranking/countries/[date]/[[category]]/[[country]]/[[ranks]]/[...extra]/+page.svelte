@@ -24,6 +24,8 @@
 		untrack(() => (data = { ...data, rankingData: data.rankingData.sort(sorting) }));
 	}
 	$effect(() => sortData(sortBy, sortDescending));
+
+	// TODO: run sortData on navigation idk
 </script>
 
 <svelte:head>
@@ -107,7 +109,10 @@
 						</td>
 
 						<td style="display: flex; align-items: center;">
-							<RankingFlag style="margin: 0 10px;" countryCode={country.country} tooltipContent={getCountryName(country.country)} />
+							<RankingFlag
+								style="margin: 0 10px;"
+								countryCode={country.country}
+								tooltipContent={getCountryName(country.country)} />
 							<span class="hide-width-640">
 								{COUNTRIES[country.country] || country.country}
 							</span>

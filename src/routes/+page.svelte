@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { run, preventDefault } from "svelte/legacy";
-
-	import { animate, formatNumber, tooltip } from "$lib/util";
 	import { PUBLIC_SOCKET_PORT } from "$env/static/public";
+	import { animate, formatNumber, preventDefault, tooltip } from "$lib/util";
+	import { io } from "socket.io-client";
 	import { onDestroy, onMount } from "svelte";
 	import { expoInOut } from "svelte/easing";
 	import { fade } from "svelte/transition";
-	import { io } from "socket.io-client";
 
 	const socket = io(`http://localhost:${PUBLIC_SOCKET_PORT}`);
 	socket.on("senko-count", senkos => {
@@ -22,23 +20,16 @@
 		});
 	});
 
+	const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
 	let sessionCount = $state(0);
 	let localCount = $state(0);
 	let globalCount = 0;
 	let globalCountAnimated = $state(0);
 	let globalInitialized = $state(false);
-	let senkoDimension = $state(20);
-	let shadowColor = $state("#aaa");
-	const colors = ["2233ee", "ee22ee", "ee2233", "eeee22", "22ee33", "22eeee"];
-	let audioElementPoggers: HTMLAudioElement = $state();
-	let mainDivElement: HTMLElement = $state();
-
-	run(() => {
-		senkoDimension = 20 + sessionCount * 0.5;
-	});
-	run(() => {
-		shadowColor = "#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa");
-	});
+	let senkoDimension = $derived(20 + sessionCount * 0.5);
+	let shadowColor = $derived("#" + (sessionCount ? colors[(sessionCount - 1) % colors.length] : "aaa"));
+	let audioElementPoggers: HTMLAudioElement | undefined = $state();
+	let mainDivElement: HTMLElement | undefined = $state();
 
 	onMount(() => {
 		if (localStorage.senko) localCount = localStorage.senko;
@@ -48,7 +39,7 @@
 	onDestroy(() => socket.disconnect());
 
 	function handleClick() {
-		const audio = audioElementPoggers.cloneNode(false) as HTMLAudioElement;
+		const audio = audioElementPoggers!.cloneNode(false) as HTMLAudioElement;
 		audio.volume = 0.42;
 		audio.play();
 

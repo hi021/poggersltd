@@ -2,13 +2,13 @@
 	import { browser } from "$app/environment";
 	import { goto, onNavigate } from "$app/navigation";
 	import { page } from "$app/state";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import { COUNTRIES, MIN_DATE } from "$lib/constants";
 	import { addDays, getDaysBetweenDates, getRankingUrl } from "$lib/util";
 	import { onMount } from "svelte";
 	import { slide } from "svelte/transition";
 	import MultiSelectDropdown from "../MultiSelectDropdown.svelte";
 	import Switch from "../Switch.svelte";
-	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 
 	interface Props {
 		viewMode?: "players" | "countries" | "gains" | "mostGained";
@@ -20,8 +20,10 @@
 
 	let expanded = $state(false);
 	let isGainedDaysCustom = $state(false);
-	let maxDays = $derived(getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date(page.params.date || MIN_DATE).valueOf()));
-	$effect(() => handleGainsTimeFrameNavigation(settings.gainedDays));
+	let maxDays = $derived(
+		getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date(page.params.date || MIN_DATE).valueOf())
+	);
+	$effect(() => {viewMode == "gains" && handleGainsTimeFrameNavigation(settings.gainedDays)});
 
 	const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
 	const gainsTimeFrames = {
@@ -36,41 +38,48 @@
 		Custom: "Custom"
 	};
 
-	settings.countryFilter = new Set<string>(page.params.country?.split(",")?.filter(it=>it && it!="all"));
+	settings.countryFilter = new Set<string>(page.params.country?.split(",")?.filter(it => it && it != "all"));
 
 	function checkAndSetIsGainedDaysCustom(days = settings.gainedDays) {
-		return isGainedDaysCustom = (!days || gainsTimeFrames[days] == null);
+		return (isGainedDaysCustom = !days || gainsTimeFrames[days] == null);
 	}
 
 	function handleGainsTimeFrame(e: Event) {
 		const target = e.target as HTMLSelectElement;
 		const days = parseInt(target.value);
-		if(!checkAndSetIsGainedDaysCustom(days)) settings.gainedDays = days;
+		if (!checkAndSetIsGainedDaysCustom(days)) settings.gainedDays = days;
 	}
 
 	function handleGainsTimeFrameNavigation(days: number) {
 		console.log("handleGainsTimeFrameNavigation", days); // TODO
-		if (browser) goto(getRankingUrl(page.params as any, "gains", "osu", days), { invalidateAll: false, keepFocus: true, noScroll: true });
+			if (!browser) return;
+			goto(getRankingUrl(page.params as any, "gains", "osu", days), {
+				invalidateAll: false,
+				keepFocus: true,
+				noScroll: true
+			});
 	}
 
 	function handleCountryFilterChange() {
 		if (!browser) return;
-			goto(
-				getRankingUrl(
-					{ ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
-					viewMode as "players" | "gains",
-					"osu",
-					settings.gainedDays
-				),
-				{ noScroll: true }
-			);
+		goto(
+			getRankingUrl(
+				{ ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
+				viewMode as "players" | "gains",
+				"osu",
+				settings.gainedDays
+			),
+			{ noScroll: true }
+		);
 	}
 
 	onMount(() => checkAndSetIsGainedDaysCustom());
 	// TODO: this hits the server twice - once for the date change, once for the gainedDays change.
 	// can probably be optimized by having the date change also update the gainedDays param to maxDays if it's currently out of range
 	// ALSO change the gainedDays when navigating into the future, not just backwards like here
-	onNavigate(() => {if(settings.gainedDays > maxDays) settings.gainedDays = maxDays;	});
+	onNavigate(() => {
+		if (settings.gainedDays > maxDays) settings.gainedDays = maxDays;
+	});
 </script>
 
 <div class="wrapper" {style}>
@@ -143,9 +152,14 @@
 					</select>
 
 					{#if isGainedDaysCustom}
-					<!-- TODO probably debounce like UserSearch.svelte -->
+						<!-- TODO probably debounce like UserSearch.svelte -->
 						<label>
-							<input class="input-dark normal-size" type="number" min="1" max={maxDays} bind:value={settings.gainedDays} />
+							<input
+								class="input-dark normal-size"
+								type="number"
+								min="1"
+								max={maxDays}
+								bind:value={settings.gainedDays} />
 							days
 						</label>
 					{/if}

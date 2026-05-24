@@ -14,8 +14,8 @@ declare namespace App {
 
 	interface AlertData {
 		message: string;
-    type: "error" | "warning"| "success" | "info";
-		
+		type: "error" | "warning" | "success" | "info";
+
 		showIcon?: boolean;
 	}
 

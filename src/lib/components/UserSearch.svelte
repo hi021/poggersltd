@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount, tick } from "svelte";
 	import { debounce, getAvatarURL, preventDefault } from "$lib/util";
+	import { onMount, tick } from "svelte";
 	import { slide } from "svelte/transition";
 
 	let searchInputElement = $state() as HTMLInputElement;
@@ -89,7 +89,7 @@
 						class="autocmp-item"
 						tabindex="0"
 						role="button"
-						onclick={preventDefault((e) => {
+						onclick={preventDefault(e => {
 							value = a.name;
 							gotoPlayer(a);
 							autocompleteEntries = [];
