@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { COUNTRIES } from "$lib/constants";
-	import { tooltip } from "$lib/util";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
+	import { getCountryName } from "$lib/util";
 
 	interface Props {
 		countryRank?: number | undefined;
@@ -17,5 +17,5 @@
 	</td>
 {/if}
 <td style="width: 40px; line-height: 0; {countryRank ? '' : 'padding-left: 2.125ch;'}">
-	<img class="osu-flag-small" alt={country} use:tooltip={{ content: COUNTRIES[country] }} src="/flags/{country}.svg" />
+	<RankingFlag countryCode={country} tooltipContent={getCountryName(country)} />
 </td>

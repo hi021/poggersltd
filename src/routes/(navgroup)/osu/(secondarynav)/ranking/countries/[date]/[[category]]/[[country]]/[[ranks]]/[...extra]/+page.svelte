@@ -1,10 +1,11 @@
 <script lang="ts">
-	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
-	import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
-	import { rankingSettings } from "$lib/stores";
-	import { COUNTRIES } from "$lib/constants";
-	import { formatNumber, tooltip } from "$lib/util";
 	import { page } from "$app/state";
+	import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
+	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
+	import { COUNTRIES } from "$lib/constants";
+	import { rankingSettings } from "$lib/stores";
+	import { formatNumber, getCountryName, tooltip } from "$lib/util";
 	import { untrack } from "svelte";
 	import type { PageData } from "./$types";
 
@@ -106,11 +107,7 @@
 						</td>
 
 						<td style="display: flex; align-items: center;">
-							<img
-								class="osu-flag-small"
-								style="margin: 0 10px;"
-								alt={country.country}
-								src="/flags/{country.country}.svg" />
+							<RankingFlag style="margin: 0 10px;" countryCode={country.country} tooltipContent={getCountryName(country.country)} />
 							<span class="hide-width-640">
 								{COUNTRIES[country.country] || country.country}
 							</span>

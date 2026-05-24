@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { addDays, getDaysBetweenDates, getRankingUrl } from "$lib/util";
-	import { COUNTRIES, MIN_DATE } from "$lib/constants";
 	import { browser } from "$app/environment";
-	import { slide } from "svelte/transition";
-	import { goto } from "$app/navigation";
+	import { goto, onNavigate } from "$app/navigation";
 	import { page } from "$app/state";
+	import { COUNTRIES, MIN_DATE } from "$lib/constants";
+	import { addDays, getDaysBetweenDates, getRankingUrl } from "$lib/util";
 	import { onMount } from "svelte";
-	import Switch from "../Switch.svelte";
+	import { slide } from "svelte/transition";
 	import MultiSelectDropdown from "../MultiSelectDropdown.svelte";
+	import Switch from "../Switch.svelte";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 
 	interface Props {
 		viewMode?: "players" | "countries" | "gains" | "mostGained";
@@ -19,10 +20,10 @@
 
 	let expanded = $state(false);
 	let isGainedDaysCustom = $state(false);
-	const maxDays = getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date(page.params.date).valueOf());
-	const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
+	let maxDays = $derived(getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date(page.params.date || MIN_DATE).valueOf()));
+	$effect(() => handleGainsTimeFrameNavigation(settings.gainedDays));
 
-	// TODO: make maxDays refresh
+	const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
 	const gainsTimeFrames = {
 		1: "1 Day",
 		7: "1 Week",
@@ -35,34 +36,25 @@
 		Custom: "Custom"
 	};
 
-	settings.countryFilter = new Set<string>(page.params.country?.split(","));
+	settings.countryFilter = new Set<string>(page.params.country?.split(",")?.filter(it=>it && it!="all"));
 
 	function checkAndSetIsGainedDaysCustom(days = settings.gainedDays) {
-		return (isGainedDaysCustom = !days || gainsTimeFrames[days] == null);
+		return isGainedDaysCustom = (!days || gainsTimeFrames[days] == null);
 	}
 
 	function handleGainsTimeFrame(e: Event) {
 		const target = e.target as HTMLSelectElement;
 		const days = parseInt(target.value);
-		settings.gainedDays = checkAndSetIsGainedDaysCustom(days) ? 1 : days;
-		handleGainsTimeFrameNavigation(settings.gainedDays);
+		if(!checkAndSetIsGainedDaysCustom(days)) settings.gainedDays = days;
 	}
 
 	function handleGainsTimeFrameNavigation(days: number) {
-		console.log(days); // TODO
-		if (browser) goto(getRankingUrl(page.params as any, "gains", "osu", days), { invalidateAll: false });
+		console.log("handleGainsTimeFrameNavigation", days); // TODO
+		if (browser) goto(getRankingUrl(page.params as any, "gains", "osu", days), { invalidateAll: false, keepFocus: true, noScroll: true });
 	}
 
 	function handleCountryFilterChange() {
-		console.log(
-			getRankingUrl(
-				{ ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
-				viewMode as "players" | "gains",
-				"osu",
-				settings.gainedDays
-			)
-		); // TODO remove log...
-		if (browser)
+		if (!browser) return;
 			goto(
 				getRankingUrl(
 					{ ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
@@ -75,6 +67,10 @@
 	}
 
 	onMount(() => checkAndSetIsGainedDaysCustom());
+	// TODO: this hits the server twice - once for the date change, once for the gainedDays change.
+	// can probably be optimized by having the date change also update the gainedDays param to maxDays if it's currently out of range
+	// ALSO change the gainedDays when navigating into the future, not just backwards like here
+	onNavigate(() => {if(settings.gainedDays > maxDays) settings.gainedDays = maxDays;	});
 </script>
 
 <div class="wrapper" {style}>
@@ -130,7 +126,7 @@
 					{#snippet optionComponent({ value, label, onchange })}
 						<label>
 							<input type="checkbox" class="no-appearance" {value} {onchange} />
-							<img class="osu-flag-small" alt={value} src="/flags/{value}.svg" />
+							<RankingFlag countryCode={value} tooltipContent={label} />
 							{label}
 						</label>
 					{/snippet}
@@ -147,8 +143,9 @@
 					</select>
 
 					{#if isGainedDaysCustom}
+					<!-- TODO probably debounce like UserSearch.svelte -->
 						<label>
-							<input type="number" min="1" max={maxDays} bind:value={settings.gainedDays} />
+							<input class="input-dark normal-size" type="number" min="1" max={maxDays} bind:value={settings.gainedDays} />
 							days
 						</label>
 					{/if}

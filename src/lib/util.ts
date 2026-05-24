@@ -9,7 +9,7 @@ import { linear } from "svelte/easing";
 import tippy, { type Props } from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import type { RouteParams } from "../routes/(navgroup)/osu/(secondarynav)/ranking/players/[date]/[[category]]/[[country]]/[[ranks]]/[...extra]/$types";
-import { MIN_DATE } from "./constants";
+import { COUNTRIES, MIN_DATE } from "./constants";
 
 export function formatNumber(number: number | string, delimiter = " "): string {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
@@ -236,9 +236,15 @@ export function transitionHeight(node: Element, { delay = 0, duration = 400, eas
 
 export function preventDefault(handler: (arg0: Event, ...args: any[]) => void) {
 return (event: Event) => {
-event.preventDefault();
-handler(event);
-};
+	event.preventDefault();
+	handler(event);
+	};
+}
+
+export function getCountryName(countryCode: string) {
+	const name = COUNTRIES[countryCode];
+	if(!name) console.warn(`Unknown country code: ${countryCode}`);
+	return name ?? "Unknown";
 }
 
 export function animate({

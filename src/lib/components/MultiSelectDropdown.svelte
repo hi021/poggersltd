@@ -24,31 +24,38 @@
 	let hasChanged = false;
 
 	function onFocus() {
-		dropdownVisible = true;
+		filterOptions();
 	}
 
 	function onOutClick() {
 		dropdownVisible = false;
+		query = "";
 		if (hasChanged) onBlur?.();
 		hasChanged = false;
 	}
-
+	
 	function clearAll() {
 		selected = new Set<string>();
-		onBlur?.();
+			query = "";
+			onBlur?.();
+			hasChanged = false;
 	}
 
 	function onOptionChecked(e: Event) {
 		const target = e.target as HTMLInputElement;
 		const value = target.value;
 		selected = target.checked ? selected.add(value) : selected.difference(new Set([value]));
+		query = "";
 		hasChanged = true;
 	}
 
-	function filterOptions(e: KeyboardEvent) {
+	function handleKeyUp(e: KeyboardEvent) {
 		if (e.key === "Escape" || e.key === "Enter") return onOutClick();
+		filterOptions();
+	}
 
-		const optionsQuery = (query ?? "").toUpperCase();
+	function filterOptions() {
+				const optionsQuery = (query ?? "").toUpperCase();
 		const labels = dropdownOptionsElement!.getElementsByTagName("label");
 		let anyVisible = false;
 
@@ -57,7 +64,7 @@
 			const countryCode = checkboxElement.value;
 			const countryName = label.textContent || label.innerText;
 
-			const isMatched = optionsQuery == countryCode || countryName.toUpperCase().includes(optionsQuery);
+			const isMatched = !optionsQuery || optionsQuery == countryCode || countryName.toUpperCase().includes(optionsQuery);
 			label.style.display = isMatched ? "" : "none";
 			if (isMatched) anyVisible = true;
 		}
@@ -74,7 +81,7 @@
 			{placeholder}
 			bind:value={query}
 			onfocus={onFocus}
-			onkeyup={filterOptions}
+			onkeyup={handleKeyUp}
 			use:outClick={[dropdownOptionsElement]}
 			onoutclick={onOutClick}
 			onblur={onBlur} />

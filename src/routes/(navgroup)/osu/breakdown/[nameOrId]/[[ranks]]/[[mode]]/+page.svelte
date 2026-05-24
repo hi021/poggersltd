@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { formatNumber, getAvatarURL, transitionHeight, tooltip, getOsuProfileURL } from "$lib/util";
 	import Loader from "$lib/components/Loader.svelte";
-	import { COUNTRIES } from "$lib/constants";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
+	import { formatNumber, getAvatarURL, getCountryName, getOsuProfileURL, tooltip, transitionHeight } from "$lib/util";
 	import type { PageData } from "./$types";
 
 	interface Props {
@@ -26,13 +26,7 @@
 			<img class="osu-avatar-small" alt="" src={getAvatarURL(data.user.id)} />
 		</a>
 		<span style="font-size: 1.125rem; margin: 0 12px;">{data.user.name}</span>
-		<img
-			class="osu-flag-small"
-			alt={data.user.country}
-			src="/flags/{data.user.country}.svg"
-			use:tooltip={{
-				content: COUNTRIES[data.user.country] || data.user.country
-			}} />
+		<RankingFlag countryCode={data.user.country} tooltipContent={getCountryName(data.user.country)} />
 	</div>
 
 	{#if data.breakdown.length == 1}

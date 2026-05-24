@@ -14,7 +14,7 @@
 
 	<h2>What's different?</h2>
 	<p class="para">
-		The site and its API were remade from scratch to hopefully be much more performant and nicer to use.
+		The site and its API were remade from scratch to hopefully be much more performant and nicer to use while providing extra nerdy stats.
 		<br />
 		<s>I've also moved away from osu!Stats to respektive's newer API.</s> Well that got shut down... the plan was to have
 		top 25, top 8, and top 1 tracking too;
@@ -27,10 +27,9 @@
 		Here are some of the things to keep in mind:
 	</p>
 	<ul>
-		<li>Only players with at least 1000 (or 1020 since December 1?, 2024) top 50s are included.</li>
+		<li>Only players with at least 1000 (or 1275 since May 14, 2026) top 50s are included.</li>
 		<li>
-			Only up to 150 players per country - the US is in trouble! It's an osu!Stats limitation that I can't do anything
-			about.
+			Only up to 150 players per country - the US is in trouble! It's an osu!Stats limitation that I can't skirt around.
 		</li>
 		<li>
 			For the first 2.5 months or so, only the global top of 150 players was tracked. July 26, 2020 marks a switch to
@@ -57,7 +56,7 @@
 			Top 25, top 8, and top 1 scores were only collected from Oct 9, 2022 until Mar 20, 2023 (they killed respektive's
 			api aaa)
 		</li>
-		<li>There are gaps in data due to API downtime (though the site is designed around them).</li>
+		<li>There are gaps in data due to API downtime, the site is designed around them, but you may encounter little missing dots on the charts.</li>
 	</ul>
 
 	<h2>osu! score ranking archive</h2>
@@ -102,8 +101,8 @@
 
 	<h2>poggers API</h2>
 	<p class="para">
-		There's a little REST-like API, it's probably usable if you'd like to use the site's data.<br />
-		Basic documentation can be found <a class="a" href="/api">here</a>.
+		There's a little unversioned REST-like API, it's probably usable if you'd like some of the site's data.<br />
+		Basic documentation with examples can be found <a class="a" href="/api">here</a>.
 	</p>
 
 	<h2>Other osu! stat-tracking sites</h2>

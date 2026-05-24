@@ -302,14 +302,16 @@ button:disabled {
 
 /* OSU */
 .osu-flag-small {
-	height: 1.5rem;
+	height: 1.5em;
 	aspect-ratio: 4/3;
 	border-radius: 0.333rem;
+	    overflow: hidden;
 }
 .osu-flag-smaller {
-	height: 1rem;
+	height: 1em;
 	aspect-ratio: 4/3;
 	border-radius: 0.25rem;
+	    overflow: hidden;
 }
 .osu-avatar-small {
 	width: 36px;

@@ -10,6 +10,7 @@
 		addDays,
 		formatDate,
 		getAvatarURL,
+		getCountryName,
 		getOsuProfileURL,
 		getServerDate,
 		isRangeContainedWithin,
@@ -20,6 +21,7 @@
 	import { Tween } from "svelte/motion";
 	import { fade, fly, slide } from "svelte/transition";
 	import type { PageData } from "./$types";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import {
 		_mergePlayerRanksIntoExistingArray,
 		_processResult,
@@ -301,12 +303,7 @@
 									onclick={() =>
 										(editingPlayerIndex = editingPlayerIndex != i || editingPlayerIndex == null ? i : null)}>
 									<span>{player.name}</span>
-									<img
-										class="osu-flag-smaller unselectable"
-										height="24"
-										alt={player.country}
-										src={`/flags/${player.country}.svg`}
-										use:tooltip={{ content: COUNTRIES[player.country] || player.country }} />
+									<RankingFlag className="osu-flag-smaller unselectable" countryCode={player.country} tooltipContent={getCountryName(player.country)} />
 								</a>
 							</div>
 

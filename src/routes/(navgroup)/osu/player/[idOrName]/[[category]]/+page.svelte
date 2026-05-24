@@ -19,6 +19,7 @@
 	import PlayerBasicStats from "$lib/components/Player/PlayerBasicStats.svelte";
 	import PlayerDate from "$lib/components/Player/PlayerDate.svelte";
 	import { COUNTRIES, RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
+	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import { afterNavigate, goto } from "$app/navigation";
 	import { quintOut } from "svelte/easing";
 	import { browser } from "$app/environment";
@@ -69,15 +70,11 @@
 					{/if}
 				</div>
 				<div id="top-bar-bottom" class="row">
-					<img
-						class="osu-flag-small unselectable"
-						width="36"
-						height="36"
-						alt={data.country}
-						src={`/flags/${data.country}.svg`}
-						style="margin-right: 10px;" />
-
-					<span>{COUNTRIES[data.country] || data.country}</span>
+					<RankingFlag
+						countryCode={data.country}
+						style="margin-right: 10px; height: 2.125em;"
+						tooltipContent={getCountryName(data.country)} />
+					<span>{getCountryName(data.country)}</span>
 				</div>
 				<div class="tabs-container row">
 					{#each SCORE_CATEGORIES as cat}
