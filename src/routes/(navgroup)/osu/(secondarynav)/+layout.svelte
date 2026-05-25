@@ -1,18 +1,16 @@
 <script lang="ts">
-	import { formatDate, addDays, preventDefault } from "$lib/util";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
-	import { rankingSettings } from "$lib/stores";
 	import { MIN_DATE } from "$lib/constants";
-	import type { Snippet } from "svelte";
-	interface Props {
-		children?: Snippet;
-	}
+	import { rankingSettings } from "$lib/stores";
+	import { addDays, formatDate, preventDefault } from "$lib/util";
+	import { setContext } from "svelte";
+	import type { LayoutProps } from "./$types";
 
-	let { children }: Props = $props();
+	let { children }: LayoutProps = $props();
 
 	const MAX_DATE = formatDate();
-	let date = $state(
+	let date = $derived(
 		!page.params.date || page.params.date === "latest" || page.params.date === "last" ? MAX_DATE : page.params.date
 	);
 	let scoreCategory = $derived(page.params.category);
@@ -33,7 +31,7 @@
 		setURL();
 	}
 
-	const setURL = (noScroll = true) => {
+	const setURL = (opts: Parameters<typeof goto>[1] = { noScroll: true }) => {
 		const categoryUrl = "/" + (scoreCategory || "top50");
 		if (rankingMode !== "ranking") return goto(`/osu/gains${categoryUrl}`);
 
@@ -43,10 +41,12 @@
 		const ranksUrl = page.params.ranks || extraUrl ? "/" + (page.params.ranks || "") : "";
 		const countryUrl = country || ranksUrl || extraUrl ? "/" + (country || "all") : "";
 
-		goto(`/osu/ranking${typeUrl}${dateUrl}${categoryUrl}${countryUrl}${ranksUrl}${extraUrl}`, {
-			noScroll
-		});
+		const url = `/osu/ranking${typeUrl}${dateUrl}${categoryUrl}${countryUrl}${ranksUrl}${extraUrl}${page.url.search}`;
+		console.debug("Navigating to URL:", url);
+		goto(url, opts);
 	};
+
+	setContext("setURL", setURL);
 </script>
 
 <nav class="secondary-nav row">
@@ -134,7 +134,7 @@
 		id="group-container"
 		class="row"
 		class:sticky={$rankingSettings.dateSticky}
-		onsubmit={preventDefault(() => setURL(true))}>
+		onsubmit={preventDefault(() => setURL())}>
 		<button
 			class="arrow-button btn-none"
 			type="button"

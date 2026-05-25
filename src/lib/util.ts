@@ -213,6 +213,7 @@ export const getOsuSnipeURL = (id: number | string, country = "global") =>
 
 export const getRankingUrl = (
 	params: RouteParams,
+	url: URL,
 	ranking: "players" | "gains" | "countries" = "players",
 	baseUrl: "api" | "osu" = "api",
 	gainedDays = 1
@@ -220,7 +221,7 @@ export const getRankingUrl = (
 	const extraString = gainedDays > 1 || params.extra ? `/${gainedDays > 1 ? gainedDays : params.extra}` : "";
 	const ranksString = params.ranks || extraString ? `/${params.ranks ?? "-"}` : "";
 
-	return `/${baseUrl}/ranking/${ranking}/${params.date}/${params.category ?? "top50"}/${params.country ?? "all"}${ranksString}${extraString}`;
+	return `/${baseUrl}/ranking/${ranking}/${params.date}/${params.category ?? "top50"}/${params.country ?? "all"}${ranksString}${extraString}${url.search}`;
 };
 
 export function transitionHeight(node: Element, { delay = 0, duration = 400, easing = linear, maxHeight = 1024 }) {

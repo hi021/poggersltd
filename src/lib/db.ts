@@ -59,3 +59,22 @@ export function prepareAggregationProjection(
 
 	return project;
 }
+
+// TODO: document (e.g. /api/ranking/countries/2025-11-29/top50?sortBy=players:-1,average:1)
+export function prepareSortObject(searchParams: URLSearchParams, defaultSortColumn: string): Record<string, 1 | -1> {
+	const rawSortBy = searchParams.get("sortBy")?.trim() || defaultSortColumn;
+	const rawSortDirection = searchParams.get("sortDirection")?.toLowerCase();
+	const defaultDirection = rawSortDirection === "asc" ? 1 : -1;
+
+	return Object.fromEntries(
+		rawSortBy
+			.split(",")
+			.map(field => field.trim())
+			.filter(Boolean)
+			.map(field => {
+				const [name, directionPart] = field.split(":").map(part => part.trim());
+				const direction = Number(directionPart);
+				return [name.toLowerCase(), direction === 1 ? 1 : direction === -1 ? -1 : defaultDirection] as const;
+			})
+	);
+}

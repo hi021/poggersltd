@@ -5,12 +5,12 @@ import {
 	SCORE_CATEGORIES,
 	SHORT_CACHE_CONTROL
 } from "$lib/constants";
-import { dbRankings } from "$lib/db";
+import { dbRankings, prepareSortObject } from "$lib/db";
 import { formatDate } from "$lib/util";
 import { error, json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
-export const GET: RequestHandler = async ({ params, setHeaders }) => {
+export const GET: RequestHandler = async ({ params, url, setHeaders }) => {
 	const scoreCategory = (params.category as App.RankingCategory) ?? "top50";
 	if (!SCORE_CATEGORIES.includes(scoreCategory)) throw error(400, "Invalid ranking score category");
 
@@ -28,14 +28,24 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
 	const ranks = params.ranks ? params.ranks.split("-") : [0, 0];
 	const rankMin = Number(ranks[0]) ?? 0;
 	const rankMax = Number(ranks[1]) || Infinity;
-	const rankConditions = rankMin > 1 || rankMax < Infinity ? [{ $lte: ["$$entry.rank", rankMax] }, { $gte: ["$$entry.rank", rankMin] }] : [];
+	const rankConditions =
+		rankMin > 1 || rankMax < Infinity ? [{ $lte: ["$$entry.rank", rankMax] }, { $gte: ["$$entry.rank", rankMin] }] : [];
 
 	const countriesParam = params.country;
-	const countryCondition = countriesParam && countriesParam.toLowerCase() != "all" ? { $in: ["$$entry.country", countriesParam.toUpperCase().split(",")] } : {};
+	const countryCondition =
+		countriesParam && countriesParam.toLowerCase() != "all"
+			? { $in: ["$$entry.country", countriesParam.toUpperCase().split(",")] }
+			: {};
 
 	const filterConditions = [...rankConditions, countryCondition].filter(cond => Object.keys(cond).length > 0);
-	const filterCond = filterConditions.length === 0 ? true : filterConditions.length === 1 ? filterConditions[0] : { $and: filterConditions };
+	const filterCond =
+		filterConditions.length === 0
+			? true
+			: filterConditions.length === 1
+				? filterConditions[0]
+				: { $and: filterConditions };
 
+	const sortObject = prepareSortObject(url.searchParams, "weighted");
 	const aggregate = [
 		{ $match: { _id: date } },
 		{
@@ -64,7 +74,12 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
 								{
 									$cond: [
 										{ $lte: ["$$rank", 11] },
-										{ $multiply: ["$entries.scores", { $subtract: [1, { $multiply: [{ $subtract: ["$$rank", 1] }, 0.09] }] }] },
+										{
+											$multiply: [
+												"$entries.scores",
+												{ $subtract: [1, { $multiply: [{ $subtract: ["$$rank", 1] }, 0.09] }] }
+											]
+										},
 										{ $multiply: ["$entries.scores", 0.05] }
 									]
 								},
@@ -88,10 +103,10 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
 		{
 			$project: {
 				country: "$_id",
-				total: 1,
+				total: { $round: ["$total", 2] },
 				players: 1,
-				average: { $divide: ["$total", "$players"] },
-				weighted: 1,
+				average: { $round: [{ $divide: ["$total", "$players"] }, 2] },
+				weighted: { $round: ["$weighted", 2] },
 				median: {
 					$let: {
 						vars: {
@@ -119,7 +134,8 @@ export const GET: RequestHandler = async ({ params, setHeaders }) => {
 				},
 				_id: 0
 			}
-		}
+		},
+		{ $sort: sortObject }
 	];
 
 	const result = await dbRankings.aggregate(aggregate).toArray();

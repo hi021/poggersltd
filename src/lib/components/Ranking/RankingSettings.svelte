@@ -23,7 +23,8 @@
 	let maxDays = $derived(
 		getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date(page.params.date || MIN_DATE).valueOf())
 	);
-	$effect(() => {viewMode == "gains" && handleGainsTimeFrameNavigation(settings.gainedDays)});
+	// TODO
+	// $effect(() => {viewMode == "gains" && handleGainsTimeFrameNavigation(settings.gainedDays)});
 
 	const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
 	const gainsTimeFrames = {
@@ -52,12 +53,12 @@
 
 	function handleGainsTimeFrameNavigation(days: number) {
 		console.log("handleGainsTimeFrameNavigation", days); // TODO
-			if (!browser) return;
-			goto(getRankingUrl(page.params as any, "gains", "osu", days), {
-				invalidateAll: false,
-				keepFocus: true,
-				noScroll: true
-			});
+		if (!browser) return;
+		goto(getRankingUrl(page.params as any, page.url, "gains", "osu", days), {
+			invalidateAll: false,
+			keepFocus: true,
+			noScroll: true
+		});
 	}
 
 	function handleCountryFilterChange() {
@@ -65,6 +66,7 @@
 		goto(
 			getRankingUrl(
 				{ ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
+				page.url,
 				viewMode as "players" | "gains",
 				"osu",
 				settings.gainedDays

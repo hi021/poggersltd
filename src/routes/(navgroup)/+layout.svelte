@@ -4,6 +4,7 @@
 	import Footer from "$lib/components/Footer.svelte";
 	import { alertData } from "$lib/stores";
 	import type { Snippet } from "svelte";
+
 	interface Props {
 		children?: Snippet;
 	}

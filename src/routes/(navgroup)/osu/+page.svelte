@@ -1,6 +1,6 @@
 <script lang="ts">
-	import UserSearch from "$lib/components/UserSearch.svelte";
 	import { goto } from "$app/navigation";
+	import UserSearch from "$lib/components/UserSearch.svelte";
 	import { onMount } from "svelte";
 
 	let dialogElement = $state() as HTMLDialogElement;

@@ -1,5 +1,4 @@
 <script lang="ts">
-	//@ts-nocheck the chart library is being really dumb, please don't worry about it
 	import { browser } from "$app/environment";
 	import { afterNavigate, goto } from "$app/navigation";
 	import { page } from "$app/state";
@@ -14,6 +13,7 @@
 	import { RANKING_BADGES, SCORE_CATEGORIES } from "$lib/constants";
 	import {
 		getAvatarURL,
+		getCountryName,
 		getOsuAltURL,
 		getOsuDailyURL,
 		getOsuProfileURL,
@@ -76,7 +76,7 @@
 						tooltipContent={getCountryName(data.country)} />
 					<span>{getCountryName(data.country)}</span>
 				</div>
-				<div class="tabs-container row">
+				<div class="tab-container row">
 					{#each SCORE_CATEGORIES as cat}
 						<button class="tab btn-none" type="button" class:active={category === cat} onclick={() => (category = cat)}>
 							{cat}
@@ -222,7 +222,7 @@
 		--radius: 12px;
 		--av-height: 96px;
 		--av-height-2: calc(var(--av-height) / 2);
-		--tabs-height: calc(2rem + 4px);
+		--tab-height: calc(2rem + 4px);
 		padding: calc(var(--av-height-2));
 	}
 
@@ -259,7 +259,7 @@
 	aside {
 		width: var(--av-height);
 		padding-top: calc(var(--av-height-2) + 1rem);
-		margin-top: calc(-1 * (var(--av-height-2) + var(--tabs-height)));
+		margin-top: calc(-1 * (var(--av-height-2) + var(--tab-height)));
 		padding-bottom: 10px;
 		align-items: center;
 		gap: 8px;
@@ -317,16 +317,14 @@
 		border-bottom-right-radius: var(--radius);
 	}
 	.overlay {
-		--color-base: 0, 0, 0;
-		position: absolute;
+		--color-base: 0, 0, 0 position: absolute;
 		backdrop-filter: blur(5px);
 		margin-left: calc(-1 * var(--pad));
 	}
 
-	.tabs-container {
+	.tab-container {
 		padding-left: 8px;
-		background-color: var(--color-darker);
-		height: var(--tabs-height);
+		height: var(--tab-height);
 	}
 	.tab {
 		color: inherit;

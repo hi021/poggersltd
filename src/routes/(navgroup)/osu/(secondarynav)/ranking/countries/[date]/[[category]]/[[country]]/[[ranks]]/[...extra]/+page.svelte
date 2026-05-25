@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
 	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
@@ -6,26 +7,28 @@
 	import { COUNTRIES } from "$lib/constants";
 	import { rankingSettings } from "$lib/stores";
 	import { formatNumber, getCountryName, tooltip } from "$lib/util";
-	import { untrack } from "svelte";
+	import { getContext, untrack } from "svelte";
 	import type { PageData } from "./$types";
 
 	interface Props {
 		data: PageData;
 	}
 
-	let { data = $bindable() }: Props = $props();
+	let { data }: Props = $props();
 
 	let sortBy = $state("weighted");
 	let sortDescending = $state(true);
+	const setURL = getContext("setURL") as (opts?: Parameters<typeof goto>[1]) => void;
 
-	function sortData(sortingColumn: string, isDescending: boolean) {
-		const order = isDescending ? 1 : -1;
-		const sorting = (a: any, b: any) => (a[sortingColumn] < b[sortingColumn] ? order : -order);
-		untrack(() => (data = { ...data, rankingData: data.rankingData.sort(sorting) }));
-	}
-	$effect(() => sortData(sortBy, sortDescending));
-
-	// TODO: run sortData on navigation idk
+	$effect(() => {
+		sortBy;
+		sortDescending;
+		untrack(() => {
+			page.url.searchParams.set("sortBy", sortBy);
+			page.url.searchParams.set("sortDirection", sortDescending ? "desc" : "asc");
+			setURL({ noScroll: true, invalidateAll: true });
+		});
+	});
 </script>
 
 <svelte:head>
@@ -45,7 +48,7 @@
 
 					<th> Country </th>
 
-					<!-- TODO: Can move these into a component -->
+					<!-- TODO?: Can move these sortables into a component -->
 					<th
 						class="sortable"
 						onclick={() => {
@@ -106,9 +109,7 @@
 							if (sortBy === "median") sortDescending = !sortDescending;
 							else sortBy = "median";
 						}}>
-						<span
-							class:desc={sortBy === "median" && sortDescending}
-							class:asc={sortBy === "median" && !sortDescending}>
+						<span class:desc={sortBy === "median" && sortDescending} class:asc={sortBy === "median" && !sortDescending}>
 							Median
 						</span>
 					</th>
