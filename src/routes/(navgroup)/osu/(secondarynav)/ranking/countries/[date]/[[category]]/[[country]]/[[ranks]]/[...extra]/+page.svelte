@@ -99,6 +99,19 @@
 							Average
 						</span>
 					</th>
+
+					<th
+						class="sortable"
+						onclick={() => {
+							if (sortBy === "median") sortDescending = !sortDescending;
+							else sortBy = "median";
+						}}>
+						<span
+							class:desc={sortBy === "median" && sortDescending}
+							class:asc={sortBy === "median" && !sortDescending}>
+							Median
+						</span>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -132,6 +145,10 @@
 
 						<td>
 							{formatNumber(Math.round(country.average))}
+						</td>
+
+						<td>
+							{formatNumber(Math.round(country.median))}
 						</td>
 					</tr>
 				{/each}

@@ -98,14 +98,7 @@ declare namespace App {
 		players: number;
 		average: number;
 		weighted: number;
-	}
-	// for the first loop in the API endpoint, average and country name are set afterward
-	interface CountryRankingAPI {
-		country?: string;
-		total: number;
-		players: number;
-		average?: number;
-		weighted: number;
+		median: number;
 	}
 
 	interface MostGainedRankingEntry {
