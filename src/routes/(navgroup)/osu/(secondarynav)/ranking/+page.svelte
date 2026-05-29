@@ -9,7 +9,7 @@
 
 <main class="osu-main flex-fill">
 	<p class="solo-text">
-		Press <button type="button" class="btn-none" onclick={yoink}>yoink</button> to show the latest top 50s ranking!
+		Press <button type="button" class="btn-none" onclick={yoink}>yoink</button> to show today's top 50s ranking!
 	</p>
 </main>
 
@@ -19,7 +19,7 @@
 		font-size: inherit;
 		color: var(--color-active);
 	}
-	button:is(:global(:hover, :focus)) {
+	button:is(:hover, :focus) {
 		box-shadow: none;
 		text-decoration: underline;
 	}

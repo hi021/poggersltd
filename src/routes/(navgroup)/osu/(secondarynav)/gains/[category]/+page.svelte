@@ -1,12 +1,12 @@
 <script lang="ts">
-	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
-	import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
+	import { page } from "$app/state";
 	import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
+	import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
 	import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
 	import RankingName from "$lib/components/Ranking/RankingName.svelte";
+	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
 	import { rankingSettings } from "$lib/stores";
 	import { formatNumber } from "$lib/util";
-	import { page } from "$app/state";
 	import type { PageData } from "./$types";
 
 	interface Props {
@@ -24,7 +24,7 @@
 	{#if !data?.rankingData?.length}
 		<RankingEmpty />
 	{:else}
-		<RankingSettings bind:settings={$rankingSettings} viewMode="mostGained" />
+		<RankingSettings viewMode="mostGained" />
 
 		<table class="osu-table">
 			<tbody>

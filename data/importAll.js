@@ -8,7 +8,7 @@ import * as path from "path";
 import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 ////////////////////////////
 const inputDir = path.resolve(__dirname, "archive-aftergains");

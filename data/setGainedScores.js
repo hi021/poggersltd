@@ -12,16 +12,19 @@ import * as path from "path";
 import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 ////////////////////////////
 const inputDir = path.resolve(__dirname, "archive-new");
 const outputDir = path.resolve(__dirname, "archive-aftergains");
 ////////////////////////////
 
-try {
-	const client = await MongoClient.connect(process.env.DB_URI);
-	const dbRankings = client.db(process.env.DB_NAME).collection("rankings");
+export async function calculateGainedScores(mongoClient = null) {
+	// whether ran manually from console as opposed to another script that passes in a shared client
+	try {
+	const useOwnClient = mongoClient == null;
+	if (useOwnClient) mongoClient = await MongoClient.connect(process.env.DB_URI);
+	const dbRankings = mongoClient.db(process.env.DB_NAME).collection("rankings");
 
 	let players = {}; // maps (of players by id) for each category, used to get day to day gains
 	let prevDate = "";
@@ -68,8 +71,12 @@ try {
 		prevDate = date;
 	}
 
-	client.close();
+	mongoClient.close();
 } catch (e) {
 	console.error(e);
 	process.exit(1);
 }
+}
+
+// run if called directly from console
+if (process.argv[1] === import.meta.filename) calculateGainedScores();

@@ -14,7 +14,7 @@
 		</div>
 		<div class="vr hide-width-960" style="margin: 26px 32px;"></div>
 		<p class="flex-center" style="font-weight: 300; font-size: 2.25rem;">
-			{page?.error?.message || "An error has occurred..."}
+			{page.error?.message || "An error has occurred..."}
 		</p>
 	</div>
 

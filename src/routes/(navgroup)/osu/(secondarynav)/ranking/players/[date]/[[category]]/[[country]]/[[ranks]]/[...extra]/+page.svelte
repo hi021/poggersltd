@@ -1,14 +1,14 @@
 <script lang="ts">
-	import RankingGainedRanks from "$lib/components/Ranking/RankingGainedRanks.svelte";
-	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
-	import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
-	import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
-	import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
-	import RankingName from "$lib/components/Ranking/RankingName.svelte";
-	import Pagination from "$lib/components/Pagination.svelte";
-	import { formatNumber, addDays, formatDate } from "$lib/util";
-	import { rankingSettings } from "$lib/stores";
 	import { page } from "$app/state";
+	import Pagination from "$lib/components/Pagination.svelte";
+	import RankingAvatar from "$lib/components/Ranking/RankingAvatar.svelte";
+	import RankingCountry from "$lib/components/Ranking/RankingCountry.svelte";
+	import RankingEmpty from "$lib/components/Ranking/RankingEmpty.svelte";
+	import RankingGainedRanks from "$lib/components/Ranking/RankingGainedRanks.svelte";
+	import RankingName from "$lib/components/Ranking/RankingName.svelte";
+	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
+	import { rankingSettings } from "$lib/stores";
+	import { addDays, formatDate, formatNumber } from "$lib/util";
 	import type { PageData } from "./$types";
 
 	interface Props {
@@ -42,7 +42,7 @@
 		</div>
 	{/if}
 
-	<RankingSettings bind:settings={$rankingSettings} viewMode="players" />
+	<RankingSettings viewMode="players" />
 	{#if !pageData?.length}
 		<RankingEmpty />
 	{:else}

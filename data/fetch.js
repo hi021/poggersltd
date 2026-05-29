@@ -21,7 +21,7 @@ import {
 } from "./shared.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 ////////////////////////////
 const MIN_SCORE_THRESHOLD = { top50: 1275, top25: 725, top8: 275, top1: 18 };

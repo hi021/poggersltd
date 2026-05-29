@@ -8,7 +8,7 @@ import { fileURLToPath } from "url";
 import { CATEGORY_NAMES, createNGram, createPlayerIndexes, getRankingEntries } from "./shared.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 /**
  * Make `RankingEntry` into `Player` and put it into the big mappy, calculating peak and lowest values

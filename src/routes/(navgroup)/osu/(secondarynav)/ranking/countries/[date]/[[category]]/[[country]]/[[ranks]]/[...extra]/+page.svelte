@@ -5,7 +5,6 @@
 	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import RankingSettings from "$lib/components/Ranking/RankingSettings.svelte";
 	import { COUNTRIES } from "$lib/constants";
-	import { rankingSettings } from "$lib/stores";
 	import { formatNumber, getCountryName, tooltip } from "$lib/util";
 	import { getContext, untrack } from "svelte";
 	import type { PageData } from "./$types";
@@ -36,7 +35,7 @@
 </svelte:head>
 
 <main class="flex-fill column osu-main">
-	<RankingSettings bind:settings={$rankingSettings} viewMode="countries" />
+	<RankingSettings viewMode="countries" />
 
 	{#if !data?.rankingData?.length}
 		<RankingEmpty />

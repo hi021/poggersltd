@@ -6,7 +6,7 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 ////////////////////////////
 const exclude = ["2022-10-09", "2022-10-10", "2022-10-11", "2022-10-12"];

@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 export const CATEGORY_NAMES = ["top50", "top25", "top8", "top1"]; // only the ones stored in db
 export const SKIP_CATEGORY_NAMES = ["top100", "top15"]; // TODO

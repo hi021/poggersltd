@@ -4,6 +4,7 @@
 	import { page } from "$app/state";
 	import RankingFlag from "$lib/components/Ranking/RankingFlag.svelte";
 	import { COUNTRIES, MIN_DATE } from "$lib/constants";
+	import { rankingSettings } from "$lib/stores";
 	import { addDays, getDaysBetweenDates, getRankingUrl } from "$lib/util";
 	import { onMount } from "svelte";
 	import { slide } from "svelte/transition";
@@ -12,11 +13,10 @@
 
 	interface Props {
 		viewMode?: "players" | "countries" | "gains" | "mostGained";
-		settings: App.RankingSettings;
 		style?: string;
 	}
 
-	let { viewMode = "players", settings = $bindable(), style = "" }: Props = $props();
+	let { viewMode = "players", style = "" }: Props = $props();
 
 	let expanded = $state(false);
 	let isGainedDaysCustom = $state(false);
@@ -24,7 +24,7 @@
 		getDaysBetweenDates(addDays(new Date(MIN_DATE), 1).valueOf(), new Date(page.params.date || MIN_DATE).valueOf())
 	);
 	// TODO
-	// $effect(() => {viewMode == "gains" && handleGainsTimeFrameNavigation(settings.gainedDays)});
+	// $effect(() => {viewMode == "gains" && handleGainsTimeFrameNavigation($rankingSettings.gainedDays)});
 
 	const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
 	const gainsTimeFrames = {
@@ -39,16 +39,16 @@
 		Custom: "Custom"
 	};
 
-	settings.countryFilter = new Set<string>(page.params.country?.split(",")?.filter(it => it && it != "all"));
+	$rankingSettings.countryFilter = new Set<string>(page.params.country?.split(",")?.filter(it => it && it != "all"));
 
-	function checkAndSetIsGainedDaysCustom(days = settings.gainedDays) {
+	function checkAndSetIsGainedDaysCustom(days = $rankingSettings.gainedDays) {
 		return (isGainedDaysCustom = !days || gainsTimeFrames[days] == null);
 	}
 
 	function handleGainsTimeFrame(e: Event) {
 		const target = e.target as HTMLSelectElement;
 		const days = parseInt(target.value);
-		if (!checkAndSetIsGainedDaysCustom(days)) settings.gainedDays = days;
+		if (!checkAndSetIsGainedDaysCustom(days)) $rankingSettings.gainedDays = days;
 	}
 
 	function handleGainsTimeFrameNavigation(days: number) {
@@ -65,11 +65,11 @@
 		if (!browser) return;
 		goto(
 			getRankingUrl(
-				{ ...page.params, country: [...(settings.countryFilter ?? [])].join(",") } as any,
+				{ ...page.params, country: [...($rankingSettings.countryFilter ?? [])].join(",") } as any,
 				page.url,
 				viewMode as "players" | "gains",
 				"osu",
-				settings.gainedDays
+				$rankingSettings.gainedDays
 			),
 			{ noScroll: true }
 		);
@@ -80,7 +80,7 @@
 	// can probably be optimized by having the date change also update the gainedDays param to maxDays if it's currently out of range
 	// ALSO change the gainedDays when navigating into the future, not just backwards like here
 	onNavigate(() => {
-		if (settings.gainedDays > maxDays) settings.gainedDays = maxDays;
+		if ($rankingSettings.gainedDays > maxDays) $rankingSettings.gainedDays = maxDays;
 	});
 </script>
 
@@ -97,21 +97,21 @@
 	{#if expanded}
 		<div class="column background" transition:slide={{ duration: 200, axis: "y" }}>
 			{#if viewMode != "countries"}
-				<Switch labelOrientation="row" style={switchStyle} bind:checked={settings.avatars}>
+				<Switch labelOrientation="row" style={switchStyle} bind:checked={$rankingSettings.avatars}>
 					{#snippet before()}
 						<span>Avatars</span>
 					{/snippet}
 				</Switch>
 			{/if}
 			{#if viewMode == "players"}
-				<Switch labelOrientation="row" style={switchStyle} bind:checked={settings.scoreDifferences}>
+				<Switch labelOrientation="row" style={switchStyle} bind:checked={$rankingSettings.scoreDifferences}>
 					{#snippet before()}
 						<span>Score differences</span>
 					{/snippet}
 				</Switch>
 			{/if}
 			{#if viewMode != "mostGained"}
-				<Switch labelOrientation="row" style={switchStyle} bind:checked={settings.dateSticky}>
+				<Switch labelOrientation="row" style={switchStyle} bind:checked={$rankingSettings.dateSticky}>
 					{#snippet before()}
 						<span>Sticky date bar</span>
 					{/snippet}
@@ -120,7 +120,7 @@
 			{#if viewMode == "players" || viewMode == "gains"}
 				<label class="row" style={switchStyle}>
 					<span>Players per page</span>
-					<select class="input-dark normal-size" bind:value={settings.perPage}>
+					<select class="input-dark normal-size" bind:value={$rankingSettings.perPage}>
 						<option value={10}>10</option>
 						<option value={25}>25</option>
 						<option value={50}>50</option>
@@ -131,8 +131,8 @@
 
 				<MultiSelectDropdown
 					options={COUNTRIES}
-					bind:selected={settings.countryFilter}
-					placeholder="Country filter ({settings.countryFilter.size})"
+					bind:selected={$rankingSettings.countryFilter}
+					placeholder="Country filter ({$rankingSettings.countryFilter.size})"
 					onBlur={handleCountryFilterChange}>
 					{#snippet optionComponent({ value, label, onchange })}
 						<label>
@@ -161,7 +161,7 @@
 								type="number"
 								min="1"
 								max={maxDays}
-								bind:value={settings.gainedDays} />
+								bind:value={$rankingSettings.gainedDays} />
 							days
 						</label>
 					{/if}

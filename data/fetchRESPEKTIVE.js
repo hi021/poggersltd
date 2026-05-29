@@ -8,7 +8,7 @@ import * as path from "path";
 import * as fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 // export const MIN_TOP100 = 1500;
 // export const MIN_TOP50 = 1250;

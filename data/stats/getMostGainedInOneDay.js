@@ -9,7 +9,7 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 
 const startDate = "2023-01-01";
 const endDate = "2024-01-01";
