@@ -5,7 +5,7 @@
 <main>
 	<h1>hii</h1>
 	<p style="margin-bottom: 48px;">
-		This is an ongoing rewrite of a rewrite of poggers.ltd/pogowanie - a site for tracking <em
+		This is an ongoing rewrite of a rewrite of poggers.moe (poggers.ltd)/pogowanie - a site for tracking <em
 			>osu! score leaderboards</em
 		>.
 		<br />
@@ -25,7 +25,7 @@
 
 	<h2>Caveats & inaccuracies</h2>
 	<p class="para">
-		poggers.ltd gets its data from osu!Stats, which isn't too reliable.
+		poggers.moe gets its data from osu!Stats, which isn't too reliable.
 		<br />
 		Here are some of the things to keep in mind:
 	</p>

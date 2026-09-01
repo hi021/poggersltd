@@ -46,7 +46,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.name ?? "player"} - poggers</title>
+	<title>{data.name ?? "missing player"} - poggers</title>
 </svelte:head>
 
 <main class="flex-fill column">
@@ -72,8 +72,7 @@
 				<div id="top-bar-bottom" class="row">
 					<RankingFlag
 						countryCode={data.country}
-						style="margin-right: 10px; height: 2.125em;"
-						tooltipContent={getCountryName(data.country)} />
+						style="margin-right: 10px; height: 1.725em;"/>
 					<span>{getCountryName(data.country)}</span>
 				</div>
 				<div class="tab-container row">

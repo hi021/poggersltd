@@ -27,5 +27,6 @@
 	picture {
 		display: inline-block;
 		vertical-align: middle;
+		line-height: 0;
 	}
 </style>

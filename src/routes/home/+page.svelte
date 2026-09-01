@@ -23,7 +23,7 @@
 	</MenuButton>
 	<MenuButton
 		backgroundColor="rgb(100,181,246)"
-		href="https://ht.poggers.ltd"
+		href="https://ht.poggers.moe"
 		label="Hardware Tycoon"
 		backgroundImage="url(/ht_thumb.jpg)"
 		tooltipContent="Free lil browser strategy/management game about running a hardware company" />
