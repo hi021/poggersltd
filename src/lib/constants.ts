@@ -8,16 +8,21 @@ export const MIN_DATE = "2020-05-10";
 export const MAX_CHART_TREND_DAYS = 180; // TODO...
 export const MAX_CHART_PLAYERS = 30;
 
-export const SCORE_CATEGORIES: Array<"top50" | "top25" | "top8" | "top1"> = ["top50", "top25", "top8", "top1"];
+export const SCORE_CATEGORIES: Readonly<Array<"top50" | "top25" | "top8" | "top1">> = Object.freeze([
+	"top50",
+	"top25",
+	"top8",
+	"top1"
+]);
 
-export const CATEGORY_COLORS = {
+export const CATEGORY_COLORS = Object.freeze({
 	top50: "#E57373",
 	top25: "#7986CB",
 	top8: "#4DB6AC",
 	top1: "#DCE775"
-};
+});
 
-export const CHART_COLORS = [
+export const CHART_COLORS = Object.freeze([
 	"#B39DDB",
 	"#CE93D8",
 	"#F48FB1",
@@ -28,8 +33,8 @@ export const CHART_COLORS = [
 	"#FFF59D",
 	"#E6EE9C",
 	"#C5E1A5"
-];
-export const CHART_RANK_COLORS = [
+]);
+export const CHART_RANK_COLORS = Object.freeze([
 	"#D3548D",
 	"#C51162",
 	"#AA00FF",
@@ -40,18 +45,28 @@ export const CHART_RANK_COLORS = [
 	"#64DD17",
 	"#FFD600",
 	"#FF6D00"
-];
+]);
 
-export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = {
+export const RANKING_BADGES: { [id: string]: { img: string; title?: string } } = Object.freeze({
 	"5795337": { img: "/badges/pogu.png", title: "poggers" },
 	"1023489": { img: "/badges/unhappi.png", title: "gay" },
 	"6502403": { img: "/badges/bowing.svg" },
 	"11495715": { img: "/badges/doggo.svg" }
-};
+});
+
+// TODO: was supposed to be used with depends() in load functions - needs validation
+export const ROUTE_NAMES = Object.freeze(
+	new Map([
+		["API_GAINS", "API_GAINS"],
+		["API_COUNTRIES", "API_COUNTRIES"],
+		["API_PLAYERS", "API_PLAYERS"],
+		["API_PLAYER", "API_PLAYER"]
+	])
+);
 
 // This could potentially be Intl.DisplayNames(["en"], { type: "region" })
 // but this is safer plus gives control over order and naming
-export const COUNTRIES: { [countryCode: string]: string } = {
+export const COUNTRIES: { [countryCode: string]: string } = Object.freeze({
 	US: "United States",
 	RU: "Russian Federation",
 	JP: "Japan",
@@ -129,4 +144,4 @@ export const COUNTRIES: { [countryCode: string]: string } = {
 	QA: "Qatar",
 	RE: "Reunion",
 	TT: "Trinidad and Tobago"
-};
+});

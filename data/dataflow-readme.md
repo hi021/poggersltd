@@ -13,8 +13,8 @@
    will convert into new json format and insert into database
    `json
  {
-   "_id": "<date>",
-   "top50": [ {"name": <...>, ...}, ... ]
+"_id": "<date>",
+"top50": [ {"name": <...>, ...}, ... ]
  }
  `
 3. run `node setGainedScores.js` (**./archive-new** -> **./archive-aftergains**)\

@@ -19,9 +19,7 @@
 	<hr class="show-width-640" />
 
 	<nav class="row column-width-640">
-		<a href="/osu/ranking" class="nav-tab" class:active={page.url.pathname.startsWith("/osu/ranking")}>
-			Ranking
-		</a>
+		<a href="/osu/ranking" class="nav-tab" class:active={page.url.pathname.startsWith("/osu/ranking")}> Ranking </a>
 		<a
 			href="/osu"
 			class="nav-tab"
@@ -34,9 +32,7 @@
 		<a href="/osu/gains/top50" class="nav-tab" class:active={page.url.pathname.startsWith("/osu/gains")}>
 			Most Gained
 		</a>
-		<a href="/about" class="nav-tab right" class:active={page.url.pathname.startsWith("/about")}>
-			About
-		</a>
+		<a href="/about" class="nav-tab right" class:active={page.url.pathname.startsWith("/about")}> About </a>
 	</nav>
 </header>
 

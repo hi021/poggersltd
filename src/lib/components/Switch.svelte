@@ -16,7 +16,7 @@
 		onChange,
 		checked = $bindable(),
 		disabled = false,
-		size = "1.625rem",
+		size = "1.75rem",
 		style = "gap: 2px;",
 		labelOrientation = "column",
 		before,
@@ -26,9 +26,9 @@
 
 <label class={labelOrientation} {style} class:disabled>
 	{@render before?.()}
-	<div class="switch">
+	<div class="switch" style="--size: {size};">
 		<input type="checkbox" class="no-appearance" {disabled} onchange={onChange} bind:checked />
-		<span class="slider" style="--size: {size};"></span>
+		<span class="slider"></span>
 	</div>
 	{@render after?.()}
 </label>
@@ -38,7 +38,7 @@
 		position: relative;
 		display: inline-block;
 		width: 3.875rem;
-		height: 2rem;
+		height: calc(var(--size) + 0.375rem);
 		cursor: pointer;
 	}
 	label.disabled {
@@ -50,10 +50,7 @@
 
 	.switch .slider {
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		inset: 0;
 		background-color: var(--color-dark);
 		transition: 0.25s;
 		border-radius: 9999px;

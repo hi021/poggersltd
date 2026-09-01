@@ -22,60 +22,60 @@ const outputDir = path.resolve(__dirname, "archive-aftergains");
 export async function calculateGainedScores(mongoClient = null) {
 	// whether ran manually from console as opposed to another script that passes in a shared client
 	try {
-	const useOwnClient = mongoClient == null;
-	if (useOwnClient) mongoClient = await MongoClient.connect(process.env.DB_URI);
-	const dbRankings = mongoClient.db(process.env.DB_NAME).collection("rankings");
+		const useOwnClient = mongoClient == null;
+		if (useOwnClient) mongoClient = await MongoClient.connect(process.env.DB_URI);
+		const dbRankings = mongoClient.db(process.env.DB_NAME).collection("rankings");
 
-	let players = {}; // maps (of players by id) for each category, used to get day to day gains
-	let prevDate = "";
-	const globFiles = fs.globSync(inputDir + "/*.json").sort();
-	for (const file of globFiles) {
-		const date = path.basename(file, ".json");
-		console.log(`Converting ${date}...`);
-		const fileJson = JSON.parse(fs.readFileSync(file));
-		const fileConverted = {}; // arrays of converted players for each category
+		let players = {}; // maps (of players by id) for each category, used to get day to day gains
+		let prevDate = "";
+		const globFiles = fs.globSync(inputDir + "/*.json").sort();
+		for (const file of globFiles) {
+			const date = path.basename(file, ".json");
+			console.log(`Converting ${date}...`);
+			const fileJson = JSON.parse(fs.readFileSync(file));
+			const fileConverted = {}; // arrays of converted players for each category
 
-		const dateDiff = prevDate ? getDaysBetweenDates(new Date(date), new Date(prevDate)) : 0;
-		if (dateDiff > 1) console.log(`${dateDiff} day difference between entries, setting gainedDays`);
+			const dateDiff = prevDate ? getDaysBetweenDates(new Date(date), new Date(prevDate)) : 0;
+			if (dateDiff > 1) console.log(`${dateDiff} day difference between entries, setting gainedDays`);
 
-		for (const category in fileJson) {
-			const convertedPlayersArray = new Array(fileJson[category].length);
-			for (const i in fileJson[category]) {
-				const plr = fileJson[category][i];
+			for (const category in fileJson) {
+				const convertedPlayersArray = new Array(fileJson[category].length);
+				for (const i in fileJson[category]) {
+					const plr = fileJson[category][i];
 
-				// set gains
-				const prevPlr = players[category]?.get(plr._id);
-				if (prevPlr && prevPlr.date == prevDate) {
-					const prevScores = prevPlr.scores;
-					const prevRank = prevPlr.rank;
+					// set gains
+					const prevPlr = players[category]?.get(plr._id);
+					if (prevPlr && prevPlr.date == prevDate) {
+						const prevScores = prevPlr.scores;
+						const prevRank = prevPlr.rank;
 
-					plr.gainedScores = prevScores ? plr.scores - prevScores : undefined;
-					plr.gainedRanks = prevRank ? prevRank - plr.rank : undefined; // reversed because (+1 is 100 -> 99 etc.)
-					if (dateDiff > 1) plr.gainedDays = dateDiff;
+						plr.gainedScores = prevScores ? plr.scores - prevScores : undefined;
+						plr.gainedRanks = prevRank ? prevRank - plr.rank : undefined; // reversed because (+1 is 100 -> 99 etc.)
+						if (dateDiff > 1) plr.gainedDays = dateDiff;
+					}
+
+					convertedPlayersArray[i] = plr;
+					if (!players[category]) players[category] = new Map();
+					players[category].set(plr._id, { ...plr, date });
 				}
-
-				convertedPlayersArray[i] = plr;
-				if (!players[category]) players[category] = new Map();
-				players[category].set(plr._id, { ...plr, date });
+				fileConverted[category] = convertedPlayersArray;
 			}
-			fileConverted[category] = convertedPlayersArray;
+
+			const outputPath = path.join(outputDir, date + ".json");
+			console.log(`Writing to ${outputPath}...`);
+			fs.writeFileSync(outputPath, JSON.stringify(fileConverted));
+
+			const insertRes = await dbRankings.updateOne({ _id: date }, { $set: fileConverted }, { upsert: true });
+			console.log(`Modified ${insertRes.modifiedCount}, upserted ${insertRes.upsertedCount}`);
+
+			prevDate = date;
 		}
 
-		const outputPath = path.join(outputDir, date + ".json");
-		console.log(`Writing to ${outputPath}...`);
-		fs.writeFileSync(outputPath, JSON.stringify(fileConverted));
-
-		const insertRes = await dbRankings.updateOne({ _id: date }, { $set: fileConverted }, { upsert: true });
-		console.log(`Modified ${insertRes.modifiedCount}, upserted ${insertRes.upsertedCount}`);
-
-		prevDate = date;
+		mongoClient.close();
+	} catch (e) {
+		console.error(e);
+		process.exit(1);
 	}
-
-	mongoClient.close();
-} catch (e) {
-	console.error(e);
-	process.exit(1);
-}
 }
 
 // run if called directly from console

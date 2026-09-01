@@ -25,6 +25,7 @@
 	);
 	// TODO
 	// $effect(() => {viewMode == "gains" && handleGainsTimeFrameNavigation($rankingSettings.gainedDays)});
+	// TODO idk gainesScores reset to -1
 
 	const switchStyle = "width: 100%; justify-content: space-between; align-items: center;";
 	const gainsTimeFrames = {

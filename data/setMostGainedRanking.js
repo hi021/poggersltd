@@ -13,7 +13,7 @@ dotenv.config({ path: path.resolve(__dirname, "..", ".env"), silent: true });
 ////////////////////////////
 const outputFile = "archive-other/most-gained.json";
 const arbitraryMin = { top50: 175, top25: 50, top8: 25, top1: 9 };
-// will skip these players at the given dates, used to fix data for MystExiStentia once (because of unban?)
+// will skip these players on the given dates, used to fix data for MystExiStentia once (because of unban?)
 const ignoredPlayers = { 9413991: ["2022-12-16"], 15787074: ["2023-01-10"] };
 ////////////////////////////
 
@@ -47,6 +47,7 @@ export async function setMostGainedRanking(mongoClient = null) {
 				)
 					continue;
 
+				// TODO TypeError: Cannot read properties of undefined (reading 'push')
 				scoreArrays[category].push({
 					_id: player._id,
 					name: player.name,
